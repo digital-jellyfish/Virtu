@@ -23,7 +23,7 @@
     <CreateTestPage>true</CreateTestPage>
     <ValidateXaml>true</ValidateXaml>
     <ThrowErrorsInValidation>false</ThrowErrorsInValidation>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Jellyfish.snk</AssemblyOriginatorKeyFile>
     <UsePlatformExtensions>false</UsePlatformExtensions>
   </PropertyGroup>
@@ -217,7 +217,4 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <PropertyGroup>
-    <PostBuildEvent>del $(TargetDir)TestPage.html</PostBuildEvent>
-  </PropertyGroup>
 </Project>
