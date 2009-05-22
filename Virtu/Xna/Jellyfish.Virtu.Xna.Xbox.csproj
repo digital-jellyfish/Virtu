@@ -212,11 +212,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="..\Roms\Apple2e.rom">
-      <Link>Roms\Apple2e.rom</Link>
+    <Resource Include="..\Roms\AppleIIe.rom">
+      <Link>Roms\AppleIIe.rom</Link>
     </Resource>
-    <Resource Include="..\Roms\Printer.rom">
-      <Link>Roms\Printer.rom</Link>
+    <Resource Include="..\Roms\DiskII.rom">
+      <Link>Roms\DiskII.rom</Link>
     </Resource>
   </ItemGroup>
   <ItemGroup>
