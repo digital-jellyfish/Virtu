@@ -1,0 +1,11 @@
+﻿<jl:ApplicationBase x:Class="Jellyfish.Virtu.MainApp"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:jl="clr-namespace:Jellyfish.Library;assembly=Jellyfish.Library"
+    xmlns:jv="clr-namespace:Jellyfish.Virtu;assembly=Jellyfish.Virtu">
+    <Application.RootVisual>
+        <jv:MainPage/>
+    </Application.RootVisual>
+    <Application.Resources>
+    </Application.Resources>
+</jl:ApplicationBase>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Dictionary>
+    <Acronyms>
+        <CasingExceptions>
+            <Acronym>CXXX</Acronym>
+            <Acronym>RPC</Acronym>
+        </CasingExceptions>
+    </Acronyms>
+    <Words>
+        <Recognized>
+            <Word>Annunciator</Word>
+            <Word>Dsk</Word>
+            <Word>Opcode</Word>
+            <Word>Virtu</Word>
+            <Word>Xna</Word>
+            <Word>x</Word>
+            <Word>y</Word>
+        </Recognized>
+        <Unrecognized>
+            <Word>DownRight</Word>
+            <Word>UpRight</Word>
+        </Unrecognized>
+    </Words>
+</Dictionary>

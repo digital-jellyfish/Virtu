@@ -1,0 +1,11 @@
+﻿<UserControl x:Class="Jellyfish.Virtu.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:jl="clr-namespace:Jellyfish.Library;assembly=Jellyfish.Library"
+    xmlns:jv="clr-namespace:Jellyfish.Virtu;assembly=Jellyfish.Virtu">
+    <Grid Background="Black" Cursor="None">
+        <Image Name="_image" MinWidth="560" MinHeight="384"/>
+
+        <jl:FrameRateCounter/>
+    </Grid>
+</UserControl>

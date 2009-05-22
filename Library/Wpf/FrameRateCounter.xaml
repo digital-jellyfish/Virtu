@@ -1,0 +1,9 @@
+﻿<UserControl x:Class="Jellyfish.Library.FrameRateCounter" x:Name="frameRateControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <TextBlock FontFamily="Consolas" FontSize="12" Foreground="White">
+        <TextBlock.Text>
+            <Binding Path="FrameRate" ElementName="frameRateControl" StringFormat="{}{0:D} fps"/>
+        </TextBlock.Text>
+    </TextBlock>
+</UserControl>

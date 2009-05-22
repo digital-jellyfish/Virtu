@@ -1,0 +1,11 @@
+﻿<Window x:Class="Jellyfish.Virtu.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:jl="clr-namespace:Jellyfish.Library;assembly=Jellyfish.Library"
+    Title="Virtu" ResizeMode="CanMinimize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
+    <Grid Background="Black" Cursor="None">
+        <Image Name="_image" MinWidth="560" MinHeight="384" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+
+        <jl:FrameRateCounter/>
+    </Grid>
+</Window>
