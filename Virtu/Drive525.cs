@@ -22,14 +22,14 @@ namespace Jellyfish.Virtu
             }
         }
 
-        public void InsertDisk(string fileName, int volume, bool isWriteProtected)
+        public void InsertDisk(string fileName, bool isWriteProtected)
         {
             FlushTrack();
 
             // TODO handle null param/empty string for eject, or add Eject()
 
             byte[] fileData = FileHelpers.ReadAllBytes(fileName);
-            _disk = Disk525.CreateDisk(fileName, fileData, volume, isWriteProtected);
+            _disk = Disk525.CreateDisk(fileName, fileData, isWriteProtected);
             _trackLoaded = false;
         }
 

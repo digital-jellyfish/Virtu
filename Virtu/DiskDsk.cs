@@ -4,10 +4,9 @@ namespace Jellyfish.Virtu
 {
     public sealed class DiskDsk : Disk525
     {
-        public DiskDsk(string name, byte[] data, int volume, bool isWriteProtected) : 
+        public DiskDsk(string name, byte[] data, bool isWriteProtected) : 
             base(name, data, isWriteProtected)
         {
-            Volume = volume;
         }
 
         public override void ReadTrack(int number, int fraction, byte[] buffer)
@@ -22,6 +21,6 @@ namespace Jellyfish.Virtu
             throw new NotImplementedException();
         }
 
-        private int Volume { get; set; }
+        private const int Volume = 0xFE;
     }
 }

@@ -22,11 +22,11 @@ namespace Jellyfish.Virtu
             }
             if (settings.Disk1.Name.Length > 0)
             {
-                _drives[0].InsertDisk(settings.Disk1.Name, settings.Disk1.Volume, settings.Disk1.IsWriteProtected);
+                _drives[0].InsertDisk(settings.Disk1.Name, settings.Disk1.IsWriteProtected);
             }
             if (settings.Disk2.Name.Length > 0)
             {
-                _drives[1].InsertDisk(settings.Disk2.Name, settings.Disk2.Volume, settings.Disk2.IsWriteProtected);
+                _drives[1].InsertDisk(settings.Disk2.Name, settings.Disk2.IsWriteProtected);
             }
         }
 

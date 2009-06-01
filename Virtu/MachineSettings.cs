@@ -13,8 +13,8 @@ namespace Jellyfish.Virtu.Settings
             Cpu = new CpuSettings { Is65C02 = true, IsThrottled = true };
             DiskII = new DiskIISettings
             {
-                Disk1 = new DiskSettings { Name = string.Empty, Volume = 0xFE, IsWriteProtected = false }, 
-                Disk2 = new DiskSettings { Name = string.Empty, Volume = 0xFE, IsWriteProtected = false }
+                Disk1 = new DiskSettings { Name = string.Empty, IsWriteProtected = false }, 
+                Disk2 = new DiskSettings { Name = string.Empty, IsWriteProtected = false }
             };
             Keyboard = new KeyboardSettings
             {
@@ -85,13 +85,11 @@ namespace Jellyfish.Virtu.Settings
                         Disk1 = new DiskSettings
                         {
                             Name = (string)disk1.Attribute("Name") ?? string.Empty, 
-                            Volume = (int)disk1.Attribute("Volume"), 
                             IsWriteProtected = (bool)disk1.Attribute("IsWriteProtected")
                         },
                         Disk2 = new DiskSettings
                         {
                             Name = (string)disk2.Attribute("Name") ?? string.Empty, 
-                            Volume = (int)disk2.Attribute("Volume"), 
                             IsWriteProtected = (bool)disk2.Attribute("IsWriteProtected")
                         },
                     };
@@ -214,11 +212,9 @@ namespace Jellyfish.Virtu.Settings
                 new XElement(ns + "DiskII",
                     new XElement(ns + "Disk1",
                         new XAttribute("Name", DiskII.Disk1.Name),
-                        new XAttribute("Volume", DiskII.Disk1.Volume),
                         new XAttribute("IsWriteProtected", DiskII.Disk1.IsWriteProtected)),
                     new XElement(ns + "Disk2",
                         new XAttribute("Name", DiskII.Disk2.Name),
-                        new XAttribute("Volume", DiskII.Disk2.Volume),
                         new XAttribute("IsWriteProtected", DiskII.Disk2.IsWriteProtected))),
                 new XElement(ns + "Keyboard",
                     new XAttribute("UseGamePort", Keyboard.UseGamePort),
@@ -318,7 +314,6 @@ namespace Jellyfish.Virtu.Settings
     public class DiskSettings
     {
         public string Name { get; set; }
-        public int Volume { get; set; }
         public bool IsWriteProtected { get; set; }
     };
 

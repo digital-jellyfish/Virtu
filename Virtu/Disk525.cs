@@ -11,8 +11,8 @@ namespace Jellyfish.Virtu
             Data = data;
             IsWriteProtected = true; // TODO use isWriteProtected
         }
-         
-        public static Disk525 CreateDisk(string name, byte[] data, int volume, bool isWriteProtected)
+
+        public static Disk525 CreateDisk(string name, byte[] data, bool isWriteProtected)
         {
             if (name.EndsWith(".nib", StringComparison.OrdinalIgnoreCase) && (data.Length == TrackCount * TrackSize))
             {
@@ -20,7 +20,7 @@ namespace Jellyfish.Virtu
             }
             else if (name.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase) && (data.Length == TrackCount * SectorCount * SectorSize))
             {
-                return new DiskDsk(name, data, volume, isWriteProtected);
+                return new DiskDsk(name, data, isWriteProtected);
             }
 
             return null;

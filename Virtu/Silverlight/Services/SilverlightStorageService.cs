@@ -25,7 +25,7 @@ namespace Jellyfish.Virtu.Services
             //    try
             //    {
             //        OpenFileDialog dialog = new OpenFileDialog(); // SL expects all dialogs to be user initiated, ie from within an event handler.
-            //        dialog.Filter = "Disk Files (*.nib)|*.nib|All Files (*.*)|*.*";
+            //        dialog.Filter = "Disk Files (*.dsk;*.nib)|*.dsk;*.nib|All Files (*.*)|*.*";
             //        bool? result = dialog.ShowDialog();
             //        if (result.HasValue && result.Value)
             //        {

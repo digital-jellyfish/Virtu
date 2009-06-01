@@ -16,7 +16,7 @@ namespace Jellyfish.Virtu.Services
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 OpenFileDialog dialog = new OpenFileDialog();
-                dialog.Filter = "Disk Files (*.nib)|*.nib|All Files (*.*)|*.*";
+                dialog.Filter = "Disk Files (*.dsk;*.nib)|*.dsk;*.nib|All Files (*.*)|*.*";
                 bool? result = dialog.ShowDialog();
                 if (result.HasValue && result.Value)
                 {

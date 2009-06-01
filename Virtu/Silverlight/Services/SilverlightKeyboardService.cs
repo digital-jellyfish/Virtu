@@ -91,8 +91,8 @@ namespace Jellyfish.Virtu.Services
         private int GetAsciiKey(Key key, int platformKeyCode)
         {
             ModifierKeys modifiers = System.Windows.Input.Keyboard.Modifiers;
-            bool control = ((modifiers & ModifierKeys.Control) == ModifierKeys.Control);
-            bool shift = ((modifiers & ModifierKeys.Shift) == ModifierKeys.Shift);
+            bool control = ((modifiers & ModifierKeys.Control) != 0);
+            bool shift = ((modifiers & ModifierKeys.Shift) != 0);
             bool capsLock = shift ^ _capsLock;
 
             switch (key)
