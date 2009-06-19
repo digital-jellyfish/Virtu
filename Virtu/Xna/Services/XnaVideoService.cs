@@ -44,8 +44,6 @@ namespace Jellyfish.Virtu.Services
             if (_pixelsDirty)
             {
                 _pixelsDirty = false;
-                _graphicsDevice.Textures[0] = null; // workaround bug; https://connect.microsoft.com/feedback/Workaround.aspx?FeedbackID=318195&SiteID=226
-                                                    // http://forums.xna.com/forums/post/37289.aspx
                 _texture.SetData(_pixels);
             }
 

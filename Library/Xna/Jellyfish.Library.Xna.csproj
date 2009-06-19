@@ -9,7 +9,7 @@
     <RootNamespace>Jellyfish.Library</RootNamespace>
     <AssemblyName>Jellyfish.Library</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <XnaFrameworkVersion>v3.0</XnaFrameworkVersion>
+    <XnaFrameworkVersion>v3.1</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
     <XnaCrossPlatformGroupID>3289d0b6-d8a8-415e-8c29-dc355352cb54</XnaCrossPlatformGroupID>
     <PublishUrl>publish\</PublishUrl>
@@ -59,14 +59,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86">
-      <Private>False</Private>
-      <SpecificVersion>True</SpecificVersion>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Game, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=MSIL">
-      <Private>False</Private>
-      <SpecificVersion>True</SpecificVersion>
-    </Reference>
+    <Reference Include="Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d" />
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d" />
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
@@ -165,9 +159,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Xna.Framework.3.0">
+    <BootstrapperPackage Include="Microsoft.Xna.Framework.3.1">
       <Visible>False</Visible>
-      <ProductName>Microsoft XNA Framework Redistributable 3.0</ProductName>
+      <ProductName>Microsoft XNA Framework Redistributable 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
