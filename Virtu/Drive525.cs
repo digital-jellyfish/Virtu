@@ -13,15 +13,6 @@ namespace Jellyfish.Virtu
             DriveArmStepDelta[3] = new int[] { 0,  1,  0,  1, -1,  0, -1,  0,  0,  1,  0,  1, -1,  0, -1,  0 }; // phase 3
         }
 
-        public void FlushTrack()
-        {
-            if (_trackChanged)
-            {
-                // TODO
-                _trackChanged = false;
-            }
-        }
-
         public void InsertDisk(string fileName, bool isWriteProtected)
         {
             FlushTrack();
@@ -42,6 +33,7 @@ namespace Jellyfish.Virtu
                 int newTrackNumber = MathHelpers.Clamp(_trackNumber + delta, 0, TrackNumberMax);
                 if (newTrackNumber != _trackNumber)
                 {
+                    FlushTrack();
                     _trackNumber = newTrackNumber;
                     _trackOffset = 0;
                     _trackLoaded = false;
@@ -69,6 +61,7 @@ namespace Jellyfish.Virtu
         {
             if (LoadTrack())
             {
+                _trackChanged = true;
                 _trackData[_trackOffset++] = (byte)data;
                 if (_trackOffset >= Disk525.TrackSize)
                 {
@@ -86,6 +79,15 @@ namespace Jellyfish.Virtu
             }
 
             return _trackLoaded;
+        }
+
+        public void FlushTrack()
+        {
+            if (_trackChanged)
+            {
+                _disk.WriteTrack(_trackNumber, 0, _trackData);
+                _trackChanged = false;
+            }
         }
 
         public bool IsWriteProtected { get { return _disk.IsWriteProtected; } }

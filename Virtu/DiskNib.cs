@@ -16,8 +16,7 @@ namespace Jellyfish.Virtu
 
         public override void WriteTrack(int number, int fraction, byte[] buffer)
         {
-            // TODO
-            throw new NotImplementedException();
+            Buffer.BlockCopy(buffer, 0, Data, (number / 2) * TrackSize, TrackSize);
         }
     }
 }

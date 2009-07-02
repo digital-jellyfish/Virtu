@@ -75,9 +75,16 @@ namespace Jellyfish.Virtu
 
                 case 0xC:
                     _loadMode = false;
-                    if (_motorOn && !_writeMode)
+                    if (_motorOn)
                     {
-                        return _latch = _drives[_driveNumber].Read();
+                        if (!_writeMode)
+                        {
+                            return _latch = _drives[_driveNumber].Read();
+                        }
+                        else
+                        {
+                            WriteLatch();
+                        }
                     }
                     break;
 
@@ -146,11 +153,9 @@ namespace Jellyfish.Virtu
 
                 case 0xC:
                     _loadMode = false;
-
-                    // write protect is forced if phase 1 is on [F9.7]
-                    if ((_phaseStates & Phase1On) != 0)
+                    if (_writeMode)
                     {
-                        _drives[_driveNumber].Write(_latch);
+                        WriteLatch();
                     }
                     break;
 
@@ -174,6 +179,15 @@ namespace Jellyfish.Virtu
                     // any address writes latch for sequencer LD; OE1/2 irrelevant ['323 datasheet]
                     _latch = data;
                 }
+            }
+        }
+
+        private void WriteLatch()
+        {
+            // write protect is forced if phase 1 is on [F9.7]
+            if ((_phaseStates & Phase1On) == 0)
+            {
+                _drives[_driveNumber].Write(_latch);
             }
         }
 

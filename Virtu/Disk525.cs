@@ -9,7 +9,7 @@ namespace Jellyfish.Virtu
         {
             Name = name;
             Data = data;
-            IsWriteProtected = true; // TODO use isWriteProtected
+            IsWriteProtected = isWriteProtected;
         }
 
         public static Disk525 CreateDisk(string name, byte[] data, bool isWriteProtected)
