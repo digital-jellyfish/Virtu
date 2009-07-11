@@ -1,13 +1,5 @@
 ﻿<Deployment xmlns="http://schemas.microsoft.com/client/2007/deployment"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Deployment.ApplicationIdentity>
-        <ApplicationIdentity ShortName="Virtu" Title="Virtu" Blurb="Apple IIe Emulator">
-            <!--<ApplicationIdentity.Icons>
-                <Icon Size="16x16">Properties/Apple16.png</Icon>
-                <Icon Size="32x32">Properties/Apple32.png</Icon>
-                <Icon Size="48x48">Properties/Apple48.png</Icon>
-                <Icon Size="128x128">Properties/Apple128.png</Icon>
-            </ApplicationIdentity.Icons>-->
-        </ApplicationIdentity>
-    </Deployment.ApplicationIdentity>
+    <Deployment.Parts>
+    </Deployment.Parts>
 </Deployment>

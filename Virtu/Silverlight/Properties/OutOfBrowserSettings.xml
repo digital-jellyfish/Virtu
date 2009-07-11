@@ -1,0 +1,7 @@
+<OutOfBrowserSettings ShortName="Virtu" EnableGPUAcceleration="false" ShowInstallMenuItem="true">
+    <OutOfBrowserSettings.Blurb>Apple IIe Emulator</OutOfBrowserSettings.Blurb>
+    <OutOfBrowserSettings.WindowSettings>
+        <WindowSettings Title="Virtu" Width="560" Height="384"/>
+    </OutOfBrowserSettings.WindowSettings>
+    <OutOfBrowserSettings.Icons/>
+</OutOfBrowserSettings>

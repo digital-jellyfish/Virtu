@@ -233,12 +233,9 @@ namespace Jellyfish.Virtu.Services
                 return control ? 0x1A : capsLock ? 'Z' : 'z';
 
             case Key.Unknown:
-                if (Application.Current.RunningOffline)
+                switch (Environment.OSVersion.Platform)
                 {
-                    // SL cannot access HtmlPage.BrowserInformation.Platform when out of browser
-                }
-                else if (HtmlPage.BrowserInformation.Platform.Equals("Win32", StringComparison.OrdinalIgnoreCase))
-                {
+                case PlatformID.Win32NT:
                     switch (platformKeyCode)
                     {
                     case 0xBA: // WinForms Keys.Oem1
@@ -274,9 +271,9 @@ namespace Jellyfish.Virtu.Services
                     case 0xBE: // WinForms Keys.OemPeriod
                         return shift ? '>' : '.';
                     }
-                }
-                else if (HtmlPage.BrowserInformation.Platform.Equals("MacIntel", StringComparison.OrdinalIgnoreCase))
-                {
+                    break;
+
+                case PlatformID.MacOSX:
                     switch (platformKeyCode)
                     {
                     case 0x29:
@@ -312,6 +309,10 @@ namespace Jellyfish.Virtu.Services
                     case 0x2F:
                         return shift ? '>' : '.';
                     }
+                    break;
+
+                case PlatformID.Unix: // TODO
+                    break;
                 }
                 break;
 

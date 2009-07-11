@@ -15,8 +15,9 @@ namespace Jellyfish.Virtu.Services
             _image = image;
             SetImageSize();
 
-            _bitmap = new WriteableBitmap(BitmapWidth, BitmapHeight, BitmapPixelFormat);
-            _pixels = new uint[BitmapWidth * BitmapHeight];
+            _bitmap = new WriteableBitmap(BitmapWidth, BitmapHeight);
+            _pixels = new int[BitmapWidth * BitmapHeight];
+            _image.Source = _bitmap;
 
             Application.Current.Host.Content.Resized += (sender, e) => SetImageSize();
         }
@@ -24,13 +25,13 @@ namespace Jellyfish.Virtu.Services
         [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "y*560")]
         public override void SetPixel(int x, int y, uint color)
         {
-            _pixels[y * BitmapWidth + x] = color;
+            _pixels[y * BitmapWidth + x] = (int)color;
             _pixelsDirty = true;
         }
 
         public override void Update()
         {
-            if (Application.Current.RunningOffline && /*_window.IsActive &&*/ (_isFullScreen != IsFullScreen))
+            if (Application.Current.IsRunningOutOfBrowser && /*_window.IsActive &&*/ (_isFullScreen != IsFullScreen))
             {
                 if (IsFullScreen) // SL is missing out of browser window control
                 {
@@ -52,14 +53,11 @@ namespace Jellyfish.Virtu.Services
             if (_pixelsDirty)
             {
                 _pixelsDirty = false;
-                _bitmap.Lock();
                 for (int i = 0; i < BitmapWidth * BitmapHeight; i++)
                 {
-                    _bitmap[i] = (int)_pixels[i];
+                    _bitmap.Pixels[i] = _pixels[i];
                 }
                 _bitmap.Invalidate();
-                _bitmap.Unlock();
-                _image.Source = _bitmap; // shouldn't have to set source each frame; SL bug?
             }
         }
 
@@ -73,11 +71,10 @@ namespace Jellyfish.Virtu.Services
 
         private const int BitmapWidth = 560;
         private const int BitmapHeight = 384;
-        private static readonly PixelFormat BitmapPixelFormat = PixelFormats.Bgr32;
 
         private Image _image;
         private WriteableBitmap _bitmap;
-        private uint[] _pixels;
+        private int[] _pixels;
         private bool _pixelsDirty;
         private bool _isFullScreen;
     }
