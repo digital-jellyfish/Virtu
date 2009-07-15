@@ -84,7 +84,7 @@ namespace Jellyfish.Virtu
                 if (!Read3Nibbles(0xD5, 0xAA, 0xAD, 0x20))
                     break; // no data prologue
 
-                if (ReadDataNibbles((track * SectorCount + DosOrderToLogicalSector[sector]) * SectorSize) != 0)
+                if (!ReadDataNibbles((track * SectorCount + DosOrderToLogicalSector[sector]) * SectorSize))
                     break; // bad data checksum
 
                 if ((ReadNibble() != 0xDE) || (ReadNibble() != 0xAA))
@@ -94,7 +94,7 @@ namespace Jellyfish.Virtu
             }
 
             if (sectorsDone != 0xFFFF)
-                throw new Exception("disk error"); // TODO: not sure what we want here
+                throw new Exception("disk error"); // TODO: we should alert the user and "dump" a NIB
         }
 
         private byte ReadNibble()
@@ -133,7 +133,19 @@ namespace Jellyfish.Virtu
             return (((ReadNibble() << 1) | 0x1) & ReadNibble());
         }
 
-        private byte ReadDataNibbles(int sectorOffset)
+        private byte ReadTranslatedNibble()
+        {
+            byte data = NibbleToByte[ReadNibble()];
+            // TODO: check that invalid nibbles aren't used
+            // (put 0xFFs for invalid nibbles in the table)
+            //if (data == 0xFF)
+            //{
+                //throw an exception
+            //}
+            return data;
+        }
+
+        private bool ReadDataNibbles(int sectorOffset)
         {
             byte a, x, y;
 
@@ -141,17 +153,17 @@ namespace Jellyfish.Virtu
             a = 0;
             do // fill and de-nibblize secondary buffer
             {
-                a = _secondaryBuffer[--y] = (byte)(a ^ NibbleToByte[ReadNibble()]);
+                a = _secondaryBuffer[--y] = (byte)(a ^ ReadTranslatedNibble());
             }
             while (y > 0);
 
             do // fill and de-nibblize secondary buffer
             {
-                a = _primaryBuffer[y++] = (byte)(a ^ NibbleToByte[ReadNibble()]);
+                a = _primaryBuffer[y++] = (byte)(a ^ ReadTranslatedNibble());
             }
             while (y != 0);
 
-            byte checksum = NibbleToByte[ReadNibble()]; // should be 0
+            int checksum = a ^ ReadTranslatedNibble(); // should be 0
 
             x = y = 0;
             do // decode data
@@ -166,7 +178,7 @@ namespace Jellyfish.Virtu
             }
             while (++y != 0);
 
-            return checksum;
+            return (checksum == 0);
         }
 
         private void WriteNibble(int data)
