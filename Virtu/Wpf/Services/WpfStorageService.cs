@@ -2,29 +2,14 @@
 using System.Deployment.Application;
 using System.IO;
 using System.IO.IsolatedStorage;
-using System.Windows;
-using Microsoft.Win32;
 
 namespace Jellyfish.Virtu.Services
 {
     public sealed class WpfStorageService : StorageService
     {
-        public override string GetDiskFile()
+        public WpfStorageService(Machine machine) : 
+            base(machine)
         {
-            string fileName = string.Empty;
-
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                OpenFileDialog dialog = new OpenFileDialog();
-                dialog.Filter = "Disk Files (*.dsk;*.nib)|*.dsk;*.nib|All Files (*.*)|*.*";
-                bool? result = dialog.ShowDialog();
-                if (result.HasValue && result.Value)
-                {
-                    fileName = dialog.FileName;
-                }
-            }));
-
-            return fileName;
         }
 
         public override void Load(string path, Action<Stream> reader)

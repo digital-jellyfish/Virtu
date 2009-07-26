@@ -6,15 +6,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Jellyfish.Virtu.Services
 {
-    public sealed class XnaVideoService : VideoService, IDisposable
+    public sealed class XnaVideoService : VideoService
     {
-        public XnaVideoService(GameBase game)
+        public XnaVideoService(Machine machine, GameBase game) : 
+            base(machine)
         {
             _game = game;
 
             _game.GraphicsDeviceManager.PreparingDeviceSettings += GraphicsDeviceManager_PreparingDeviceSettings;
             _game.GraphicsDeviceService.DeviceCreated += GraphicsDeviceService_DeviceCreated;
-            _game.GraphicsDeviceService.DeviceReset += GraphicsDeviceService_DeviceReset;
+            _game.GraphicsDeviceService.DeviceReset += (sender, e) => SetTexturePosition();
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "y*560")]
@@ -53,10 +54,13 @@ namespace Jellyfish.Virtu.Services
             _spriteBatch.End();
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            _spriteBatch.Dispose();
-            _texture.Dispose();
+            if (disposing)
+            {
+                _spriteBatch.Dispose();
+                _texture.Dispose();
+            }
         }
 
         private void GraphicsDeviceManager_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -80,11 +84,6 @@ namespace Jellyfish.Virtu.Services
             _spriteBatch = new SpriteBatch(_graphicsDevice);
             _texture = new Texture2D(_graphicsDevice, TextureWidth, TextureHeight, 1, TextureUsage.None, SurfaceFormat.Bgr32);
             _pixels = new uint[TextureWidth * TextureHeight];
-            SetTexturePosition();
-        }
-
-        private void GraphicsDeviceService_DeviceReset(object sender, EventArgs e)
-        {
             SetTexturePosition();
         }
 

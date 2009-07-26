@@ -8,15 +8,9 @@ namespace Jellyfish.Virtu.Services
 {
     public sealed class XnaKeyboardService : KeyboardService
     {
-        public XnaKeyboardService() : 
-            this(TimeSpan.FromMilliseconds(500).Ticks, TimeSpan.FromMilliseconds(32).Ticks)
+        public XnaKeyboardService(Machine machine) : 
+            base(machine)
         {
-        }
-
-        public XnaKeyboardService(long repeatDelay, long repeatSpeed)
-        {
-            _repeatDelay = repeatDelay;
-            _repeatSpeed = repeatSpeed;
         }
 
         public override bool IsKeyDown(int key)
@@ -46,7 +40,7 @@ namespace Jellyfish.Virtu.Services
 
                             _lastKey = key;
                             _lastTime = DateTime.UtcNow.Ticks;
-                            _repeatTime = _repeatDelay;
+                            _repeatTime = RepeatDelay;
 #if XBOX
                             int asciiKey = GetAsciiKey(key, ref gamePadState);
 #else
@@ -71,7 +65,7 @@ namespace Jellyfish.Virtu.Services
                 if (time - _lastTime >= _repeatTime)
                 {
                     _lastTime = time;
-                    _repeatTime = _repeatSpeed;
+                    _repeatTime = RepeatSpeed;
 #if XBOX
                     int asciiKey = GetAsciiKey(_lastKey, ref gamePadState);
 #else
@@ -356,6 +350,8 @@ namespace Jellyfish.Virtu.Services
              where (key != Keys.None) // filter Keys.None
              select key).ToArray();
 #endif
+        private static readonly long RepeatDelay = TimeSpan.FromMilliseconds(500).Ticks;
+        private static readonly long RepeatSpeed = TimeSpan.FromMilliseconds(32).Ticks;
 
         private KeyboardState _state;
         private KeyboardState _lastState;
@@ -363,7 +359,5 @@ namespace Jellyfish.Virtu.Services
         private Keys _lastKey;
         private long _lastTime;
         private long _repeatTime;
-        private long _repeatDelay;
-        private long _repeatSpeed;
     }
 }

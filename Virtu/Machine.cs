@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading;
 using Jellyfish.Library;
 using Jellyfish.Virtu.Services;
@@ -6,11 +7,12 @@ using Jellyfish.Virtu.Settings;
 
 namespace Jellyfish.Virtu
 {
-    public class Machine
+    public enum MachineState { Stopped = 0, Starting, Running, Pausing, Paused, Stopping }
+
+    public sealed class Machine : IDisposable
     {
         public Machine()
         {
-            Thread = new Thread(Run) { Name = "Machine" };
             Events = new MachineEvents();
             Services = new MachineServices();
             Settings = new MachineSettings();
@@ -23,8 +25,15 @@ namespace Jellyfish.Virtu
             Cassette = new Cassette(this);
             Speaker = new Speaker(this);
             Video = new Video(this);
-
             Components = new Collection<MachineComponent> { Cpu, Memory, DiskII, Keyboard, GamePort, Cassette, Speaker, Video };
+
+            Thread = new Thread(Run) { Name = "Machine" };
+        }
+
+        public void Dispose()
+        {
+            _pausedEvent.Close();
+            _unpauseEvent.Close();
         }
 
         public void Reset()
@@ -36,35 +45,64 @@ namespace Jellyfish.Virtu
         {
             _storageService = Services.GetService<StorageService>();
             _storageService.Load(MachineSettings.FileName, stream => Settings.Deserialize(stream));
+
+            State = MachineState.Starting;
             Thread.Start();
+        }
+
+        public void Pause()
+        {
+            State = MachineState.Pausing;
+            _pausedEvent.WaitOne();
+            State = MachineState.Paused;
+        }
+
+        public void Unpause()
+        {
+            State = MachineState.Running;
+            _unpauseEvent.Set();
         }
 
         public void Stop()
         {
-            _stopPending = true;
+            State = MachineState.Stopping;
+            _unpauseEvent.Set();
             Thread.Join();
+            State = MachineState.Stopped;
+
             _storageService.Save(MachineSettings.FileName, stream => Settings.Serialize(stream));
         }
 
-        private void Run()
+        private void Run() // machine thread
         {
             Components.ForEach(component => component.Initialize());
             Reset();
 
+            State = MachineState.Running;
             do
             {
-                Events.RaiseEvents(Cpu.Execute());
+                do
+                {
+                    Events.RaiseEvents(Cpu.Execute());
+                }
+                while (State == MachineState.Running);
+
+                if (State == MachineState.Pausing)
+                {
+                    _pausedEvent.Set();
+                    _unpauseEvent.WaitOne();
+                }
             }
-            while (!_stopPending);
+            while (State != MachineState.Stopping);
 
             Components.ForEach(component => component.Uninitialize());
         }
 
-        public Thread Thread { get; private set; }
         public MachineEvents Events { get; private set; }
         public MachineServices Services { get; private set; }
         public MachineSettings Settings { get; private set; }
-        public Collection<MachineComponent> Components { get; private set; }
+        public MachineState State { get; private set; }
+
         public Cpu Cpu { get; private set; }
         public Memory Memory { get; private set; }
         public DiskII DiskII { get; private set; }
@@ -73,8 +111,13 @@ namespace Jellyfish.Virtu
         public Cassette Cassette { get; private set; }
         public Speaker Speaker { get; private set; }
         public Video Video { get; private set; }
+        public Collection<MachineComponent> Components { get; private set; }
+
+        public Thread Thread { get; private set; }
+
+        private AutoResetEvent _pausedEvent = new AutoResetEvent(false);
+        private AutoResetEvent _unpauseEvent = new AutoResetEvent(false);
 
         private StorageService _storageService;
-        private bool _stopPending;
     }
 }

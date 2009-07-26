@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading;
-using Jellyfish.Virtu.Properties;
 
 namespace Jellyfish.Virtu
 {
@@ -187,6 +186,7 @@ namespace Jellyfish.Virtu
             Opcode = _memory.Read(RPC);
             RPC = (RPC + 1) & 0xFFFF;
             _executeOpcode[Opcode]();
+            Cycles += CC;
 
 //            System.Diagnostics.Debug.WriteLine("      " + ToString());
 
@@ -3243,6 +3243,7 @@ namespace Jellyfish.Virtu
         public int EA { get; private set; }
         public int CC { get; private set; }
         public int Opcode { get; private set; }
+        public long Cycles { get; private set; }
 
         private Action _updateEvent;
 

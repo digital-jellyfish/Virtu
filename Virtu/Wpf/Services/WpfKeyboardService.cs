@@ -8,13 +8,14 @@ namespace Jellyfish.Virtu.Services
 {
     public sealed class WpfKeyboardService : KeyboardService
     {
-        public WpfKeyboardService(Window window)
+        public WpfKeyboardService(Machine machine, Window window) : 
+            base(machine)
         {
             _window = window;
 
-            _window.GotKeyboardFocus += Window_GotKeyboardFocus;
             _window.KeyDown += Window_KeyDown;
             _window.KeyUp += Window_KeyUp;
+            _window.GotKeyboardFocus += (sender, e) => _updateAnyKeyDown = true;
         }
 
         public override bool IsKeyDown(int key)
@@ -53,11 +54,6 @@ namespace Jellyfish.Virtu.Services
         private bool IsKeyDown(Key key)
         {
             return _states[(int)key];
-        }
-
-        private void Window_GotKeyboardFocus(object sender, EventArgs e)
-        {
-            _updateAnyKeyDown = true;
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)

@@ -84,8 +84,14 @@
     <Compile Include="..\AssemblyCommentAttribute.cs">
       <Link>AssemblyCommentAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\FileHelpers.cs">
-      <Link>FileHelpers.cs</Link>
+    <Compile Include="..\DirectSound.cs">
+      <Link>DirectSound.cs</Link>
+    </Compile>
+    <Compile Include="..\DirectSoundInterop.cs">
+      <Link>DirectSoundInterop.cs</Link>
+    </Compile>
+    <Compile Include="..\GCHandleHelpers.cs">
+      <Link>GCHandleHelpers.cs</Link>
     </Compile>
     <Compile Include="..\GeneralSecurity.cs">
       <Link>GeneralSecurity.cs</Link>
@@ -98,6 +104,9 @@
     </Compile>
     <Compile Include="..\Lazy.cs">
       <Link>Lazy.cs</Link>
+    </Compile>
+    <Compile Include="..\MarshalHelpers.cs">
+      <Link>MarshalHelpers.cs</Link>
     </Compile>
     <Compile Include="..\MathHelpers.cs">
       <Link>MathHelpers.cs</Link>

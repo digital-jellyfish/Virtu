@@ -5,13 +5,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Jellyfish.Library
 {
-    public class FrameRateCounter : DrawableGameComponent
+    public sealed class FrameRateCounter : DrawableGameComponent
     {
         public FrameRateCounter(GameBase game) : 
             base(game)
         {
-            _frameRateBuilder = new StringBuilder(); // cache builder; avoids garbage
-
             FontColor = Color.White;
             FontName = "Default";
 
@@ -68,6 +66,6 @@ namespace Jellyfish.Library
         private long _elapsedTime;
         private int _frameCount;
         private int _frameRate;
-        private StringBuilder _frameRateBuilder;
+        private StringBuilder _frameRateBuilder = new StringBuilder(); // cache builder; avoids garbage
     }
 }

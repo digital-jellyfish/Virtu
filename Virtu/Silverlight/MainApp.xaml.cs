@@ -2,7 +2,7 @@
 
 namespace Jellyfish.Virtu
 {
-    public partial class MainApp : ApplicationBase
+    public sealed partial class MainApp : ApplicationBase
     {
         public MainApp() :
             base("Virtu")

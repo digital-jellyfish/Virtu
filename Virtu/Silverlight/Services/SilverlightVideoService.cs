@@ -3,21 +3,18 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Jellyfish.Virtu.Services
 {
     public sealed class SilverlightVideoService : VideoService
     {
-        public SilverlightVideoService(Image image)
+        public SilverlightVideoService(Machine machine, Image image) : 
+            base(machine)
         {
             _image = image;
-            SetImageSize();
-
-            _bitmap = new WriteableBitmap(BitmapWidth, BitmapHeight);
-            _pixels = new int[BitmapWidth * BitmapHeight];
             _image.Source = _bitmap;
+            SetImageSize();
 
             Application.Current.Host.Content.Resized += (sender, e) => SetImageSize();
         }
@@ -73,8 +70,8 @@ namespace Jellyfish.Virtu.Services
         private const int BitmapHeight = 384;
 
         private Image _image;
-        private WriteableBitmap _bitmap;
-        private int[] _pixels;
+        private WriteableBitmap _bitmap = new WriteableBitmap(BitmapWidth, BitmapHeight);
+        private int[] _pixels = new int[BitmapWidth * BitmapHeight];
         private bool _pixelsDirty;
         private bool _isFullScreen;
     }

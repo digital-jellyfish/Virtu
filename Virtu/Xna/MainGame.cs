@@ -18,18 +18,35 @@ namespace Jellyfish.Virtu
             GraphicsDeviceManager.PreferredBackBufferWidth = 560;
             GraphicsDeviceManager.PreferredBackBufferHeight = 384;
 #endif
-            _storageService = new XnaStorageService(this);
-            _keyboardService = new XnaKeyboardService();
-            _gamePortService = new XnaGamePortService();
-            _audioService = new AudioService(); // not connected
-            _videoService = new XnaVideoService(this);
+            _storageService = new XnaStorageService(_machine, this);
+            _keyboardService = new XnaKeyboardService(_machine);
+            _gamePortService = new XnaGamePortService(_machine);
+#if XBOX
+            _audioService = new AudioService(_machine); // not connected
+#else
+            _audioService = new XnaAudioService(_machine, this);
+#endif
+            _videoService = new XnaVideoService(_machine, this);
 
-            _machine = new Machine();
             _machine.Services.AddService(typeof(StorageService), _storageService);
             _machine.Services.AddService(typeof(KeyboardService), _keyboardService);
             _machine.Services.AddService(typeof(GamePortService), _gamePortService);
             _machine.Services.AddService(typeof(AudioService), _audioService);
             _machine.Services.AddService(typeof(VideoService), _videoService);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _machine.Dispose();
+                _storageService.Dispose();
+                _keyboardService.Dispose();
+                _gamePortService.Dispose();
+                _audioService.Dispose();
+                _videoService.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         protected override void BeginRun()
@@ -41,7 +58,6 @@ namespace Jellyfish.Virtu
         {
             _keyboardService.Update();
             _gamePortService.Update();
-            _audioService.Update();
             base.Update(gameTime);
         }
 
@@ -57,12 +73,12 @@ namespace Jellyfish.Virtu
             _machine.Stop();
         }
 
+        private Machine _machine = new Machine();
+
         private StorageService _storageService;
         private KeyboardService _keyboardService;
         private GamePortService _gamePortService;
         private AudioService _audioService;
         private VideoService _videoService;
-
-        private Machine _machine;
     }
 }

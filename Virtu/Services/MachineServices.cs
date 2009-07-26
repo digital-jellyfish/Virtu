@@ -5,9 +5,9 @@ using Jellyfish.Virtu.Properties;
 
 namespace Jellyfish.Virtu.Services
 {
-    public class MachineServices : IServiceProvider
+    public sealed class MachineServices : IServiceProvider
     {
-        public void AddService(Type serviceType, object serviceProvider)
+        public void AddService(Type serviceType, MachineService serviceProvider)
         {
             if (_serviceProviders.ContainsKey(serviceType))
             {
@@ -37,6 +37,6 @@ namespace Jellyfish.Virtu.Services
             _serviceProviders.Remove(serviceType);
         }
 
-        private Dictionary<Type, object> _serviceProviders = new Dictionary<Type, object>();
+        private Dictionary<Type, MachineService> _serviceProviders = new Dictionary<Type, MachineService>();
     }
 }

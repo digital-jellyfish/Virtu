@@ -1,11 +1,15 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Jellyfish.Virtu.Services
 {
     public sealed class XnaGamePortService : GamePortService
     {
+        public XnaGamePortService(Machine machine) : 
+            base(machine)
+        {
+        }
+
         public override void Update()
         {
             _lastState = _state;

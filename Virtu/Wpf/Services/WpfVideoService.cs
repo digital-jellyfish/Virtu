@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Permissions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,15 +11,14 @@ namespace Jellyfish.Virtu.Services
 {
     public sealed class WpfVideoService : VideoService
     {
-        public WpfVideoService(Window window, Image image)
+        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+        public WpfVideoService(Machine machine, Window window, Image image) : 
+            base(machine)
         {
             _window = window;
             _image = image;
-            SetImageSize();
-
-            _bitmap = new WriteableBitmap(BitmapWidth, BitmapHeight, BitmapDpi, BitmapDpi, BitmapPixelFormat, null);
-            _pixels = new uint[BitmapWidth * BitmapHeight];
             _image.Source = _bitmap;
+            SetImageSize();
 
             SystemEvents.DisplaySettingsChanged += (sender, e) => SetImageSize();
         }
@@ -74,8 +74,8 @@ namespace Jellyfish.Virtu.Services
 
         private Window _window;
         private Image _image;
-        private WriteableBitmap _bitmap;
-        private uint[] _pixels;
+        private WriteableBitmap _bitmap = new WriteableBitmap(BitmapWidth, BitmapHeight, BitmapDpi, BitmapDpi, BitmapPixelFormat, null);
+        private uint[] _pixels = new uint[BitmapWidth * BitmapHeight];
         private bool _pixelsDirty;
         private bool _isFullScreen;
     }

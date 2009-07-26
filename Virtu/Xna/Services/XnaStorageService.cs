@@ -8,15 +8,10 @@ namespace Jellyfish.Virtu.Services
 {
     public sealed class XnaStorageService : StorageService
     {
-        public XnaStorageService(GameBase game)
+        public XnaStorageService(Machine machine, GameBase game) : 
+            base(machine)
         {
             _game = game;
-            _storageDevice = new Lazy<StorageDevice>(() => Guide.EndShowStorageDeviceSelector(Guide.BeginShowStorageDeviceSelector(null, null)));
-        }
-
-        public override string GetDiskFile()
-        {
-            return string.Empty;
         }
 
         public override void Load(string path, Action<Stream> reader)
@@ -48,6 +43,6 @@ namespace Jellyfish.Virtu.Services
         }
 
         private GameBase _game;
-        private Lazy<StorageDevice> _storageDevice;
+        private Lazy<StorageDevice> _storageDevice = new Lazy<StorageDevice>(() => Guide.EndShowStorageDeviceSelector(Guide.BeginShowStorageDeviceSelector(null, null)));
     }
 }

@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace Jellyfish.Virtu
 {
-    public class MachineEvent
+    public sealed class MachineEvent
     {
         public MachineEvent(int delta, Action action)
         {
@@ -22,7 +22,7 @@ namespace Jellyfish.Virtu
         public Action Action { get; set; }
     }
 
-    public class MachineEvents
+    public sealed class MachineEvents
     {
         public void AddEvent(int delta, Action action)
         {
@@ -75,7 +75,7 @@ namespace Jellyfish.Virtu
                 }
             }
 
-            return delta;
+            return 0;
         }
 
         [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
@@ -86,15 +86,21 @@ namespace Jellyfish.Virtu
 
             while (node.Value.Delta <= 0)
             {
-                delta = node.Value.Delta;
                 node.Value.Action();
-
-                _used.Remove(node);
-                _free.AddFirst(node); // cache node; avoids garbage
-
+                RemoveEvent(node);
                 node = _used.First;
-                node.Value.Delta += delta;
             }
+        }
+
+        private void RemoveEvent(LinkedListNode<MachineEvent> node)
+        {
+            if (node.Next != null)
+            {
+                node.Next.Value.Delta += node.Value.Delta;
+            }
+
+            _used.Remove(node);
+            _free.AddFirst(node); // cache node; avoids garbage
         }
 
         private LinkedList<MachineEvent> _used = new LinkedList<MachineEvent>();

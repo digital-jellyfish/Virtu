@@ -48,9 +48,10 @@
         private bool _isDown;
     }
 
-    public class GamePortService
+    public class GamePortService : MachineService
     {
-        public GamePortService()
+        public GamePortService(Machine machine) : 
+            base(machine)
         {
             Paddle0 = Paddle1 = Paddle2 = Paddle3 = 255; // not connected
         }

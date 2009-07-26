@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Jellyfish.Virtu.Services
 {
-    public class AsciiKeyEventArgs : EventArgs
+    public sealed class AsciiKeyEventArgs : EventArgs
     {
         private AsciiKeyEventArgs()
         {
@@ -22,8 +22,13 @@ namespace Jellyfish.Virtu.Services
         private static readonly AsciiKeyEventArgs _instance = new AsciiKeyEventArgs();
     }
 
-    public abstract class KeyboardService
+    public abstract class KeyboardService : MachineService
     {
+        protected KeyboardService(Machine machine) : 
+            base(machine)
+        {
+        }
+
         public abstract bool IsKeyDown(int key);
 
         [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
@@ -42,7 +47,7 @@ namespace Jellyfish.Virtu.Services
         {
             while (IsAnyKeyDown)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(10);
             }
         }
 
@@ -50,7 +55,7 @@ namespace Jellyfish.Virtu.Services
         {
             while (IsResetKeyDown)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(10);
             }
         }
 

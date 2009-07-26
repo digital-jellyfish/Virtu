@@ -1,25 +1,19 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Jellyfish.Virtu.Services;
 using Jellyfish.Virtu.Settings;
 
 namespace Jellyfish.Virtu
 {
     public sealed class DiskII : MachineComponent
     {
-        public DiskII(Machine machine) :
+        public DiskII(Machine machine) : 
             base(machine)
         {
         }
 
         public override void Initialize()
         {
-            _storageService = Machine.Services.GetService<StorageService>();
-
+#if WINDOWS
             DiskIISettings settings = Machine.Settings.DiskII;
-            if (settings.Disk1.Name.Length == 0)
-            {
-                settings.Disk1.Name = _storageService.GetDiskFile();
-            }
             if (settings.Disk1.Name.Length > 0)
             {
                 _drives[0].InsertDisk(settings.Disk1.Name, settings.Disk1.IsWriteProtected);
@@ -28,6 +22,7 @@ namespace Jellyfish.Virtu
             {
                 _drives[1].InsertDisk(settings.Disk2.Name, settings.Disk2.IsWriteProtected);
             }
+#endif
         }
 
         public override void Reset()
@@ -42,10 +37,6 @@ namespace Jellyfish.Virtu
         public override void Uninitialize()
         {
             Flush();
-
-            DiskIISettings settings = Machine.Settings.DiskII; // TODO remove; reset filename to prompt on next start
-            settings.Disk1.Name = string.Empty;
-            settings.Disk2.Name = string.Empty;
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
@@ -227,12 +218,13 @@ namespace Jellyfish.Virtu
             }
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public Drive525[] Drives { get { return _drives; } }
+
         private const int Phase0On = 1 << 0;
         private const int Phase1On = 1 << 1;
         private const int Phase2On = 1 << 2;
         private const int Phase3On = 1 << 3;
-
-        private StorageService _storageService;
 
         private Drive525[] _drives = new Drive525[] { new Drive525(), new Drive525() };
         private int _latch;

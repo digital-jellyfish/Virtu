@@ -3,9 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:jl="clr-namespace:Jellyfish.Library;assembly=Jellyfish.Library"
     Title="Virtu" ResizeMode="CanMinimize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
-    <Grid Background="Black" Cursor="None">
-        <Image Name="_image" MinWidth="560" MinHeight="384" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-
-        <jl:FrameRateCounter/>
-    </Grid>
+    <DockPanel Background="Black">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Button x:Name="_disk1Button" Content="Disk 1" Focusable="false" IsTabStop="false" Margin="4 4 0 4"/>
+            <Button x:Name="_disk2Button" Content="Disk 2" Focusable="false" IsTabStop="false" Margin="4 4 0 4"/>
+            <jl:FrameRateCounter Margin="4 4 0 4" VerticalAlignment="Center"/>
+        </StackPanel>
+        <Grid Cursor="None">
+            <Image x:Name="_image" MinWidth="560" MinHeight="384" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+        </Grid>
+    </DockPanel>
 </Window>

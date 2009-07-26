@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace Jellyfish.Virtu.Settings
 {
-    public class MachineSettings
+    public sealed class MachineSettings
     {
         public MachineSettings()
         {
@@ -21,8 +21,8 @@ namespace Jellyfish.Virtu.Settings
                 UseGamePort = false, 
                 Key = new KeySettings
                 {
-                    Joystick0 = new JoystickSettings { UpLeft = 0, Up = 'E', UpRight = 0, Left = 'S', Right = 'F', DownLeft = 0, Down = 'D', DownRight = 0 }, 
-                    Joystick1 = new JoystickSettings { UpLeft = 0, Up = 'I', UpRight = 0, Left = 'J', Right = 'L', DownLeft = 0, Down = 'K', DownRight = 0 }, 
+                    Joystick0 = new JoystickSettings { UpLeft = 0, Up = 'I', UpRight = 0, Left = 'J', Right = 'L', DownLeft = 0, Down = 'K', DownRight = 0 }, 
+                    Joystick1 = new JoystickSettings { UpLeft = 0, Up = 'E', UpRight = 0, Left = 'S', Right = 'F', DownLeft = 0, Down = 'D', DownRight = 0 }, 
                     Button0 = 0, Button1 = 0, Button2 = 0
                 }
             };
@@ -305,25 +305,25 @@ namespace Jellyfish.Virtu.Settings
         public const string Namespace = "http://schemas.jellyfish.co.nz/virtu/settings";
     }
 
-    public class CpuSettings
+    public sealed class CpuSettings
     {
         public bool Is65C02 { get; set; }
         public bool IsThrottled { get; set; }
     }
 
-    public class DiskSettings
+    public sealed class DiskSettings
     {
         public string Name { get; set; }
         public bool IsWriteProtected { get; set; }
     };
 
-    public class DiskIISettings
+    public sealed class DiskIISettings
     {
         public DiskSettings Disk1 { get; set; }
         public DiskSettings Disk2 { get; set; }
     };
 
-    public class JoystickSettings
+    public sealed class JoystickSettings
     {
         public int UpLeft { get; set; }
         public int Up { get; set; }
@@ -335,7 +335,7 @@ namespace Jellyfish.Virtu.Settings
         public int DownRight { get; set; }
     };
 
-    public class KeySettings
+    public sealed class KeySettings
     {
         public JoystickSettings Joystick0 { get; set; }
         public JoystickSettings Joystick1 { get; set; }
@@ -344,19 +344,19 @@ namespace Jellyfish.Virtu.Settings
         public int Button2 { get; set; }
     };
 
-    public class KeyboardSettings
+    public sealed class KeyboardSettings
     {
         public bool UseGamePort { get; set; }
         public KeySettings Key { get; set; }
     }
 
-    public class GamePortSettings
+    public sealed class GamePortSettings
     {
         public bool UseKeyboard { get; set; }
         public KeySettings Key { get; set; }
     }
 
-    public class ColorSettings
+    public sealed class ColorSettings
     {
         public uint Black { get; set; }
         public uint DarkBlue { get; set; }
@@ -377,7 +377,7 @@ namespace Jellyfish.Virtu.Settings
         public uint Monochrome { get; set; }
     }
 
-    public class VideoSettings
+    public sealed class VideoSettings
     {
         public bool IsFullScreen { get; set; }
         public bool IsMonochrome { get; set; }

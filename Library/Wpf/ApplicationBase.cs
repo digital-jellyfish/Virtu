@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Security.Permissions;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
@@ -8,11 +9,7 @@ namespace Jellyfish.Library
 {
     public class ApplicationBase : Application
     {
-        public ApplicationBase() :
-            this(null)
-        {
-        }
-
+        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
         public ApplicationBase(string name)
         {
             Name = name;

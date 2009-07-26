@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace Jellyfish.Library
 {
-    public partial class FrameRateCounter : UserControl
+    public sealed partial class FrameRateCounter : UserControl
     {
         public FrameRateCounter()
         {

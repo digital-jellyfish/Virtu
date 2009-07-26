@@ -6,11 +6,6 @@ namespace Jellyfish.Library
 {
     public class ApplicationBase : Application
     {
-        public ApplicationBase() :
-            this(null)
-        {
-        }
-
         public ApplicationBase(string name)
         {
             Name = name;

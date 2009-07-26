@@ -1,45 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.IO.IsolatedStorage;
-using System.Threading;
-using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace Jellyfish.Virtu.Services
 {
     public sealed class SilverlightStorageService : StorageService
     {
-        public SilverlightStorageService(UserControl page)
+        public SilverlightStorageService(Machine machine) : 
+            base(machine)
         {
-            _dispatcher = page.Dispatcher;
-        }
-
-        public override string GetDiskFile()
-        {
-            string fileName = string.Empty;
-
-            // TODO
-            //ManualResetEvent syncEvent = new ManualResetEvent(false);
-            //DispatcherOperation operation = _dispatcher.BeginInvoke(() => 
-            //{
-            //    try
-            //    {
-            //        OpenFileDialog dialog = new OpenFileDialog(); // SL expects all dialogs to be user initiated, ie from within an event handler.
-            //        dialog.Filter = "Disk Files (*.dsk;*.nib)|*.dsk;*.nib|All Files (*.*)|*.*";
-            //        bool? result = dialog.ShowDialog();
-            //        if (result.HasValue && result.Value)
-            //        {
-            //            fileName = dialog.File.FullName;
-            //        }
-            //    }
-            //    finally
-            //    {
-            //        syncEvent.Set();
-            //    }
-            //});
-            //syncEvent.WaitOne();
-
-            return fileName;
         }
 
         public override void Load(string path, Action<Stream> reader)
@@ -78,7 +47,5 @@ namespace Jellyfish.Virtu.Services
             {
             }
         }
-
-        private Dispatcher _dispatcher;
     }
 }

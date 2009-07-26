@@ -16,7 +16,7 @@ namespace Jellyfish.Virtu
 
         public void ToggleOutput()
         {
-            // TODO
+            _audioService.ToggleOutput();
         }
 
         private AudioService _audioService;

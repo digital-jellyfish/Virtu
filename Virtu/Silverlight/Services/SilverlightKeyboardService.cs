@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
-using System.Windows.Browser;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -10,13 +9,14 @@ namespace Jellyfish.Virtu.Services
 {
     public sealed class SilverlightKeyboardService : KeyboardService
     {
-        public SilverlightKeyboardService(UserControl page)
+        public SilverlightKeyboardService(Machine machine, UserControl page) : 
+            base(machine)
         {
             _page = page;
 
-            _page.LostFocus += Page_LostFocus;
             _page.KeyDown += Page_KeyDown;
             _page.KeyUp += Page_KeyUp;
+            _page.LostFocus += Page_LostFocus;
         }
 
         public override bool IsKeyDown(int key)
@@ -57,15 +57,6 @@ namespace Jellyfish.Virtu.Services
             return _states[(int)key];
         }
 
-        private void Page_LostFocus(object sender, RoutedEventArgs e) // reset keyboard state on lost focus; can't access keyboard state on got focus
-        {
-            IsAnyKeyDown = false;
-            foreach (Key key in KeyValues)
-            {
-                _states[(int)key] = false;
-            }
-        }
-
         private void Page_KeyDown(object sender, KeyEventArgs e)
         {
             _states[(int)e.Key] = true;
@@ -84,6 +75,15 @@ namespace Jellyfish.Virtu.Services
             _capsLock ^= (e.Key == Key.CapsLock); // SL is missing caps lock support; try to track manually
             _states[(int)e.Key] = false;
             _updateAnyKeyDown = true;
+        }
+
+        private void Page_LostFocus(object sender, RoutedEventArgs e) // reset keyboard state on lost focus; can't access keyboard state on got focus
+        {
+            IsAnyKeyDown = false;
+            foreach (Key key in KeyValues)
+            {
+                _states[(int)key] = false;
+            }
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]

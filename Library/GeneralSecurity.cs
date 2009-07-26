@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
+using System.Security.Permissions;
 using System.Security.Principal;
 
 namespace Jellyfish.Library
@@ -9,6 +10,7 @@ namespace Jellyfish.Library
     [StructLayout(LayoutKind.Sequential)]
     public sealed class SecurityAttributes
     {
+        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
         public SecurityAttributes()
         {
             _length = Marshal.SizeOf(typeof(SecurityAttributes));
@@ -116,31 +118,21 @@ namespace Jellyfish.Library
             base.AddAuditRule(rule);
         }
 
+        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
         public void GetSecurityAttributes(bool inheritable, Action<SecurityAttributes> action)
         {
             GetSecurityAttributes(this, inheritable, action);
         }
 
+        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
         public static void GetSecurityAttributes(ObjectSecurity security, bool inheritable, Action<SecurityAttributes> action)
         {
             if (security != null)
             {
-                GCHandle gcHandle = new GCHandle();
-                try
+                GCHandleHelpers.Pin(security.GetSecurityDescriptorBinaryForm(), securityDescriptor => 
                 {
-                    gcHandle = GCHandle.Alloc(security.GetSecurityDescriptorBinaryForm(), GCHandleType.Pinned);
-                    SecurityAttributes securityAttributes = new SecurityAttributes();
-                    securityAttributes.SecurityDescriptor = gcHandle.AddrOfPinnedObject();
-                    securityAttributes.InheritHandle = inheritable;
-                    action(securityAttributes);
-                }
-                finally
-                {
-                    if (gcHandle.IsAllocated)
-                    {
-                        gcHandle.Free();
-                    }
-                }
+                    action(new SecurityAttributes() { SecurityDescriptor = securityDescriptor, InheritHandle = inheritable });
+                });
             }
             else if (inheritable)
             {

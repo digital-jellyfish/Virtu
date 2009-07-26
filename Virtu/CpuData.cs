@@ -7,7 +7,7 @@ namespace Jellyfish.Virtu
         private const int CyclesPerUpdate = 17030;
         private const int CyclesPerVSync = 17030;
         private const int CyclesPerSecond = 1022730;
-        private static readonly long TicksPerVSync = TimeSpan.FromSeconds((double)CyclesPerVSync / (double)CyclesPerSecond).Ticks;
+        private static readonly long TicksPerVSync = TimeSpan.FromSeconds((double)CyclesPerVSync / CyclesPerSecond).Ticks;
 
         private const int OpcodeCount = 256;
 

@@ -1,5 +1,3 @@
-using System;
-
 namespace Jellyfish.Virtu
 {
     static class MainApp

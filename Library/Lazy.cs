@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Jellyfish.Library
 {
-    public class Lazy<T> where T : class
+    public sealed class Lazy<T> where T : class
     {
         public Lazy(Func<T> initializer)
         {

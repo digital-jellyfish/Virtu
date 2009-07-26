@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Jellyfish.Virtu.Properties;
 using Jellyfish.Virtu.Services;
 using Jellyfish.Virtu.Settings;
 

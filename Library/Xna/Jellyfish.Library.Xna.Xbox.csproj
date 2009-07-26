@@ -62,9 +62,6 @@
     <Compile Include="..\AssemblyCommentAttribute.cs">
       <Link>AssemblyCommentAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\FileHelpers.cs">
-      <Link>FileHelpers.cs</Link>
-    </Compile>
     <Compile Include="..\GlobalSuppressions.cs">
       <Link>GlobalSuppressions.cs</Link>
     </Compile>

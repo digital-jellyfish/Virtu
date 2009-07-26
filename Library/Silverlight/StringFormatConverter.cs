@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace Jellyfish.Library
 {
-    public class StringFormatConverter : IValueConverter // SL is missing Binding.StringFormat
+    public sealed class StringFormatConverter : IValueConverter // SL is missing Binding.StringFormat
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

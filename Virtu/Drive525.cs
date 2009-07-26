@@ -1,9 +1,10 @@
 ﻿using System;
+using System.IO;
 using Jellyfish.Library;
 
 namespace Jellyfish.Virtu
 {
-    public class Drive525
+    public sealed class Drive525
     {
         public Drive525()
         {
@@ -15,12 +16,19 @@ namespace Jellyfish.Virtu
 
         public void InsertDisk(string fileName, bool isWriteProtected)
         {
+            using (FileStream stream = File.OpenRead(fileName))
+            {
+                InsertDisk(fileName, stream, isWriteProtected);
+            }
+        }
+
+        public void InsertDisk(string name, Stream stream, bool isWriteProtected)
+        {
             FlushTrack();
 
             // TODO handle null param/empty string for eject, or add Eject()
 
-            byte[] fileData = FileHelpers.ReadAllBytes(fileName);
-            _disk = Disk525.CreateDisk(fileName, fileData, isWriteProtected);
+            _disk = Disk525.CreateDisk(name, stream.ReadAllBytes(), isWriteProtected);
             _trackLoaded = false;
         }
 

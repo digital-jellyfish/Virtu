@@ -42,10 +42,12 @@
     </NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -128,6 +130,9 @@
     <Compile Include="..\MachineEvents.cs">
       <Link>Core\MachineEvents.cs</Link>
     </Compile>
+    <Compile Include="..\Services\MachineService.cs">
+      <Link>Services\MachineService.cs</Link>
+    </Compile>
     <Compile Include="..\Services\MachineServices.cs">
       <Link>Services\MachineServices.cs</Link>
     </Compile>
@@ -161,9 +166,13 @@
     <Compile Include="..\Services\VideoService.cs">
       <Link>Services\VideoService.cs</Link>
     </Compile>
+    <Compile Include="..\Xna\Services\XnaGamePortService.cs">
+      <Link>Services\XnaGamePortService.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\WpfAudioService.cs" />
     <Compile Include="Services\WpfKeyboardService.cs" />
     <Compile Include="Services\WpfStorageService.cs" />
     <Compile Include="Services\WpfVideoService.cs" />

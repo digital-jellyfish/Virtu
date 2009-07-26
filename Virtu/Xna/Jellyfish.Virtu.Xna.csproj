@@ -149,6 +149,9 @@
     <Compile Include="..\Services\KeyboardService.cs">
       <Link>Services\KeyboardService.cs</Link>
     </Compile>
+    <Compile Include="..\Services\MachineService.cs">
+      <Link>Services\MachineService.cs</Link>
+    </Compile>
     <Compile Include="..\Services\MachineServices.cs">
       <Link>Services\MachineServices.cs</Link>
     </Compile>
@@ -170,6 +173,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MainApp.cs" />
     <Compile Include="MainGame.cs" />
+    <Compile Include="Services\XnaAudioService.cs" />
     <Compile Include="Services\XnaGamePortService.cs" />
     <Compile Include="Services\XnaKeyboardService.cs" />
     <Compile Include="Services\XnaStorageService.cs" />
