@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -56,7 +55,6 @@ namespace Jellyfish.Library
             _thread.Join();
         }
 
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         private void Initialize()
         {
             int hresult = NativeMethods.DirectSoundCreate(IntPtr.Zero, out _device, IntPtr.Zero);
@@ -76,8 +74,7 @@ namespace Jellyfish.Library
 
             BufferPositionNotify[] positionEvents = new BufferPositionNotify[BlockCount]
             {
-                new BufferPositionNotify(0 * _sampleSize, _position1Event.SafeWaitHandle.DangerousGetHandle()), 
-                new BufferPositionNotify(1 * _sampleSize, _position2Event.SafeWaitHandle.DangerousGetHandle())
+                new BufferPositionNotify(0 * _sampleSize, _position1Event), new BufferPositionNotify(1 * _sampleSize, _position2Event)
             };
             ((IDirectSoundNotify)_buffer).SetNotificationPositions(positionEvents.Length, positionEvents);
 
@@ -170,7 +167,6 @@ namespace Jellyfish.Library
         public event EventHandler<DirectSoundUpdateEventArgs> Update;
 
         private const int BlockCount = 2;
-        private const int WaveFormatPcm = 1;
 
         private int _sampleRate;
         private int _sampleChannels;

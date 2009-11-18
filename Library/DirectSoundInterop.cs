@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Threading;
 
 namespace Jellyfish.Library
 {
@@ -66,10 +68,11 @@ namespace Jellyfish.Library
         [StructLayout(LayoutKind.Sequential)]
         private struct BufferPositionNotify
         {
-            public BufferPositionNotify(int offset, IntPtr notifyEvent)
+            [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
+            public BufferPositionNotify(int offset, EventWaitHandle notifyEvent)
             {
                 dwOffset = offset;
-                hEventNotify = notifyEvent;
+                hEventNotify = notifyEvent.SafeWaitHandle.DangerousGetHandle();
             }
 
             public int dwOffset;
@@ -146,5 +149,7 @@ namespace Jellyfish.Library
             [DllImport("dsound.dll")]
             public static extern int DirectSoundCreate(IntPtr pcGuidDevice, [MarshalAs(UnmanagedType.Interface)] out IDirectSound pDS, IntPtr pUnkOuter);
         }
+
+        private const int WaveFormatPcm = 1;
     }
 }
