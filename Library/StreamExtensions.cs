@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Jellyfish.Library
 {
@@ -6,6 +7,11 @@ namespace Jellyfish.Library
     {
         public static byte[] ReadAllBytes(this Stream stream)
         {
+            if (stream == null)
+            {
+                throw new ArgumentNullException("stream");
+            }
+
             int count = (int)stream.Length;
             byte[] buffer = new byte[count];
             ReadBlock(stream, buffer, 0, count);
@@ -15,6 +21,11 @@ namespace Jellyfish.Library
 
         public static int ReadBlock(this Stream stream, byte[] buffer, int offset, int count)
         {
+            if (stream == null)
+            {
+                throw new ArgumentNullException("stream");
+            }
+
             int total = 0;
             int read;
             do

@@ -10,6 +10,11 @@ namespace Jellyfish.Virtu.Services
         public XnaAudioService(Machine machine, GameBase game) : 
             base(machine)
         {
+            if (game == null)
+            {
+                throw new ArgumentNullException("game");
+            }
+
             _game = game;
 
             _directSound.Start(_game.Window.Handle);

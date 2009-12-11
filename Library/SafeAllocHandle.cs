@@ -42,6 +42,11 @@ namespace Jellyfish.Library
 
         public static SafeGlobalAllocHandle Allocate(byte[] value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException("value");
+            }
+
             SafeGlobalAllocHandle alloc = Allocate(value.Length);
             Marshal.Copy(value, 0, alloc.DangerousGetHandle(), value.Length);
 
@@ -100,6 +105,11 @@ namespace Jellyfish.Library
 
         public static SafeLocalAllocHandle Allocate(byte[] value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException("value");
+            }
+
             SafeLocalAllocHandle alloc = Allocate(value.Length);
             Marshal.Copy(value, 0, alloc.DangerousGetHandle(), value.Length);
 

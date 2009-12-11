@@ -11,6 +11,11 @@ namespace Jellyfish.Virtu.Services
         public XnaVideoService(Machine machine, GameBase game) : 
             base(machine)
         {
+            if (game == null)
+            {
+                throw new ArgumentNullException("game");
+            }
+
             _game = game;
 
             _game.GraphicsDeviceManager.PreparingDeviceSettings += GraphicsDeviceManager_PreparingDeviceSettings;

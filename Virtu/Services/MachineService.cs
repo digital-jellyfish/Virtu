@@ -6,6 +6,11 @@ namespace Jellyfish.Virtu.Services
     {
         protected MachineService(Machine machine)
         {
+            if (machine == null)
+            {
+                throw new ArgumentNullException("machine");
+            }
+
             Machine = machine;
         }
 

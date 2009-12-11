@@ -54,6 +54,11 @@ namespace Jellyfish.Library
 
         public void SetAccessControl(GeneralSecurity fileSecurity)
         {
+            if (fileSecurity == null)
+            {
+                throw new ArgumentNullException("fileSecurity");
+            }
+
             fileSecurity.Persist(this);
         }
 

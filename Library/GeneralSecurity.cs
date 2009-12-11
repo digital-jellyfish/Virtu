@@ -127,6 +127,11 @@ namespace Jellyfish.Library
         [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
         public static void GetSecurityAttributes(ObjectSecurity security, bool inheritable, Action<SecurityAttributes> action)
         {
+            if (action == null)
+            {
+                throw new ArgumentNullException("action");
+            }
+
             if (security != null)
             {
                 GCHandleHelpers.Pin(security.GetSecurityDescriptorBinaryForm(), securityDescriptor => 

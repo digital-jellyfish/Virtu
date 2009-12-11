@@ -42,102 +42,111 @@
  </Rules>
  <FxCopReport Version="1.36">
   <Targets>
+   <Target Name="$(ProjectDir)/Wpf/bin/Jellyfish.Virtu.exe">
+    <Modules>
+     <Module Name="jellyfish.virtu.exe">
+      <Namespaces>
+       <Namespace Name="Jellyfish.Virtu">
+        <Types>
+         <Type Name="DiskDsk">
+          <Members>
+           <Member Name="#Read3Nibbles(System.Byte,System.Byte,System.Byte,System.Int32)">
+            <Messages>
+             <Message Id="nibble" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2009-12-11 09:07:49Z">
+              <Issue>
+               <Item>'DiskDsk.Read3Nibbles(byte, byte, byte, int)'</Item>
+               <Item>'nibble'</Item>
+               <Item>'byte'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#WriteTrack(System.Int32,System.Int32,System.Byte[])">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-12-11 09:07:49Z">
+              <Issue Name="TooGeneric">
+               <Item>'DiskDsk.WriteTrack(int, int, byte[])'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+             <Message Id="readVolume" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2009-12-11 09:07:49Z">
+              <Issue>
+               <Item>'DiskDsk.WriteTrack(int, int, byte[])'</Item>
+               <Item>'readVolume'</Item>
+               <Item>'int'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MainWindow">
+          <Members>
+           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2009-12-11 09:07:49Z">
+              <Issue Name="Parameter">
+               <Item>'target'</Item>
+               <Item>'Button'</Item>
+               <Item>'MainWindow.IComponentConnector.Connect(int, object)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="Video">
+          <Members>
+           <Member Name="#ReadFloatingBus()">
+            <Messages>
+             <Message TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822" Created="2009-12-11 09:07:49Z" FixCategory="DependsOnFix">
+              <Issue>
+               <Item>'Video.ReadFloatingBus()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+      </Namespaces>
+     </Module>
+    </Modules>
+   </Target>
    <Target Name="$(ProjectDir)/Xna/bin/Jellyfish.Virtu.exe">
     <Modules>
      <Module Name="jellyfish.virtu.exe">
       <Namespaces>
        <Namespace Name="Jellyfish.Virtu">
         <Types>
-         <Type Name="Disk525">
-          <Messages>
-           <Message TypeName="AbstractTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1012" Created="2009-04-13 00:02:55Z">
-            <Issue>
-             <Item>'Disk525'</Item>
-            </Issue>
-           </Message>
-          </Messages>
+         <Type Name="DiskDsk">
           <Members>
-           <Member Name="#.ctor(System.String,System.Byte[])">
+           <Member Name="#Read3Nibbles(System.Byte,System.Byte,System.Byte,System.Int32)">
             <Messages>
-             <Message Id="fileData" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2009-04-13 00:02:55Z" FixCategory="DependsOnFix">
+             <Message Id="nibble" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2009-12-11 09:07:49Z">
               <Issue>
-               <Item>'fileData'</Item>
-               <Item>'Disk525.Disk525(string, byte[])'</Item>
-              </Issue>
-             </Message>
-             <Message Id="fileName" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2009-04-13 00:02:55Z" FixCategory="DependsOnFix">
-              <Issue>
-               <Item>'fileName'</Item>
-               <Item>'Disk525.Disk525(string, byte[])'</Item>
+               <Item>'DiskDsk.Read3Nibbles(byte, byte, byte, int)'</Item>
+               <Item>'nibble'</Item>
+               <Item>'byte'</Item>
               </Issue>
              </Message>
             </Messages>
            </Member>
-          </Members>
-         </Type>
-         <Type Name="DiskII">
-          <Members>
-           <Member Name="#_writeModeOn">
+           <Member Name="#WriteTrack(System.Int32,System.Int32,System.Byte[])">
             <Messages>
-             <Message TypeName="AvoidUnusedPrivateFields" Category="Microsoft.Performance" CheckId="CA1823" Created="2009-04-13 00:02:55Z">
-              <Issue>
-               <Item>'DiskII._writeModeOn'</Item>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-12-11 09:07:49Z">
+              <Issue Name="TooGeneric">
+               <Item>'DiskDsk.WriteTrack(int, int, byte[])'</Item>
+               <Item>'Exception'</Item>
               </Issue>
              </Message>
-            </Messages>
-           </Member>
-           <Member Name="#Write(System.Int32,System.Int32)">
-            <Messages>
-             <Message TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822" Created="2009-04-13 00:02:55Z" FixCategory="DependsOnFix">
+             <Message Id="readVolume" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2009-12-11 09:07:49Z">
               <Issue>
-               <Item>'DiskII.Write(int, int)'</Item>
-              </Issue>
-             </Message>
-             <Message Id="address" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2009-04-13 00:02:55Z" FixCategory="DependsOnFix">
-              <Issue>
-               <Item>'address'</Item>
-               <Item>'DiskII.Write(int, int)'</Item>
-              </Issue>
-             </Message>
-             <Message Id="data" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2009-04-13 00:02:55Z" FixCategory="DependsOnFix">
-              <Issue>
-               <Item>'data'</Item>
-               <Item>'DiskII.Write(int, int)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
-         </Type>
-         <Type Name="Drive525">
-          <Members>
-           <Member Name="#driveArmStepDelta">
-            <Messages>
-             <Message Id="Member" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-04-13 00:02:55Z">
-              <Issue>
-               <Item>'Drive525.driveArmStepDelta'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#Reset()">
-            <Messages>
-             <Message TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822" Created="2009-04-13 00:02:55Z" FixCategory="DependsOnFix">
-              <Issue>
-               <Item>'Drive525.Reset()'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
-         </Type>
-         <Type Name="Speaker">
-          <Members>
-           <Member Name="#ToggleOutput()">
-            <Messages>
-             <Message TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822" Created="2009-04-13 00:02:55Z" FixCategory="DependsOnFix">
-              <Issue>
-               <Item>'Speaker.ToggleOutput()'</Item>
+               <Item>'DiskDsk.WriteTrack(int, int, byte[])'</Item>
+               <Item>'readVolume'</Item>
+               <Item>'int'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -165,20 +174,17 @@
    </Target>
   </Targets>
   <Rules>
-   <Rule TypeName="AbstractTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1012">
-    <Resolution Name="Default">Change the accessibility of all public constructors in {0} to protected.</Resolution>
+   <Rule TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800">
+    <Resolution Name="Parameter">{0}, a parameter, is cast to type {1} multiple times in method {2}. Cache the result of the 'as' operator or direct cast in order to eliminate the redundant {3} instruction.</Resolution>
    </Rule>
-   <Rule TypeName="AvoidUnusedPrivateFields" Category="Microsoft.Performance" CheckId="CA1823">
-    <Resolution Name="Default">It appears that field {0} is never used or is only ever assigned to. Use this field or remove it.</Resolution>
+   <Rule TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201">
+    <Resolution Name="TooGeneric">{0} creates an exception of type {1}, an exception type that is not sufficiently specific and should never be raised by user code. If this exception instance might be thrown, use a different exception type.</Resolution>
    </Rule>
    <Rule TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822">
     <Resolution Name="Default">The 'this' parameter (or 'Me' in Visual Basic) of {0} is never used. Mark the member as static (or Shared in Visual Basic) or use 'this'/'Me' in the method body or at least one property accessor, if appropriate.</Resolution>
    </Rule>
-   <Rule TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814">
-    <Resolution Name="Default">{0} is a multidimensional array. Replace it with a jagged array if possible.</Resolution>
-   </Rule>
-   <Rule TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801">
-    <Resolution Name="Default">Parameter {0} of {1} is never used. Remove the parameter or use it in the method body.</Resolution>
+   <Rule TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804">
+    <Resolution Name="Default">{0} declares a variable, {1}, of type {2}, which is never used or is only assigned to. Use this variable or remove it.</Resolution>
    </Rule>
   </Rules>
  </FxCopReport>

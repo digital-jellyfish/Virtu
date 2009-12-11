@@ -10,6 +10,11 @@ namespace Jellyfish.Virtu.Services
         public WpfAudioService(Machine machine, Window window) : 
             base(machine)
         {
+            if (window == null)
+            {
+                throw new ArgumentNullException("window");
+            }
+
             _window = window;
 
             _window.SourceInitialized += (sender, e) => _directSound.Start(_window.GetHandle());
@@ -23,6 +28,8 @@ namespace Jellyfish.Virtu.Services
             {
                 _directSound.Dispose();
             }
+
+            base.Dispose(disposing);
         }
 
         private void DirectSound_Update(object sender, DirectSoundUpdateEventArgs e)

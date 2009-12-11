@@ -25,6 +25,11 @@ namespace Jellyfish.Virtu.Services
 
         protected void Update(int bufferSize, Action<byte[], int> updateBuffer) // audio thread
         {
+            if (updateBuffer == null)
+            {
+                throw new ArgumentNullException("updateBuffer");
+            }
+
             lock (_lock)
             {
                 long cycles = Machine.Cpu.Cycles;

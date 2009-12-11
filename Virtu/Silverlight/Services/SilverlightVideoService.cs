@@ -12,7 +12,13 @@ namespace Jellyfish.Virtu.Services
         public SilverlightVideoService(Machine machine, Image image) : 
             base(machine)
         {
+            if (image == null)
+            {
+                throw new ArgumentNullException("image");
+            }
+
             _image = image;
+
             _image.Source = _bitmap;
             SetImageSize();
 

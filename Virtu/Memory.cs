@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Resources;
 using Jellyfish.Library;
@@ -1376,7 +1377,7 @@ namespace Jellyfish.Virtu
             Stream romStream = (Stream)resourceManager.GetObject(romName);
             if (romStream.Length != romSize)
             {
-                throw new InvalidOperationException(SR.RomInvalidFormat(romName));
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, SR.RomInvalid, romName));
             }
 
             return romStream;

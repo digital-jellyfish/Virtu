@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Jellyfish.Virtu.Properties;
 
 namespace Jellyfish.Virtu.Services
@@ -9,13 +10,21 @@ namespace Jellyfish.Virtu.Services
     {
         public void AddService(Type serviceType, MachineService serviceProvider)
         {
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
             if (_serviceProviders.ContainsKey(serviceType))
             {
-                throw new ArgumentException(SR.ServiceAlreadyPresentFormat(serviceType.FullName), "serviceType");
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, SR.ServiceAlreadyPresent, serviceType.FullName), "serviceType");
+            }
+            if (serviceProvider == null)
+            {
+                throw new ArgumentNullException("serviceProvider");
             }
             if (!serviceType.IsAssignableFrom(serviceProvider.GetType()))
             {
-                throw new ArgumentException(SR.ServiceMustBeAssignableFormat(serviceType.FullName, serviceProvider.GetType().FullName));
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, SR.ServiceMustBeAssignable, serviceType.FullName, serviceProvider.GetType().FullName));
             }
 
             _serviceProviders.Add(serviceType, serviceProvider);

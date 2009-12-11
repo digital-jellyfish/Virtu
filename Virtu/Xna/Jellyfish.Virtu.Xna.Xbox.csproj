@@ -92,6 +92,9 @@
     <Compile Include="..\GamePort.cs">
       <Link>Core\GamePort.cs</Link>
     </Compile>
+    <Compile Include="..\GlobalSuppressions.cs">
+      <Link>GlobalSuppressions.cs</Link>
+    </Compile>
     <Compile Include="..\Keyboard.cs">
       <Link>Core\Keyboard.cs</Link>
     </Compile>
@@ -211,7 +214,7 @@
   <ItemGroup>
     <EmbeddedResource Include="..\Properties\SR.resx">
       <Link>Properties\SR.resx</Link>
-      <Generator>ResXFileCodeGeneratorEx</Generator>
+      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

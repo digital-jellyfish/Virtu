@@ -11,11 +11,21 @@ namespace Jellyfish.Virtu.Services
         public XnaStorageService(Machine machine, GameBase game) : 
             base(machine)
         {
+            if (game == null)
+            {
+                throw new ArgumentNullException("game");
+            }
+
             _game = game;
         }
 
         public override void Load(string path, Action<Stream> reader)
         {
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
             try
             {
                 using (StorageContainer storageContainer = _storageDevice.Value.OpenContainer(_game.Name))
@@ -33,6 +43,11 @@ namespace Jellyfish.Virtu.Services
 
         public override void Save(string path, Action<Stream> writer)
         {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
             using (StorageContainer storageContainer = _storageDevice.Value.OpenContainer(_game.Name))
             {
                 using (FileStream stream = new FileStream(Path.Combine(storageContainer.Path, path), FileMode.Create, FileAccess.Write, FileShare.None))

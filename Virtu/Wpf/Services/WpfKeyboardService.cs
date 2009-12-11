@@ -11,6 +11,11 @@ namespace Jellyfish.Virtu.Services
         public WpfKeyboardService(Machine machine, Window window) : 
             base(machine)
         {
+            if (window == null)
+            {
+                throw new ArgumentNullException("window");
+            }
+
             _window = window;
 
             _window.KeyDown += Window_KeyDown;

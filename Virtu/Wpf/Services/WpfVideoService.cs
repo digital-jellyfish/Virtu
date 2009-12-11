@@ -15,8 +15,18 @@ namespace Jellyfish.Virtu.Services
         public WpfVideoService(Machine machine, Window window, Image image) : 
             base(machine)
         {
+            if (window == null)
+            {
+                throw new ArgumentNullException("window");
+            }
+            if (image == null)
+            {
+                throw new ArgumentNullException("image");
+            }
+
             _window = window;
             _image = image;
+
             _image.Source = _bitmap;
             SetImageSize();
 

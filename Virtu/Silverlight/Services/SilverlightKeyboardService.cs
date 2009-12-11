@@ -12,6 +12,11 @@ namespace Jellyfish.Virtu.Services
         public SilverlightKeyboardService(Machine machine, UserControl page) : 
             base(machine)
         {
+            if (page == null)
+            {
+                throw new ArgumentNullException("page");
+            }
+
             _page = page;
 
             _page.KeyDown += Page_KeyDown;

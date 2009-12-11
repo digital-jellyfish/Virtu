@@ -13,6 +13,11 @@ namespace Jellyfish.Virtu.Services
 
         public override void Load(string path, Action<Stream> reader)
         {
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
             try
             {
                 using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
@@ -33,6 +38,11 @@ namespace Jellyfish.Virtu.Services
 
         public override void Save(string path, Action<Stream> writer)
         {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
             try
             {
                 using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())

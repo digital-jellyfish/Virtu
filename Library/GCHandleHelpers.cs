@@ -9,6 +9,11 @@ namespace Jellyfish.Library
         [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
         public static void Pin(object value, Action<IntPtr> action)
         {
+            if (action == null)
+            {
+                throw new ArgumentNullException("action");
+            }
+
             GCHandle gcHandle = new GCHandle();
             try
             {

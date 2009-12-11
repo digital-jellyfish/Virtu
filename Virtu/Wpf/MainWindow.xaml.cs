@@ -15,7 +15,7 @@ namespace Jellyfish.Virtu
 
             _storageService = new WpfStorageService(_machine);
             _keyboardService = new WpfKeyboardService(_machine, this);
-            _gamePortService = new XnaGamePortService(_machine);
+            _gamePortService = new GamePortService(_machine); // not connected
             _audioService = new WpfAudioService(_machine, this);
             _videoService = new WpfVideoService(_machine, this, _image);
 
