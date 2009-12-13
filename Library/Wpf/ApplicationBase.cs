@@ -14,18 +14,18 @@ namespace Jellyfish.Library
         {
             Name = name;
 
-            DispatcherUnhandledException += Application_DispatcherUnhandledException;
-            AppDomain.CurrentDomain.UnhandledException += AppDomain_UnhandledException;
+            DispatcherUnhandledException += OnApplicationDispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
         }
 
-        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        private void OnApplicationDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             MessageBox.Show(GetExceptionMessage(e.Exception), GetExceptionCaption("Application Dispatcher Exception", true));
             Shutdown();
             e.Handled = true;
         }
 
-        private void AppDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void OnAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             MessageBox.Show(GetExceptionMessage(e.ExceptionObject as Exception), GetExceptionCaption("AppDomain Exception", e.IsTerminating));
         }

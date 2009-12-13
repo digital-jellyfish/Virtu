@@ -29,9 +29,9 @@ namespace Jellyfish.Virtu
             UpdateSettings();
             IsVBlank = true;
 
-            Machine.Events.AddEvent((CyclesPerVBlank / 2), _leaveVBlankEvent);
-            Machine.Events.AddEvent(CyclesPerVSync, _resetVSyncEvent);
-            Machine.Events.AddEvent(CyclesPerFlash, _inverseTextEvent);
+            Machine.Events.AddEvent(_cyclesPerVBlankPreset, _leaveVBlankEvent); // align flush events with scanner; assumes vcount preset at start of frame [3-15, 3-16]
+            Machine.Events.AddEvent(_cyclesPerVSync, _resetVSyncEvent);
+            Machine.Events.AddEvent(_cyclesPerFlash, _inverseTextEvent);
         }
 
         public override void Reset()
@@ -92,8 +92,29 @@ namespace Jellyfish.Virtu
 
         public int ReadFloatingBus()
         {
-            // TODO
-            return 0x00;
+            // derive scanner counters from current cycles into frame; assumes hcount and vcount preset at start of frame [3-13, 3-15, 3-16]
+            int cycles = _cyclesPerVSync - Machine.Events.FindEvent(_resetVSyncEvent);
+            int hClock = cycles % CyclesPerHSync;
+            int hCount = (hClock != 0) ? HCountPreset + hClock - 1 : 0;
+            int vLine = cycles / CyclesPerHSync;
+            int vCount = _vCountPreset + vLine;
+
+            // derive scanner address [5-8]
+            int address = ((vCount << 4) & 0x0380) | ((0x0068 + (hCount & 0x0038) + (((vCount >> 1) & 0x0060) | ((vCount >> 3) & 0x0018))) & 0x0078) | (hCount & 0x0007);
+            if (_memory.IsHires && !(_memory.IsMixed && ((vCount & 0xA0) == 0xA0))) // hires but not actively mixed [5-13, 5-19]
+            {
+                address |= (_memory.IsVideoPage2 ? 0x4000 : 0x2000) | ((vCount << 10) & 0x1C00);
+            }
+            else
+            {
+                address |= _memory.IsVideoPage2 ? 0x0800 : 0x0400;
+                if (((_scannerModes & ScannerModes.AppleII) != 0) && (hCount < HCountLeaveHBlank))
+                {
+                    address |= 0x1000;
+                }
+            }
+
+            return _memory.Read(address);
         }
 
         public void SetCharSet()
@@ -641,7 +662,7 @@ namespace Jellyfish.Virtu
         #region Flush Methods
         private void FlushRowMode0(int y)
         {
-            int address = (!_memory.IsVideoPage2 ? 0x0400 : 0x0800) + AddressOffset[y];
+            int address = (_memory.IsVideoPage2 ? 0x0800 : 0x0400) + AddressOffset[y];
             for (int x = 0; x < CellColumns; x++)
             {
                 if (_isCellDirty[CellColumns * y + x])
@@ -654,7 +675,7 @@ namespace Jellyfish.Virtu
 
         private void FlushRowMode1(int y)
         {
-            int address = (!_memory.IsVideoPage2 ? 0x0400 : 0x0800) + AddressOffset[y];
+            int address = (_memory.IsVideoPage2 ? 0x0800 : 0x0400) + AddressOffset[y];
             for (int x = 0; x < CellColumns; x++)
             {
                 if (_isCellDirty[CellColumns * y + x])
@@ -667,7 +688,7 @@ namespace Jellyfish.Virtu
 
         private void FlushRowMode2(int y)
         {
-            int address = (!_memory.IsVideoPage2 ? 0x0400 : 0x0800) + AddressOffset[y];
+            int address = (_memory.IsVideoPage2 ? 0x0800 : 0x0400) + AddressOffset[y];
             for (int x = 0; x < 2 * CellColumns; x += 2)
             {
                 if (_isCellDirty[CellColumns * y + x / 2])
@@ -705,7 +726,7 @@ namespace Jellyfish.Virtu
 
         private void FlushRowMode5(int y)
         {
-            int address = !_memory.IsVideoPage2 ? 0x2000 : 0x4000;
+            int address = _memory.IsVideoPage2 ? 0x4000 : 0x2000;
             for (int i = 0; i < CellHeight; i++, y++)
             {
                 for (int x = 0; x < CellColumns; x++)
@@ -745,7 +766,7 @@ namespace Jellyfish.Virtu
 
         private void FlushRowMode8(int y)
         {
-            int address = (!_memory.IsVideoPage2 ? 0x0400 : 0x0800) + AddressOffset[y];
+            int address = (_memory.IsVideoPage2 ? 0x0800 : 0x0400) + AddressOffset[y];
             for (int x = 0; x < CellColumns; x++)
             {
                 if (_isCellDirty[CellColumns * y + x])
@@ -758,7 +779,7 @@ namespace Jellyfish.Virtu
 
         private void FlushRowMode9(int y)
         {
-            int address = (!_memory.IsVideoPage2 ? 0x0400 : 0x0800) + AddressOffset[y];
+            int address = (_memory.IsVideoPage2 ? 0x0800 : 0x0400) + AddressOffset[y];
             for (int x = 0; x < 2 * CellColumns; x += 2)
             {
                 if (_isCellDirty[CellColumns * y + x / 2])
@@ -796,7 +817,7 @@ namespace Jellyfish.Virtu
 
         private void FlushRowModeC(int y)
         {
-            int address = !_memory.IsVideoPage2 ? 0x2000 : 0x4000;
+            int address = _memory.IsVideoPage2 ? 0x4000 : 0x2000;
             for (int i = 0; i < CellHeight; i++, y++)
             {
                 for (int x = 0; x < CellColumns; x++)
@@ -812,7 +833,7 @@ namespace Jellyfish.Virtu
 
         private void FlushRowModeD(int y)
         {
-            int address = !_memory.IsVideoPage2 ? 0x2000 : 0x4000;
+            int address = _memory.IsVideoPage2 ? 0x4000 : 0x2000;
             for (int i = 0; i < CellHeight; i++, y++)
             {
                 for (int x = 0; x < CellColumns; x++)
@@ -854,7 +875,7 @@ namespace Jellyfish.Virtu
 
         private void FlushRowEvent()
         {
-            int y = (CyclesPerVSync - (CyclesPerVBlank / 2) - Machine.Events.FindEvent(_resetVSyncEvent)) / CyclesPerHSync;
+            int y = (_cyclesPerVSync - _cyclesPerVBlankPreset - Machine.Events.FindEvent(_resetVSyncEvent)) / CyclesPerHSync;
 
             FlushRowMode[_memory.VideoMode](y - CellHeight); // in arrears
 
@@ -866,7 +887,7 @@ namespace Jellyfish.Virtu
             {
                 IsVBlank = true;
 
-                Machine.Events.AddEvent(CyclesPerVBlank, _leaveVBlankEvent);
+                Machine.Events.AddEvent(_cyclesPerVBlank, _leaveVBlankEvent);
             }
         }
 
@@ -886,7 +907,7 @@ namespace Jellyfish.Virtu
 
             DirtyScreenText();
 
-            Machine.Events.AddEvent(CyclesPerFlash, _inverseTextEvent);
+            Machine.Events.AddEvent(_cyclesPerFlash, _inverseTextEvent);
         }
 
         private void LeaveVBlankEvent()
@@ -900,7 +921,13 @@ namespace Jellyfish.Virtu
         {
             UpdateSettings();
 
-            Machine.Events.AddEvent(CyclesPerVSync, _resetVSyncEvent);
+            EventHandler handler = VSync;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
+
+            Machine.Events.AddEvent(_cyclesPerVSync, _resetVSyncEvent);
         }
 
         private void SetPixel(int x, int y, int color)
@@ -949,6 +976,23 @@ namespace Jellyfish.Virtu
             _colorPalette[ColorDHiresE] = settings.Color.Yellow;
             _colorPalette[ColorDHiresF] = settings.Color.White;
 
+            _scannerModes = settings.ScannerModes;
+            if ((_scannerModes & ScannerModes.Pal) != 0)
+            {
+                _vCountPreset = VCountPresetPal;
+                _vLineLeaveVBlank = VLineLeaveVBlankPal;
+            }
+            else
+            {
+                _vCountPreset = VCountPresetNtsc;
+                _vLineLeaveVBlank = VLineLeaveVBlankNtsc;
+            }
+
+            _cyclesPerVBlank = (_vLineLeaveVBlank - VLineEnterVBlank) * CyclesPerHSync;
+            _cyclesPerVBlankPreset = (_vLineLeaveVBlank - VLineTriggerPreset) * CyclesPerHSync; // cycles during vblank after vcount preset [3-15, 3-16]
+            _cyclesPerVSync = _vLineLeaveVBlank * CyclesPerHSync;
+            _cyclesPerFlash = VSyncsPerFlash * _cyclesPerVSync;
+
             if (_videoService.IsFullScreen != settings.IsFullScreen)
             {
                 _videoService.ToggleFullScreen();
@@ -956,6 +1000,9 @@ namespace Jellyfish.Virtu
         }
 
         public bool IsVBlank { get; private set; }
+        public long TicksPerVSync { get { return TimeSpan.FromSeconds((double)_cyclesPerVSync / CyclesPerSecond).Ticks; } }
+
+        public event EventHandler VSync;
 
         private Action _flushRowEvent;
         private Action _inverseTextEvent;
@@ -969,5 +1016,12 @@ namespace Jellyfish.Virtu
         private uint[] _colorPalette = new uint[ColorPaletteCount];
         private bool[] _isCellDirty = new bool[Height * CellColumns + 1]; // includes sentinel
         private bool _isTextInversed;
+        private int _cyclesPerVBlank;
+        private int _cyclesPerVBlankPreset;
+        private int _cyclesPerVSync;
+        private int _cyclesPerFlash;
+        private int _vCountPreset;
+        private int _vLineLeaveVBlank;
+        private ScannerModes _scannerModes;
     }
 }

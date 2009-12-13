@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Jellyfish.Virtu
@@ -78,8 +77,7 @@ namespace Jellyfish.Virtu
             return 0;
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
-        public void RaiseEvents(int delta)
+        public void HandleEvents(int delta)
         {
             LinkedListNode<MachineEvent> node = _used.First;
             node.Value.Delta -= delta;

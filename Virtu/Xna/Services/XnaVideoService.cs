@@ -18,8 +18,8 @@ namespace Jellyfish.Virtu.Services
 
             _game = game;
 
-            _game.GraphicsDeviceManager.PreparingDeviceSettings += GraphicsDeviceManager_PreparingDeviceSettings;
-            _game.GraphicsDeviceService.DeviceCreated += GraphicsDeviceService_DeviceCreated;
+            _game.GraphicsDeviceManager.PreparingDeviceSettings += OnGraphicsDeviceManagerPreparingDeviceSettings;
+            _game.GraphicsDeviceService.DeviceCreated += OnGraphicsDeviceServiceDeviceCreated;
             _game.GraphicsDeviceService.DeviceReset += (sender, e) => SetTexturePosition();
         }
 
@@ -68,7 +68,7 @@ namespace Jellyfish.Virtu.Services
             }
         }
 
-        private void GraphicsDeviceManager_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        private void OnGraphicsDeviceManagerPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
             DisplayMode displayMode = e.GraphicsDeviceInformation.Adapter.CurrentDisplayMode;
             PresentationParameters presentationParameters = e.GraphicsDeviceInformation.PresentationParameters;
@@ -83,7 +83,7 @@ namespace Jellyfish.Virtu.Services
             }
         }
 
-        private void GraphicsDeviceService_DeviceCreated(object sender, EventArgs e)
+        private void OnGraphicsDeviceServiceDeviceCreated(object sender, EventArgs e)
         {
             _graphicsDevice = _game.GraphicsDevice;
             _spriteBatch = new SpriteBatch(_graphicsDevice);

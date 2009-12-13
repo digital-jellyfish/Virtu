@@ -18,7 +18,7 @@ namespace Jellyfish.Virtu.Services
             _game = game;
 
             _directSound.Start(_game.Window.Handle);
-            _directSound.Update += DirectSound_Update;
+            _directSound.Update += OnDirectSoundUpdate;
             _game.Exiting += (sender, e) => _directSound.Stop();
         }
 
@@ -30,7 +30,7 @@ namespace Jellyfish.Virtu.Services
             }
         }
 
-        private void DirectSound_Update(object sender, DirectSoundUpdateEventArgs e)
+        private void OnDirectSoundUpdate(object sender, DirectSoundUpdateEventArgs e)
         {
             IntPtr buffer = e.Buffer;
             Update(e.BufferSize, (source, count) => 

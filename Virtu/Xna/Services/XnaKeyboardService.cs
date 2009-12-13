@@ -48,7 +48,7 @@ namespace Jellyfish.Virtu.Services
 #endif
                             if (asciiKey >= 0)
                             {
-                                RaiseAsciiKeyDown(asciiKey);
+                                OnAsciiKeyDown(asciiKey);
                             }
                         }
                     }
@@ -73,7 +73,7 @@ namespace Jellyfish.Virtu.Services
 #endif
                     if (asciiKey >= 0)
                     {
-                        RaiseAsciiKeyDown(asciiKey);
+                        OnAsciiKeyDown(asciiKey);
                     }
                 }
             }

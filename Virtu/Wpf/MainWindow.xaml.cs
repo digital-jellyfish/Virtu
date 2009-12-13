@@ -26,11 +26,11 @@ namespace Jellyfish.Virtu
             _machine.Services.AddService(typeof(VideoService), _videoService);
 
             Loaded += (sender, e) => _machine.Start();
-            CompositionTarget.Rendering += CompositionTarget_Rendering;
+            CompositionTarget.Rendering += OnCompositionTargetRendering;
             Application.Current.Exit += (sender, e) => _machine.Stop();
 
-            _disk1Button.Click += (sender, e) => DiskButton_Click(0);
-            _disk2Button.Click += (sender, e) => DiskButton_Click(1);
+            _disk1Button.Click += (sender, e) => OnDiskButtonClick(0);
+            _disk2Button.Click += (sender, e) => OnDiskButtonClick(1);
         }
 
         public void Dispose()
@@ -43,14 +43,14 @@ namespace Jellyfish.Virtu
             _videoService.Dispose();
         }
 
-        private void CompositionTarget_Rendering(object sender, EventArgs e)
+        private void OnCompositionTargetRendering(object sender, EventArgs e)
         {
             _keyboardService.Update();
             _gamePortService.Update();
             _videoService.Update();
         }
 
-        private void DiskButton_Click(int drive)
+        private void OnDiskButtonClick(int drive)
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "Disk Files (*.dsk;*.nib)|*.dsk;*.nib|All Files (*.*)|*.*";

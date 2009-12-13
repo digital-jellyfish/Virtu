@@ -10,16 +10,16 @@ namespace Jellyfish.Library
         {
             Name = name;
 
-            UnhandledException += Application_UnhandledException;
-            //AppDomain.CurrentDomain.UnhandledException += AppDomain_UnhandledException;
+            UnhandledException += OnApplicationUnhandledException;
+            //AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
         }
 
-        private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
+        private void OnApplicationUnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
             MessageBox.Show(GetExceptionMessage(e.ExceptionObject), GetExceptionCaption("Application Exception", false), MessageBoxButton.OK);
         }
 
-        //private void AppDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        //private void OnAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         //{
         //    MessageBox.Show(GetExceptionMessage(e.ExceptionObject as Exception), GetExceptionCaption("AppDomain Exception", e.IsTerminating), MessageBoxButton.OK);
         //}

@@ -83,7 +83,7 @@ namespace Jellyfish.Virtu
             {
                 do
                 {
-                    Events.RaiseEvents(Cpu.Execute());
+                    Events.HandleEvents(Cpu.Execute());
                 }
                 while (State == MachineState.Running);
 

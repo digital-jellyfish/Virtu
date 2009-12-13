@@ -9,42 +9,18 @@ namespace Jellyfish.Library
     public sealed partial class DirectSound
     {
         [Flags]
-        private enum BufferCapabilities
-        {
-            PrimaryBuffer = 0x00000001, 
-            CtrlPositionNotify = 0x00000100, 
-            StickyFocus = 0x00004000, 
-            GlobalFocus = 0x00008000
-        }
+        private enum BufferCapabilities { PrimaryBuffer = 0x00000001, CtrlPositionNotify = 0x00000100, StickyFocus = 0x00004000, GlobalFocus = 0x00008000 }
 
         [Flags]
-        private enum BufferLock
-        {
-            None = 0x00000000, 
-            FromWriteCursor = 0x00000001, 
-            EntireBuffer = 0x00000002
-        }
+        private enum BufferLock { None = 0x00000000, FromWriteCursor = 0x00000001, EntireBuffer = 0x00000002 }
 
         [Flags]
-        private enum BufferPlay
-        {
-            Looping = 0x00000001
-        }
+        private enum BufferPlay { Looping = 0x00000001 }
 
         [Flags]
-        private enum BufferStatus
-        {
-            Playing = 0x00000001, 
-            BufferLost = 0x00000002, 
-            Looping = 0x00000004, 
-            Terminated = 0x00000020
-        }
+        private enum BufferStatus { Playing = 0x00000001, BufferLost = 0x00000002, Looping = 0x00000004, Terminated = 0x00000020 }
 
-        private enum CooperativeLevel
-        {
-            Normal = 1, 
-            Priority = 2
-        }
+        private enum CooperativeLevel { Normal = 1, Priority = 2 }
 
         [StructLayout(LayoutKind.Sequential)]
         private sealed class BufferDescription

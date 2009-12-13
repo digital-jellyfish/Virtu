@@ -11,10 +11,10 @@ namespace Jellyfish.Library
         {
             InitializeComponent();
 
-            CompositionTarget.Rendering += CompositionTarget_Rendering;
+            CompositionTarget.Rendering += OnCompositionTargetRendering;
         }
 
-        private void CompositionTarget_Rendering(object sender, EventArgs e)
+        private void OnCompositionTargetRendering(object sender, EventArgs e)
         {
             _frameCount++;
 

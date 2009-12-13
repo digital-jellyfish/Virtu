@@ -10,8 +10,6 @@ namespace Jellyfish.Virtu
         public Cpu(Machine machine) : 
             base(machine)
         {
-            _updateEvent = UpdateEvent; // cache delegate; avoids garbage
-
             ExecuteOpcode65N02 = new Action[OpcodeCount]
             {
                 Execute65X02Brk00, Execute65X02Ora01, Execute65N02Nop02, Execute65N02Nop03, 
@@ -157,7 +155,7 @@ namespace Jellyfish.Virtu
 
             UpdateSettings();
 
-            Machine.Events.AddEvent(CyclesPerUpdate, _updateEvent);
+            Machine.Video.VSync += OnVideoVSync;
         }
 
         public override void Reset()
@@ -3212,21 +3210,20 @@ namespace Jellyfish.Virtu
         }
         #endregion
 
-        private void UpdateEvent()
+        private void OnVideoVSync(object sender, EventArgs e)
         {
             UpdateSettings();
 
             if (Machine.Settings.Cpu.IsThrottled)
             {
                 long elapsedTime = DateTime.UtcNow.Ticks - _lastTime;
-                if (elapsedTime < TicksPerVSync)
+                long ticksPerVSync = Machine.Video.TicksPerVSync;
+                if (elapsedTime < ticksPerVSync)
                 {
-                    Thread.Sleep(TimeSpan.FromTicks(TicksPerVSync - elapsedTime).Milliseconds);
+                    Thread.Sleep(TimeSpan.FromTicks(ticksPerVSync - elapsedTime).Milliseconds);
                 }
                 _lastTime = DateTime.UtcNow.Ticks;
             }
-
-            Machine.Events.AddEvent(CyclesPerUpdate, _updateEvent);
         }
 
         private void UpdateSettings()
@@ -3244,8 +3241,6 @@ namespace Jellyfish.Virtu
         public int CC { get; private set; }
         public int Opcode { get; private set; }
         public long Cycles { get; private set; }
-
-        private Action _updateEvent;
 
         private Memory _memory;
 

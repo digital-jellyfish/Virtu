@@ -1596,9 +1596,17 @@ namespace Jellyfish.Virtu
         private const int CyclesPerHBlank = 25;
         private const int CyclesPerHSync = 65;
         private const int CyclesPerFlush = 8 * CyclesPerHSync;
-        private const int CyclesPerVBlank = 70 * CyclesPerHSync;
-        private const int CyclesPerVSync = 262 * CyclesPerHSync;
-        private const int CyclesPerFlash = 16 * CyclesPerVSync;
+        private const int CyclesPerSecond = 1022730;
+
+        private const int HCountPreset = 0x40; // hcount preset after hcount overflows -> HPE' low [3-13]
+        private const int HCountLeaveHBlank = 0x58; // hcount when leaving hblank [3-15]
+        private const int VCountPresetNtsc = 0xFA; // vcount preset after vcount overflows (NTSC) [3-13]
+        private const int VCountPresetPal = 0xC8; // vcount preset after vcount overflows (PAL) [3-17]
+        private const int VLineEnterVBlank = 192; // vline when entering vblank (NTSC & PAL) [3-17]
+        private const int VLineTriggerPreset = 256; // vline when vcount overflows and presets (NTSC & PAL) [3-15, 3-16]
+        private const int VLineLeaveVBlankNtsc = 262; // vline when leaving vblank (NTSC) [3-13]
+        private const int VLineLeaveVBlankPal = 312; // vline when leaving vblank (PAL) [3-17]
+        private const int VSyncsPerFlash = 16; // flash count using vcount overflow [3-17]
 
         public const int ModeCount = 16;
 
@@ -1622,7 +1630,7 @@ namespace Jellyfish.Virtu
         private readonly Action<int>[] FlushRowMode;
 
         private const int Width = 560;
-        private const int Height = 192;
+        private const int Height = VLineEnterVBlank;
 
         private const int TextHeight = 8;
         private const int TextRows = Height / TextHeight;

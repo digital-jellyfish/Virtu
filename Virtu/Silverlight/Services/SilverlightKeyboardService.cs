@@ -19,9 +19,9 @@ namespace Jellyfish.Virtu.Services
 
             _page = page;
 
-            _page.KeyDown += Page_KeyDown;
-            _page.KeyUp += Page_KeyUp;
-            _page.LostFocus += Page_LostFocus;
+            _page.KeyDown += OnPageKeyDown;
+            _page.KeyUp += OnPageKeyUp;
+            _page.LostFocus += OnPageLostFocus;
         }
 
         public override bool IsKeyDown(int key)
@@ -62,7 +62,7 @@ namespace Jellyfish.Virtu.Services
             return _states[(int)key];
         }
 
-        private void Page_KeyDown(object sender, KeyEventArgs e)
+        private void OnPageKeyDown(object sender, KeyEventArgs e)
         {
             _states[(int)e.Key] = true;
             IsAnyKeyDown = true;
@@ -70,19 +70,19 @@ namespace Jellyfish.Virtu.Services
             int asciiKey = GetAsciiKey(e.Key, e.PlatformKeyCode);
             if (asciiKey >= 0)
             {
-                RaiseAsciiKeyDown(asciiKey);
+                OnAsciiKeyDown(asciiKey);
                 e.Handled = true;
             }
         }
 
-        private void Page_KeyUp(object sender, KeyEventArgs e)
+        private void OnPageKeyUp(object sender, KeyEventArgs e)
         {
             _capsLock ^= (e.Key == Key.CapsLock); // SL is missing caps lock support; try to track manually
             _states[(int)e.Key] = false;
             _updateAnyKeyDown = true;
         }
 
-        private void Page_LostFocus(object sender, RoutedEventArgs e) // reset keyboard state on lost focus; can't access keyboard state on got focus
+        private void OnPageLostFocus(object sender, RoutedEventArgs e) // reset keyboard state on lost focus; can't access keyboard state on got focus
         {
             IsAnyKeyDown = false;
             foreach (Key key in KeyValues)

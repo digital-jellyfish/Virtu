@@ -10,7 +10,6 @@ namespace Jellyfish.Virtu
         public Keyboard(Machine machine) :
             base(machine)
         {
-            _pollEvent = PollEvent; // cache delegate; avoids garbage
         }
 
         public override void Initialize()
@@ -19,8 +18,7 @@ namespace Jellyfish.Virtu
             _gamePortService = Machine.Services.GetService<GamePortService>();
 
             _keyboardService.AsciiKeyDown += (sender, e) => Latch = e.AsciiKey;
-
-            Machine.Events.AddEvent(CyclesPerPoll, _pollEvent);
+            Machine.Video.VSync += OnVideoVSync;
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
@@ -123,7 +121,7 @@ namespace Jellyfish.Virtu
             Strobe = false;
         }
 
-        private void PollEvent()
+        private void OnVideoVSync(object sender, EventArgs e)
         {
             if (_keyboardService.IsResetKeyDown)
             {
@@ -145,18 +143,12 @@ namespace Jellyfish.Virtu
                 Machine.Video.ToggleMonochrome();
                 _keyboardService.WaitForKeyUp();
             }
-
-            Machine.Events.AddEvent(CyclesPerPoll, _pollEvent);
         }
 
         public bool IsAnyKeyDown { get { return _keyboardService.IsAnyKeyDown; } }
         public bool Strobe { get; private set; }
 
         private int Latch { get { return _latch; } set { _latch = value; Strobe = true; } }
-
-        private const int CyclesPerPoll = 17030;
-
-        private Action _pollEvent;
 
         private KeyboardService _keyboardService;
         private GamePortService _gamePortService;

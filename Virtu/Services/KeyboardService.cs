@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Jellyfish.Virtu.Services
@@ -31,8 +30,7 @@ namespace Jellyfish.Virtu.Services
 
         public abstract bool IsKeyDown(int key);
 
-        [SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate")]
-        protected void RaiseAsciiKeyDown(int asciiKey)
+        protected void OnAsciiKeyDown(int asciiKey)
         {
             EventHandler<AsciiKeyEventArgs> handler = AsciiKeyDown;
             if (handler != null)

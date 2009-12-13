@@ -4,11 +4,6 @@ namespace Jellyfish.Virtu
 {
     public partial class Cpu
     {
-        private const int CyclesPerUpdate = 17030;
-        private const int CyclesPerVSync = 17030;
-        private const int CyclesPerSecond = 1022730;
-        private static readonly long TicksPerVSync = TimeSpan.FromSeconds((double)CyclesPerVSync / CyclesPerSecond).Ticks;
-
         private const int OpcodeCount = 256;
 
         private readonly Action[] ExecuteOpcode65N02;

@@ -38,7 +38,7 @@ namespace Jellyfish.Virtu.Settings
             };
             Video = new VideoSettings
             {
-                IsFullScreen = false, IsMonochrome = false, ScannerType = 0, 
+                IsFullScreen = false, IsMonochrome = false, ScannerModes = ScannerModes.None, 
                 Color = new ColorSettings
                 {
                     Black = 0x000000, 
@@ -172,8 +172,8 @@ namespace Jellyfish.Virtu.Settings
                     Video = new VideoSettings
                     {
                         IsFullScreen = (bool)video.Attribute("IsFullScreen"), 
-                        IsMonochrome = (bool)video.Attribute("IsMonochrome"), 
-                        ScannerType = (int)video.Attribute("ScannerType"), 
+                        IsMonochrome = (bool)video.Attribute("IsMonochrome"),
+                        ScannerModes = (ScannerModes)Enum.Parse(typeof(ScannerModes), (string)video.Attribute("ScannerModes"), true), 
                         Color = new ColorSettings
                         {
                             Black = (uint)color.Attribute("Black"), 
@@ -269,7 +269,7 @@ namespace Jellyfish.Virtu.Settings
                 new XElement(ns + "Video",
                     new XAttribute("IsFullScreen", Video.IsFullScreen),
                     new XAttribute("IsMonochrome", Video.IsMonochrome),
-                    new XAttribute("ScannerType", Video.ScannerType),
+                    new XAttribute("ScannerModes", Video.ScannerModes),
                     new XElement(ns + "Color",
                         new XAttribute("Black", Video.Color.Black),
                         new XAttribute("DarkBlue", Video.Color.DarkBlue),
@@ -377,11 +377,14 @@ namespace Jellyfish.Virtu.Settings
         public uint Monochrome { get; set; }
     }
 
+    [Flags]
+    public enum ScannerModes { None = 0x0, AppleII = 0x1, Pal = 0x2 } // defaults to AppleIIe, Ntsc
+
     public sealed class VideoSettings
     {
         public bool IsFullScreen { get; set; }
         public bool IsMonochrome { get; set; }
-        public int ScannerType { get; set; }
+        public ScannerModes ScannerModes { get; set; }
         public ColorSettings Color { get; set; }
     };
 }

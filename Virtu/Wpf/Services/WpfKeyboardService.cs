@@ -18,8 +18,8 @@ namespace Jellyfish.Virtu.Services
 
             _window = window;
 
-            _window.KeyDown += Window_KeyDown;
-            _window.KeyUp += Window_KeyUp;
+            _window.KeyDown += OnWindowKeyDown;
+            _window.KeyUp += OnWindowKeyUp;
             _window.GotKeyboardFocus += (sender, e) => _updateAnyKeyDown = true;
         }
 
@@ -61,7 +61,7 @@ namespace Jellyfish.Virtu.Services
             return _states[(int)key];
         }
 
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void OnWindowKeyDown(object sender, KeyEventArgs e)
         {
             _states[(int)((e.Key == Key.System) ? e.SystemKey : e.Key)] = true;
             IsAnyKeyDown = true;
@@ -69,12 +69,12 @@ namespace Jellyfish.Virtu.Services
             int asciiKey = GetAsciiKey(e.Key, e.KeyboardDevice);
             if (asciiKey >= 0)
             {
-                RaiseAsciiKeyDown(asciiKey);
+                OnAsciiKeyDown(asciiKey);
                 e.Handled = true;
             }
         }
 
-        private void Window_KeyUp(object sender, KeyEventArgs e)
+        private void OnWindowKeyUp(object sender, KeyEventArgs e)
         {
             _states[(int)((e.Key == Key.System) ? e.SystemKey : e.Key)] = false;
             _updateAnyKeyDown = true;
