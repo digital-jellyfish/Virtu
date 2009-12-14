@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Jellyfish.Virtu.Services;
 using Jellyfish.Virtu.Settings;
 
 namespace Jellyfish.Virtu
@@ -12,6 +13,8 @@ namespace Jellyfish.Virtu
 
         public override void Initialize()
         {
+            _drives[0].InsertDisk("Default.dsk", StorageService.GetResourceStream("Default.dsk", 0x23000), false);
+
 #if WINDOWS
             DiskIISettings settings = Machine.Settings.DiskII;
             if (settings.Disk1.Name.Length > 0)

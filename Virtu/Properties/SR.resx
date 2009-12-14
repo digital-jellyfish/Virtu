@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="RomInvalid" xml:space="preserve">
-    <value>Rom '{0}' invalid.</value>
+  <data name="ResourceNotFound" xml:space="preserve">
+    <value>Resource '{0}' not found.</value>
+  </data>
+  <data name="ResourceInvalid" xml:space="preserve">
+    <value>Resource '{0}' invalid.</value>
   </data>
   <data name="ServiceAlreadyPresent" xml:space="preserve">
     <value>Service type '{0}' already present.</value>

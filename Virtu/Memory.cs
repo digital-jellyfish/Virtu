@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
-using System.Resources;
 using Jellyfish.Library;
-using Jellyfish.Virtu.Properties;
+using Jellyfish.Virtu.Services;
 
 namespace Jellyfish.Virtu
 {
@@ -90,13 +88,13 @@ namespace Jellyfish.Virtu
             _speaker = Machine.Speaker;
             _video = Machine.Video;
 
-            Stream romStream = GetRomStream("AppleIIe.rom", 0x4000);
+            Stream romStream = StorageService.GetResourceStream("AppleIIe.rom", 0x4000);
             romStream.Seek(0x0100, SeekOrigin.Current);
             romStream.ReadBlock(_romInternalRegionC1CF, 0x0000, 0x0F00);
             romStream.ReadBlock(_romRegionD0DF, 0x0000, 0x1000);
             romStream.ReadBlock(_romRegionE0FF, 0x0000, 0x2000);
 
-            romStream = GetRomStream("DiskII.rom", 0x0100);
+            romStream = StorageService.GetResourceStream("DiskII.rom", 0x0100);
             romStream.ReadBlock(_romExternalRegionC1CF, 0x0500, 0x0100);
 
             if ((ReadRomRegionE0FF(0xFBB3) == 0x06) && (ReadRomRegionE0FF(0xFBBF) == 0xC1))
@@ -1369,18 +1367,6 @@ namespace Jellyfish.Virtu
         private static bool TestMask(int data, int mask, int value)
         {
             return ((data & mask) == value);
-        }
-
-        private Stream GetRomStream(string romName, int romSize)
-        {
-            ResourceManager resourceManager = new ResourceManager("Jellyfish.Virtu.g", GetType().Assembly) { IgnoreCase = true };
-            Stream romStream = (Stream)resourceManager.GetObject(romName);
-            if (romStream.Length != romSize)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, SR.RomInvalid, romName));
-            }
-
-            return romStream;
         }
 
         private void ResetState(int mask)

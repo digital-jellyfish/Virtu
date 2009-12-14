@@ -205,6 +205,9 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="..\Disks\Default.dsk">
+      <Link>Disks\Default.dsk</Link>
+    </Resource>
     <None Include="Properties\OutOfBrowserSettings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" Condition="" />

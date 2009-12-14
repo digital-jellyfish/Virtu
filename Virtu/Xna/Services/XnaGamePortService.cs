@@ -29,8 +29,8 @@ namespace Jellyfish.Virtu.Services
                 Joystick0 = GetJoystick(ref left, ref dpad);
                 Joystick1 = GetJoystick(ref right);
 
-                IsButton0Down = (_state.Buttons.A == ButtonState.Pressed);
-                IsButton1Down = (_state.Buttons.B == ButtonState.Pressed);
+                IsButton0Down = ((_state.Buttons.A == ButtonState.Pressed) || (_state.Buttons.LeftShoulder == ButtonState.Pressed));
+                IsButton1Down = ((_state.Buttons.B == ButtonState.Pressed) || (_state.Buttons.RightShoulder == ButtonState.Pressed));
                 IsButton2Down = (_state.Buttons.X == ButtonState.Pressed);
             }
         }

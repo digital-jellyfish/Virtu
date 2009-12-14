@@ -61,11 +61,20 @@ namespace Jellyfish.Virtu.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rom &apos;{0}&apos; invalid..
+        ///   Looks up a localized string similar to Resource &apos;{0}&apos; invalid..
         /// </summary>
-        internal static string RomInvalid {
+        internal static string ResourceInvalid {
             get {
-                return ResourceManager.GetString("RomInvalid", resourceCulture);
+                return ResourceManager.GetString("ResourceInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resource &apos;{0}&apos; not found..
+        /// </summary>
+        internal static string ResourceNotFound {
+            get {
+                return ResourceManager.GetString("ResourceNotFound", resourceCulture);
             }
         }
         

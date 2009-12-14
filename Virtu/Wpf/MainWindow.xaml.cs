@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using Jellyfish.Virtu.Services;
+using Jellyfish.Virtu.Settings;
 using Microsoft.Win32;
 
 namespace Jellyfish.Virtu
@@ -62,6 +63,15 @@ namespace Jellyfish.Virtu
                 {
                     _machine.Pause();
                     _machine.DiskII.Drives[drive].InsertDisk(dialog.FileName, stream, false);
+                    DiskIISettings settings = _machine.Settings.DiskII;
+                    if (drive == 0)
+                    {
+                        settings.Disk1.Name = dialog.FileName;
+                    }
+                    else
+                    {
+                        settings.Disk2.Name = dialog.FileName;
+                    }
                     _machine.Unpause();
                 }
             }
