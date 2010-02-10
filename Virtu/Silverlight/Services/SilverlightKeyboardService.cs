@@ -316,7 +316,42 @@ namespace Jellyfish.Virtu.Services
                     }
                     break;
 
-                case PlatformID.Unix: // TODO
+                case PlatformID.Unix:
+                    switch (platformKeyCode)
+                    {
+                    case 0x2F:
+                        return shift ? ':' : ';';
+
+                    case 0x3D:
+                        return shift ? '?' : '/';
+
+                    case 0x31:
+                        return shift ? '~' : '`';
+
+                    case 0x22:
+                        return shift ? '{' : '[';
+
+                    case 0x33:
+                        return control ? 0x1C : shift ? '|' : '\\';
+
+                    case 0x23:
+                        return control ? 0x1D : shift ? '}' : ']';
+
+                    case 0x30:
+                        return shift ? '"' : '\'';
+
+                    case 0x14:
+                        return control ? 0x1F : shift ? '_' : '-';
+
+                    case 0x15:
+                        return shift ? '+' : '=';
+
+                    case 0x3B:
+                        return shift ? '<' : ',';
+
+                    case 0x3C:
+                        return shift ? '>' : '.';
+                    }
                     break;
                 }
                 break;
