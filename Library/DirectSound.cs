@@ -67,7 +67,7 @@ namespace Jellyfish.Library
 
             GCHandleHelpers.Pin(new WaveFormat(_sampleRate, _sampleChannels, _sampleBits), waveFormat => 
             {
-                BufferDescription description = new BufferDescription(BufferCapabilities.CtrlPositionNotify, BlockCount * _sampleSize, waveFormat);
+                BufferDescription description = new BufferDescription(BufferCapabilities.CtrlPositionNotify | BufferCapabilities.CtrlVolume, BlockCount * _sampleSize, waveFormat);
                 _device.CreateSoundBuffer(description, out _buffer, IntPtr.Zero);
             });
             ClearBuffer();
@@ -77,6 +77,8 @@ namespace Jellyfish.Library
                 new BufferPositionNotify(0 * _sampleSize, _position1Event), new BufferPositionNotify(1 * _sampleSize, _position2Event)
             };
             ((IDirectSoundNotify)_buffer).SetNotificationPositions(positionEvents.Length, positionEvents);
+
+            _buffer.SetVolume(-1500); // 50 %
 
             _buffer.Play(0, 0, BufferPlay.Looping);
         }

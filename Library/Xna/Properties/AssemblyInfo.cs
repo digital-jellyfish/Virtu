@@ -14,13 +14,14 @@ using Jellyfish.Library;
 [assembly: AssemblyProduct("Jellyfish.Library.Xna")]
 #endif
 [assembly: AssemblyCompany("Digital Jellyfish Design Ltd")]
-[assembly: AssemblyCopyright("Copyright © 2009 Digital Jellyfish Design Ltd")]
+[assembly: AssemblyCopyright("Copyright © 2009-2010 Digital Jellyfish Design Ltd")]
 [assembly: AssemblyComment("Developed by Sean Fausett")]
 
 [assembly: AssemblyVersion("0.1.0.0")]
 #if WINDOWS
 [assembly: AssemblyFileVersion("0.1.0.0")]
 #endif
+[assembly: AssemblyInformationalVersion("0.1.0.0")]
 
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]

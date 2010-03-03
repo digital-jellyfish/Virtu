@@ -9,11 +9,12 @@ using Jellyfish.Library;
 [assembly: AssemblyDescription("Apple IIe Emulator")]
 [assembly: AssemblyProduct("Jellyfish.Virtu.Wpf")]
 [assembly: AssemblyCompany("Digital Jellyfish Design Ltd")]
-[assembly: AssemblyCopyright("Copyright © 1995-2009 Digital Jellyfish Design Ltd")]
+[assembly: AssemblyCopyright("Copyright © 1995-2010 Digital Jellyfish Design Ltd")]
 [assembly: AssemblyComment("Developed by Sean Fausett & Nick Westgate")]
 
 [assembly: AssemblyVersion("0.7.0.0")]
 [assembly: AssemblyFileVersion("0.7.0.0")]
+[assembly: AssemblyInformationalVersion("0.7.0.0")]
 
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]

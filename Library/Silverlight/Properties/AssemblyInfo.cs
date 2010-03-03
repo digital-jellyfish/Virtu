@@ -8,11 +8,12 @@ using Jellyfish.Library;
 [assembly: AssemblyDescription("Common Library")]
 [assembly: AssemblyProduct("Jellyfish.Library.Silverlight")]
 [assembly: AssemblyCompany("Digital Jellyfish Design Ltd")]
-[assembly: AssemblyCopyright("Copyright © 2009 Digital Jellyfish Design Ltd")]
+[assembly: AssemblyCopyright("Copyright © 2009-2010 Digital Jellyfish Design Ltd")]
 [assembly: AssemblyComment("Developed by Sean Fausett")]
 
 [assembly: AssemblyVersion("0.1.0.0")]
 [assembly: AssemblyFileVersion("0.1.0.0")]
+[assembly: AssemblyInformationalVersion("0.1.0.0")]
 
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]

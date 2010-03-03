@@ -108,7 +108,7 @@ namespace Jellyfish.Virtu
             else
             {
                 address |= _memory.IsVideoPage2 ? 0x0800 : 0x0400;
-                if (((_scannerModes & ScannerModes.AppleII) != 0) && (hCount < HCountLeaveHBlank))
+                if (((_scannerOptions & ScannerOptions.AppleII) != 0) && (hCount < HCountLeaveHBlank))
                 {
                     address |= 0x1000;
                 }
@@ -976,8 +976,8 @@ namespace Jellyfish.Virtu
             _colorPalette[ColorDHiresE] = settings.Color.Yellow;
             _colorPalette[ColorDHiresF] = settings.Color.White;
 
-            _scannerModes = settings.ScannerModes;
-            if ((_scannerModes & ScannerModes.Pal) != 0)
+            _scannerOptions = settings.ScannerOptions;
+            if ((_scannerOptions & ScannerOptions.Pal) != 0)
             {
                 _vCountPreset = VCountPresetPal;
                 _vLineLeaveVBlank = VLineLeaveVBlankPal;
@@ -1022,6 +1022,6 @@ namespace Jellyfish.Virtu
         private int _cyclesPerFlash;
         private int _vCountPreset;
         private int _vLineLeaveVBlank;
-        private ScannerModes _scannerModes;
+        private ScannerOptions _scannerOptions;
     }
 }
