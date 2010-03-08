@@ -68,12 +68,11 @@ namespace Jellyfish.Virtu.Services
         public const int SampleRate = 44100; // hz
         public const int SampleChannels = 1;
         public const int SampleBits = 8;
-        public const int SampleSize = (int)(SampleRate * Latency / 1000f) * SampleChannels * SampleBits / 8;
+        public const int SampleLatency = 40; // ms
+        public const int SampleSize = (int)(SampleRate * SampleLatency / 1000f) * SampleChannels * SampleBits / 8;
 
         private const int CyclesPerSecond = 1022730;
-        private const int CyclesPerSample = (int)(CyclesPerSecond * Latency / 1000f);
-
-        private const int Latency = 40; // ms
+        private const int CyclesPerSample = (int)(CyclesPerSecond * SampleLatency / 1000f);
 
         private static readonly byte[] SampleHigh = Enumerable.Repeat((byte)0xFF, SampleSize).ToArray();
         private static readonly byte[] SampleZero = new byte[SampleSize];

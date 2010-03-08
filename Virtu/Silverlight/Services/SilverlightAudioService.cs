@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Controls;
+using Jellyfish.Library;
 
 namespace Jellyfish.Virtu.Services
 {
@@ -20,10 +21,22 @@ namespace Jellyfish.Virtu.Services
             _page = page;
             _media = media;
 
-            // TODO
+            _page.Loaded += (sender, e) => _media.SetSource(_mediaSource);
+            _mediaSource.Update += OnMediaSourceUpdate;
+        }
+
+        private void OnMediaSourceUpdate(object sender, WaveMediaStreamSourceUpdateEventArgs e)
+        {
+            int offset = 0;
+            Update(e.BufferSize, (source, count) => 
+            {
+                Buffer.BlockCopy(source, 0, e.Buffer, offset, count);
+                offset += count;
+            });
         }
 
         private UserControl _page;
         private MediaElement _media;
+        private WaveMediaStreamSource _mediaSource = new WaveMediaStreamSource(SampleRate, SampleChannels, SampleBits, SampleSize, SampleLatency);
     }
 }

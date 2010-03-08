@@ -55,28 +55,6 @@ namespace Jellyfish.Library
             public IntPtr hEventNotify;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        private sealed class WaveFormat
-        {
-            public WaveFormat(int sampleRate, int sampleChannels, int sampleBits)
-            {
-                wFormatTag = WaveFormatPcm;
-                nSamplesPerSec = sampleRate;
-                nChannels = (short)sampleChannels;
-                wBitsPerSample = (short)sampleBits;
-                nBlockAlign = (short)(sampleChannels * sampleBits / 8);
-                nAvgBytesPerSec = sampleRate * nBlockAlign;
-            }
-
-            public short wFormatTag;
-            public short nChannels;
-            public int nSamplesPerSec;
-            public int nAvgBytesPerSec;
-            public short nBlockAlign;
-            public short wBitsPerSample;
-            public short cbSize;
-        }
-
         [ComImport, Guid("279AFA83-4981-11CE-A521-0020AF0BE560"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         private interface IDirectSound
         {
@@ -125,7 +103,5 @@ namespace Jellyfish.Library
             [DllImport("dsound.dll")]
             public static extern int DirectSoundCreate(IntPtr pcGuidDevice, [MarshalAs(UnmanagedType.Interface)] out IDirectSound pDS, IntPtr pUnkOuter);
         }
-
-        private const int WaveFormatPcm = 1;
     }
 }

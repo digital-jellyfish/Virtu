@@ -101,6 +101,12 @@
     <Compile Include="..\StreamExtensions.cs">
       <Link>StreamExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\StringBuilderExtensions.cs">
+      <Link>StringBuilderExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\WaveFormat.cs">
+      <Link>WaveFormat.cs</Link>
+    </Compile>
     <Compile Include="..\XmlSerializerHelpers.cs">
       <Link>XmlSerializerHelpers.cs</Link>
     </Compile>

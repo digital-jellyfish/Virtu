@@ -177,16 +177,11 @@ namespace Jellyfish.Virtu
 
         public int Execute()
         {
-//            EA = 0x0000;
-//            System.Diagnostics.Debug.WriteLine(string.Format("{0:X4}-", RPC));
-
             CC = 0;
             Opcode = _memory.Read(RPC);
             RPC = (RPC + 1) & 0xFFFF;
             _executeOpcode[Opcode]();
             Cycles += CC;
-
-//            System.Diagnostics.Debug.WriteLine("      " + ToString());
 
             return CC;
         }
