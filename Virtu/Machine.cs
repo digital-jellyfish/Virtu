@@ -32,7 +32,7 @@ namespace Jellyfish.Virtu
 
         public void Dispose()
         {
-            _pausedEvent.Close();
+            _pauseEvent.Close();
             _unpauseEvent.Close();
         }
 
@@ -47,13 +47,15 @@ namespace Jellyfish.Virtu
             _storageService.Load(MachineSettings.FileName, stream => Settings.Deserialize(stream));
 
             State = MachineState.Starting;
+            Services.ForEach(service => service.Start());
+
             Thread.Start();
         }
 
         public void Pause()
         {
             State = MachineState.Pausing;
-            _pausedEvent.WaitOne();
+            _pauseEvent.WaitOne();
             State = MachineState.Paused;
         }
 
@@ -66,6 +68,9 @@ namespace Jellyfish.Virtu
         public void Stop()
         {
             State = MachineState.Stopping;
+            Services.ForEach(service => service.Stop());
+
+            _pauseEvent.Set();
             _unpauseEvent.Set();
             Thread.Join();
             State = MachineState.Stopped;
@@ -89,7 +94,7 @@ namespace Jellyfish.Virtu
 
                 if (State == MachineState.Pausing)
                 {
-                    _pausedEvent.Set();
+                    _pauseEvent.Set();
                     _unpauseEvent.WaitOne();
                 }
             }
@@ -115,7 +120,7 @@ namespace Jellyfish.Virtu
 
         public Thread Thread { get; private set; }
 
-        private AutoResetEvent _pausedEvent = new AutoResetEvent(false);
+        private AutoResetEvent _pauseEvent = new AutoResetEvent(false);
         private AutoResetEvent _unpauseEvent = new AutoResetEvent(false);
 
         private StorageService _storageService;

@@ -12,7 +12,7 @@
         </StackPanel>
         <Grid Cursor="None">
             <Image x:Name="_image" MinWidth="560" MinHeight="384"/>
-            <MediaElement x:Name="_media" AutoPlay="true"/>
+            <MediaElement x:Name="_media"/>
         </Grid>
     </tk:DockPanel>
 </UserControl>

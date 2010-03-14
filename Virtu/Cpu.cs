@@ -3208,17 +3208,6 @@ namespace Jellyfish.Virtu
         private void OnVideoVSync(object sender, EventArgs e)
         {
             UpdateSettings();
-
-            if (Machine.Settings.Cpu.IsThrottled)
-            {
-                long elapsedTime = DateTime.UtcNow.Ticks - _lastTime;
-                long ticksPerVSync = Machine.Video.TicksPerVSync;
-                if (elapsedTime < ticksPerVSync)
-                {
-                    Thread.Sleep(TimeSpan.FromTicks(ticksPerVSync - elapsedTime).Milliseconds);
-                }
-                _lastTime = DateTime.UtcNow.Ticks;
-            }
         }
 
         private void UpdateSettings()
@@ -3240,6 +3229,5 @@ namespace Jellyfish.Virtu
         private Memory _memory;
 
         private Action[] _executeOpcode;
-        private long _lastTime;
     }
 }

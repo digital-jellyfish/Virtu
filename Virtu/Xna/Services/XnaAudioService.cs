@@ -32,11 +32,9 @@ namespace Jellyfish.Virtu.Services
 
         private void OnDirectSoundUpdate(object sender, DirectSoundUpdateEventArgs e)
         {
-            IntPtr buffer = e.Buffer;
             Update(e.BufferSize, (source, count) => 
             {
-                Marshal.Copy(source, 0, buffer, count);
-                buffer = (IntPtr)((long)buffer + count);
+                Marshal.Copy(source, 0, e.Buffer, count);
             });
         }
 

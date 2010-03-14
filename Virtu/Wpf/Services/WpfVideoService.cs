@@ -59,6 +59,7 @@ namespace Jellyfish.Virtu.Services
                     _window.SizeToContent = SizeToContent.WidthAndHeight;
                 }
                 _isFullScreen = IsFullScreen;
+                SetImageSize();
             }
 
             if (_pixelsDirty)
@@ -70,7 +71,8 @@ namespace Jellyfish.Virtu.Services
 
         private void SetImageSize()
         {
-            int uniformScale = Math.Min((int)SystemParameters.PrimaryScreenWidth / BitmapWidth, (int)SystemParameters.PrimaryScreenHeight / BitmapHeight);
+            int uniformScale = IsFullScreen ? Math.Min((int)SystemParameters.PrimaryScreenWidth / BitmapWidth, (int)SystemParameters.PrimaryScreenHeight / BitmapHeight) : 
+                Math.Min((int)SystemParameters.FullPrimaryScreenWidth / BitmapWidth, (int)SystemParameters.FullPrimaryScreenHeight / BitmapHeight);
             _image.Width = uniformScale * BitmapWidth;
             _image.Height = uniformScale * BitmapHeight;
         }

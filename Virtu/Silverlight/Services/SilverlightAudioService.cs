@@ -21,17 +21,16 @@ namespace Jellyfish.Virtu.Services
             _page = page;
             _media = media;
 
-            _page.Loaded += (sender, e) => _media.SetSource(_mediaSource);
+            _page.Loaded += (sender, e) => { _media.SetSource(_mediaSource); _media.Play(); };
             _mediaSource.Update += OnMediaSourceUpdate;
+            //_page.Closed += (sender, e) => _media.Stop(); // SL is missing Closed / Unloaded event
         }
 
         private void OnMediaSourceUpdate(object sender, WaveMediaStreamSourceUpdateEventArgs e)
         {
-            int offset = 0;
             Update(e.BufferSize, (source, count) => 
             {
-                Buffer.BlockCopy(source, 0, e.Buffer, offset, count);
-                offset += count;
+                Buffer.BlockCopy(source, 0, e.Buffer, 0, count);
             });
         }
 

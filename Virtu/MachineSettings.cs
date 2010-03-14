@@ -10,7 +10,7 @@ namespace Jellyfish.Virtu.Settings
     {
         public MachineSettings()
         {
-            Cpu = new CpuSettings { Is65C02 = true, IsThrottled = true };
+            Cpu = new CpuSettings { Is65C02 = true, IsThrottled = true, Multiplier = 1 };
             DiskII = new DiskIISettings
             {
                 Disk1 = new DiskSettings { Name = string.Empty, IsWriteProtected = false }, 
@@ -75,7 +75,8 @@ namespace Jellyfish.Virtu.Settings
                     Cpu = new CpuSettings
                     {
                         Is65C02 = (bool)cpu.Attribute("Is65C02"), 
-                        IsThrottled = (bool)cpu.Attribute("IsThrottled")
+                        IsThrottled = (bool)cpu.Attribute("IsThrottled"), 
+                        Multiplier = (int)cpu.Attribute("Multiplier")
                     };
                     XElement diskII = root.Element(ns + "DiskII");
                     XElement disk1 = diskII.Element(ns + "Disk1");
@@ -208,7 +209,8 @@ namespace Jellyfish.Virtu.Settings
             XElement xml = new XElement(ns + "MachineSettings",
                 new XElement(ns + "Cpu",
                     new XAttribute("Is65C02", Cpu.Is65C02),
-                    new XAttribute("IsThrottled", Cpu.IsThrottled)),
+                    new XAttribute("IsThrottled", Cpu.IsThrottled),
+                    new XAttribute("Multiplier", Cpu.Multiplier)),
                 new XElement(ns + "DiskII",
                     new XElement(ns + "Disk1",
                         new XAttribute("Name", DiskII.Disk1.Name),
@@ -309,6 +311,7 @@ namespace Jellyfish.Virtu.Settings
     {
         public bool Is65C02 { get; set; }
         public bool IsThrottled { get; set; }
+        public int Multiplier { get; set; }
     }
 
     public sealed class DiskSettings
