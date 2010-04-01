@@ -18,13 +18,13 @@ namespace Jellyfish.Virtu.Services
             return IsKeyDown((Keys)key);
         }
 
-        public override void Update()
+        public override void Update() // main thread
         {
-#if XBOX
-            GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
-#endif
             _lastState = _state;
             _state = Microsoft.Xna.Framework.Input.Keyboard.GetState();
+
+            GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
+            bool gamePadControl = (gamePadState.Buttons.LeftStick == ButtonState.Pressed);
 
             if (_state != _lastState)
             {
@@ -36,25 +36,22 @@ namespace Jellyfish.Virtu.Services
                         IsAnyKeyDown = true;
                         if (!_lastState.IsKeyDown(key))
                         {
-                            _capsLock ^= (key == Keys.CapsLock);
-
                             _lastKey = key;
                             _lastTime = DateTime.UtcNow.Ticks;
                             _repeatTime = RepeatDelay;
-#if XBOX
-                            int asciiKey = GetAsciiKey(key, ref gamePadState);
-#else
-                            int asciiKey = GetAsciiKey(key);
-#endif
-                            if (asciiKey >= 0)
-                            {
-                                OnAsciiKeyDown(asciiKey);
-                            }
+                            OnKeyDown(key, gamePadControl);
                         }
                     }
-                    else if (key == _lastKey)
+                    else
                     {
-                        _lastKey = Keys.None;
+                        if (key == _lastKey)
+                        {
+                            _lastKey = Keys.None;
+                        }
+                        if (_lastState.IsKeyDown(key))
+                        {
+                            OnKeyUp(key, gamePadControl);
+                        }
                     }
                 }
             }
@@ -66,34 +63,17 @@ namespace Jellyfish.Virtu.Services
                 {
                     _lastTime = time;
                     _repeatTime = RepeatSpeed;
-#if XBOX
-                    int asciiKey = GetAsciiKey(_lastKey, ref gamePadState);
-#else
-                    int asciiKey = GetAsciiKey(_lastKey);
-#endif
-                    if (asciiKey >= 0)
-                    {
-                        OnAsciiKeyDown(asciiKey);
-                    }
+                    OnKeyDown(_lastKey, gamePadControl);
                 }
             }
-#if XBOX
-            IsOpenAppleKeyDown = IsKeyDown(Keys.LeftAlt) || (gamePadState.Buttons.LeftShoulder == ButtonState.Pressed);
-            IsCloseAppleKeyDown = IsKeyDown(Keys.RightAlt) || (gamePadState.Buttons.RightShoulder == ButtonState.Pressed);
-            IsResetKeyDown = ((IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl)) && IsKeyDown(Keys.F12)) || 
-                ((gamePadState.Buttons.LeftStick == ButtonState.Pressed) && (gamePadState.Buttons.Start == ButtonState.Pressed));
 
-            IsCpuThrottleKeyDown = IsKeyDown(Keys.F8) || ((IsKeyDown(Keys.ChatPadGreen) || IsKeyDown(Keys.ChatPadOrange)) && IsKeyDown(Keys.D8));
-            IsVideoMonochromeKeyDown = IsKeyDown(Keys.F9) || ((IsKeyDown(Keys.ChatPadGreen) || IsKeyDown(Keys.ChatPadOrange)) && IsKeyDown(Keys.D9));
-#else
-            IsOpenAppleKeyDown = IsKeyDown(Keys.LeftAlt);
-            IsCloseAppleKeyDown = IsKeyDown(Keys.RightAlt);
-            IsResetKeyDown = (IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl)) && IsKeyDown(Keys.F12);
+            bool control = IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl);
 
-            IsCpuThrottleKeyDown = IsKeyDown(Keys.F8);
-            IsVideoFullScreenKeyDown = IsKeyDown(Keys.F11);
-            IsVideoMonochromeKeyDown = IsKeyDown(Keys.F9);
-#endif
+            IsOpenAppleKeyDown = IsKeyDown(Keys.LeftAlt) || IsKeyDown(Keys.NumPad0) || (gamePadState.Buttons.LeftShoulder == ButtonState.Pressed);
+            IsCloseAppleKeyDown = IsKeyDown(Keys.RightAlt) || IsKeyDown(Keys.Decimal) || (gamePadState.Buttons.RightShoulder == ButtonState.Pressed);
+            IsResetKeyDown = (control && IsKeyDown(Keys.Back)) || (gamePadControl && (gamePadState.Buttons.Start == ButtonState.Pressed));
+
+            base.Update();
         }
 
         private bool IsKeyDown(Keys key)
@@ -101,17 +81,42 @@ namespace Jellyfish.Virtu.Services
             return _state.IsKeyDown(key);
         }
 
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
-#if XBOX
-        private int GetAsciiKey(Keys key, ref GamePadState gamePadState)
+        private void OnKeyDown(Keys key, bool gamePadControl)
         {
-            bool control = IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl) || (gamePadState.Buttons.LeftStick == ButtonState.Pressed);
-#else
-        private int GetAsciiKey(Keys key)
+            int asciiKey = GetAsciiKey(key, gamePadControl);
+            if (asciiKey >= 0)
+            {
+                OnAsciiKeyDown(asciiKey);
+            }
+        }
+
+        private void OnKeyUp(Keys key, bool gamePadControl)
         {
             bool control = IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl);
-#endif
+
+            if (key == Keys.CapsLock)
+            {
+                _capsLock ^= true;
+            }
+            else if ((control && (key == Keys.Divide)) || (gamePadControl && (key == Keys.D8)))
+            {
+                Machine.Cpu.ToggleThrottle();
+            }
+            else if ((control && (key == Keys.Multiply)) || (gamePadControl && (key == Keys.D9)))
+            {
+                Machine.Video.ToggleMonochrome();
+            }
+            else if ((control && (key == Keys.Subtract)) || (gamePadControl && (key == Keys.D0)))
+            {
+                Machine.Video.ToggleFullScreen();
+            }
+        }
+
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
+        private int GetAsciiKey(Keys key, bool gamePadControl)
+        {
+            bool control = IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl) || gamePadControl;
             bool shift = IsKeyDown(Keys.LeftShift) || IsKeyDown(Keys.RightShift);
             bool capsLock = shift ^ _capsLock;
             bool green = IsKeyDown(Keys.ChatPadGreen);
@@ -141,7 +146,7 @@ namespace Jellyfish.Virtu.Services
                 return 0x1B;
 
             case Keys.Back:
-                return 0x7F;
+                return control ? -1 : 0x7F;
 
             case Keys.Space:
                 return ' ';
@@ -168,13 +173,13 @@ namespace Jellyfish.Virtu.Services
                 return shift ? '&' : '7';
 
             case Keys.D8:
-                return shift ? '*' : '8';
+                return gamePadControl ? -1 : shift ? '*' : '8';
 
             case Keys.D9:
-                return shift ? '(' : '9';
+                return gamePadControl ? -1 : shift ? '(' : '9';
 
             case Keys.D0:
-                return shift ? ')' : '0';
+                return gamePadControl ? -1 : shift ? ')' : '0';
 
             case Keys.A:
                 return control ? 0x01 : green ? '~' : capsLock ? 'A' : 'a';
@@ -287,51 +292,6 @@ namespace Jellyfish.Virtu.Services
 
             case Keys.OemPeriod:
                 return shift ? '>' : green ? '?' : '.';
-
-            case Keys.NumPad1:
-                return '1';
-
-            case Keys.NumPad2:
-                return '2';
-
-            case Keys.NumPad3:
-                return '3';
-
-            case Keys.NumPad4:
-                return '4';
-
-            case Keys.NumPad5:
-                return '5';
-
-            case Keys.NumPad6:
-                return '6';
-
-            case Keys.NumPad7:
-                return '7';
-
-            case Keys.NumPad8:
-                return '8';
-
-            case Keys.NumPad9:
-                return '9';
-
-            case Keys.NumPad0:
-                return '0';
-
-            case Keys.Decimal:
-                return '.';
-
-            case Keys.Divide:
-                return '/';
-
-            case Keys.Multiply:
-                return '*';
-
-            case Keys.Subtract:
-                return '-';
-
-            case Keys.Add:
-                return '+';
             }
 
             return -1;

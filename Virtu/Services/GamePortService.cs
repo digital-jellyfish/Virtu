@@ -56,7 +56,7 @@
             Paddle0 = Paddle1 = Paddle2 = Paddle3 = 255; // not connected
         }
 
-        public virtual void Update() { }
+        public virtual void Update() { } // main thread
 
         public int Paddle0 { get; protected set; }
         public int Paddle1 { get; protected set; }

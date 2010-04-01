@@ -7,6 +7,11 @@ namespace Jellyfish.Library
 {
     public class GameBase : Game
     {
+        public GameBase() : 
+            this(null)
+        {
+        }
+
         public GameBase(string name)
         {
             Name = name;
@@ -29,6 +34,7 @@ namespace Jellyfish.Library
             {
                 Exit();
             }
+
             base.Update(gameTime);
         }
 

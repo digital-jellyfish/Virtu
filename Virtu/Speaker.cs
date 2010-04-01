@@ -18,6 +18,13 @@ namespace Jellyfish.Virtu
             Machine.Events.AddEvent(CyclesPerFlush * Machine.Settings.Cpu.Multiplier, _flushOutputEvent);
         }
 
+        public override void Reset()
+        {
+            _audioService.Reset();
+            _isHigh = false;
+            _highCycles = _totalCycles = 0;
+        }
+
         public void ToggleOutput()
         {
             UpdateCycles();

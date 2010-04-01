@@ -38,7 +38,7 @@ namespace Jellyfish.Virtu
 
         public void Reset()
         {
-            Components.ForEach(component => component.Reset());
+            Components.ForEach(component => component.Reset()); // while machine starting or paused
         }
 
         public void Start()

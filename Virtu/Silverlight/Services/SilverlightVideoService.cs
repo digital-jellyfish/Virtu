@@ -32,7 +32,7 @@ namespace Jellyfish.Virtu.Services
             _pixelsDirty = true;
         }
 
-        public override void Update()
+        public override void Update() // main thread
         {
             if (Application.Current.IsRunningOutOfBrowser && /*_window.IsActive &&*/ (_isFullScreen != IsFullScreen))
             {

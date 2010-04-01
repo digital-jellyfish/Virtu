@@ -5,12 +5,15 @@
     Title="Virtu" ResizeMode="CanMinimize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
     <DockPanel Background="Black">
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-            <Button x:Name="_disk1Button" Content="Disk 1" Focusable="false" IsTabStop="false" Margin="4 4 0 4"/>
-            <Button x:Name="_disk2Button" Content="Disk 2" Focusable="false" IsTabStop="false" Margin="4 4 0 4"/>
+            <Button x:Name="_disk1Button" Content="Disk 1" Focusable="False" IsTabStop="False" Margin="4 4 0 4"/>
+            <Button x:Name="_disk2Button" Content="Disk 2" Focusable="False" IsTabStop="False" Margin="4 4 0 4"/>
             <jl:FrameRateCounter Margin="4 4 0 4" VerticalAlignment="Center"/>
         </StackPanel>
-        <Grid Cursor="None">
+        <Grid>
             <Image x:Name="_image" MinWidth="560" MinHeight="384" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+            <!--<ScrollViewer BorderThickness="0" Focusable="False" IsTabStop="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
+                <TextBlock x:Name="_debug" FontFamily="Consolas" FontSize="12" Foreground="White"/>
+            </ScrollViewer>-->
         </Grid>
     </DockPanel>
 </Window>

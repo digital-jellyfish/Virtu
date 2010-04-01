@@ -29,7 +29,7 @@ namespace Jellyfish.Virtu.Services
             return IsKeyDown((Key)key);
         }
 
-        public override void Update()
+        public override void Update() // main thread
         {
             if (_updateAnyKeyDown) // SL is missing access to keyboard state; could lose track of keyboard state after Alt+Tab
             {
@@ -46,15 +46,13 @@ namespace Jellyfish.Virtu.Services
             }
 
             ModifierKeys modifiers = System.Windows.Input.Keyboard.Modifiers;
-            IsOpenAppleKeyDown = ((modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == (ModifierKeys.Control | ModifierKeys.Alt)) || 
-                (((modifiers & ModifierKeys.Control) != 0) && IsKeyDown(Key.Left));
-            IsCloseAppleKeyDown = ((modifiers & (ModifierKeys.Control | ModifierKeys.Windows)) == (ModifierKeys.Control | ModifierKeys.Windows)) || 
-                (((modifiers & ModifierKeys.Control) != 0) && IsKeyDown(Key.Right));
-            IsResetKeyDown = ((modifiers & ModifierKeys.Control) != 0) && (IsKeyDown(Key.F12) || IsKeyDown(Key.Up));
+            bool control = ((modifiers & ModifierKeys.Control) != 0);
 
-            IsCpuThrottleKeyDown = IsKeyDown(Key.F8);
-            IsVideoFullScreenKeyDown = IsKeyDown(Key.F11);
-            IsVideoMonochromeKeyDown = IsKeyDown(Key.F9);
+            IsOpenAppleKeyDown = ((modifiers & ModifierKeys.Alt) != 0) || IsKeyDown(Key.NumPad0);
+            IsCloseAppleKeyDown = ((modifiers & ModifierKeys.Windows) != 0) || IsKeyDown(Key.Decimal);
+            IsResetKeyDown = control && IsKeyDown(Key.Back);
+
+            base.Update();
         }
 
         private bool IsKeyDown(Key key)
@@ -64,7 +62,10 @@ namespace Jellyfish.Virtu.Services
 
         private void OnPageKeyDown(object sender, KeyEventArgs e)
         {
+            //((MainPage)_page)._debug.Text += string.Concat("OnPageKeyDn: Key=", e.Key, " PlatformKeyCode=", e.PlatformKeyCode, Environment.NewLine);
+
             _states[(int)e.Key] = true;
+            _updateAnyKeyDown = false;
             IsAnyKeyDown = true;
 
             int asciiKey = GetAsciiKey(e.Key, e.PlatformKeyCode);
@@ -73,13 +74,38 @@ namespace Jellyfish.Virtu.Services
                 OnAsciiKeyDown(asciiKey);
                 e.Handled = true;
             }
+
+            Update();
         }
 
         private void OnPageKeyUp(object sender, KeyEventArgs e)
         {
-            _capsLock ^= (e.Key == Key.CapsLock); // SL is missing caps lock support; try to track manually
+            //((MainPage)_page)._debug.Text += string.Concat("OnPageKeyUp: Key=", e.Key, " PlatformKeyCode=", e.PlatformKeyCode, Environment.NewLine);
+
             _states[(int)e.Key] = false;
             _updateAnyKeyDown = true;
+
+            ModifierKeys modifiers = System.Windows.Input.Keyboard.Modifiers;
+            bool control = ((modifiers & ModifierKeys.Control) != 0);
+
+            if (e.Key == Key.CapsLock)
+            {
+                _capsLock ^= true; // SL is missing caps lock support; try to track manually
+            }
+            else if (control && (e.Key == Key.Divide))
+            {
+                Machine.Cpu.ToggleThrottle();
+            }
+            else if (control && (e.Key == Key.Multiply))
+            {
+                Machine.Video.ToggleMonochrome();
+            }
+            else if (control && (e.Key == Key.Subtract))
+            {
+                Machine.Video.ToggleFullScreen();
+            }
+
+            Update();
         }
 
         private void OnPageLostFocus(object sender, RoutedEventArgs e) // reset keyboard state on lost focus; can't access keyboard state on got focus
@@ -124,7 +150,7 @@ namespace Jellyfish.Virtu.Services
                 return 0x1B;
 
             case Key.Back:
-                return 0x7F;
+                return control ? -1 : 0x7F;
 
             case Key.Space:
                 return ' ';
@@ -355,51 +381,6 @@ namespace Jellyfish.Virtu.Services
                     break;
                 }
                 break;
-
-            case Key.NumPad1:
-                return '1';
-
-            case Key.NumPad2:
-                return '2';
-
-            case Key.NumPad3:
-                return '3';
-
-            case Key.NumPad4:
-                return '4';
-
-            case Key.NumPad5:
-                return '5';
-
-            case Key.NumPad6:
-                return '6';
-
-            case Key.NumPad7:
-                return '7';
-
-            case Key.NumPad8:
-                return '8';
-
-            case Key.NumPad9:
-                return '9';
-
-            case Key.NumPad0:
-                return '0';
-
-            case Key.Decimal:
-                return '.';
-
-            case Key.Divide:
-                return '/';
-
-            case Key.Multiply:
-                return '*';
-
-            case Key.Subtract:
-                return '-';
-
-            case Key.Add:
-                return '+';
             }
 
             return -1;

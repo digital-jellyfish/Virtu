@@ -6,6 +6,11 @@ namespace Jellyfish.Library
 {
     public class ApplicationBase : Application
     {
+        public ApplicationBase() : 
+            this(null)
+        {
+        }
+
         public ApplicationBase(string name)
         {
             Name = name;
@@ -17,6 +22,7 @@ namespace Jellyfish.Library
         private void OnApplicationUnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
             MessageBox.Show(GetExceptionMessage(e.ExceptionObject), GetExceptionCaption("Application Exception", false), MessageBoxButton.OK);
+            e.Handled = true;
         }
 
         //private void OnAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -48,8 +54,7 @@ namespace Jellyfish.Library
             {
                 message.Append(exception.Message.ToString());
                 message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append(exception.ToString()); // includes stack trace
+                message.Append(exception.StackTrace.ToString());
             }
 
             return message.ToString();

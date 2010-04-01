@@ -63,7 +63,7 @@ namespace Jellyfish.Virtu
                 if (!Read3Nibbles(0xD5, 0xAA, 0x96, 0x304))
                     break; // no address prologue
 
-                int readVolume = ReadNibble44();
+                /*int readVolume = */ReadNibble44();
 
                 int readTrack = ReadNibble44();
                 if (readTrack != track)
@@ -94,7 +94,7 @@ namespace Jellyfish.Virtu
             }
 
             if (sectorsDone != 0xFFFF)
-                throw new Exception("disk error"); // TODO: we should alert the user and "dump" a NIB
+                throw new InvalidOperationException("disk error"); // TODO: we should alert the user and "dump" a NIB
         }
 
         private byte ReadNibble()
@@ -110,16 +110,15 @@ namespace Jellyfish.Virtu
         private bool Read3Nibbles(byte data1, byte data2, byte data3, int maxReads)
         {
             bool result = false;
-            byte nibble;
             while (--maxReads > 0)
             {
-                if ((nibble = ReadNibble()) != data1)
+                if (ReadNibble() != data1)
                     continue;
 
-                if ((nibble = ReadNibble()) != data2)
+                if (ReadNibble() != data2)
                     continue;
 
-                if ((nibble = ReadNibble()) != data3)
+                if (ReadNibble() != data3)
                     continue;
 
                 result = true;

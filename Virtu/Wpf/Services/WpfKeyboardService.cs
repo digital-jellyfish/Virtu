@@ -28,7 +28,7 @@ namespace Jellyfish.Virtu.Services
             return IsKeyDown((Key)key);
         }
 
-        public override void Update()
+        public override void Update() // main thread
         {
             KeyboardDevice keyboard = System.Windows.Input.Keyboard.PrimaryDevice;
             if (_updateAnyKeyDown)
@@ -46,14 +46,13 @@ namespace Jellyfish.Virtu.Services
                 }
             }
 
-            ModifierKeys modifiers = keyboard.Modifiers;
-            IsOpenAppleKeyDown = keyboard.IsKeyDown(Key.LeftAlt);
-            IsCloseAppleKeyDown = keyboard.IsKeyDown(Key.RightAlt);
-            IsResetKeyDown = ((modifiers & ModifierKeys.Control) != 0) && keyboard.IsKeyDown(Key.F12);
+            bool control = ((keyboard.Modifiers & ModifierKeys.Control) != 0);
 
-            IsCpuThrottleKeyDown = keyboard.IsKeyDown(Key.F8);
-            IsVideoFullScreenKeyDown = keyboard.IsKeyDown(Key.F11);
-            IsVideoMonochromeKeyDown = keyboard.IsKeyDown(Key.F9);
+            IsOpenAppleKeyDown = keyboard.IsKeyDown(Key.LeftAlt) || IsKeyDown(Key.NumPad0);
+            IsCloseAppleKeyDown = keyboard.IsKeyDown(Key.RightAlt) || IsKeyDown(Key.Decimal);
+            IsResetKeyDown = control && keyboard.IsKeyDown(Key.Back);
+
+            base.Update();
         }
 
         private bool IsKeyDown(Key key)
@@ -63,7 +62,10 @@ namespace Jellyfish.Virtu.Services
 
         private void OnWindowKeyDown(object sender, KeyEventArgs e)
         {
+            //((MainWindow)_window)._debug.Text += string.Concat("OnWindowKeyDn: Key=", e.Key, Environment.NewLine);
+
             _states[(int)((e.Key == Key.System) ? e.SystemKey : e.Key)] = true;
+            _updateAnyKeyDown = false;
             IsAnyKeyDown = true;
 
             int asciiKey = GetAsciiKey(e.Key, e.KeyboardDevice);
@@ -72,12 +74,33 @@ namespace Jellyfish.Virtu.Services
                 OnAsciiKeyDown(asciiKey);
                 e.Handled = true;
             }
+
+            Update();
         }
 
         private void OnWindowKeyUp(object sender, KeyEventArgs e)
         {
+            //((MainWindow)_window)._debug.Text += string.Concat("OnWindowKeyUp: Key=", e.Key, Environment.NewLine);
+
             _states[(int)((e.Key == Key.System) ? e.SystemKey : e.Key)] = false;
             _updateAnyKeyDown = true;
+
+            bool control = ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) != 0);
+
+            if (control && (e.Key == Key.Divide))
+            {
+                Machine.Cpu.ToggleThrottle();
+            }
+            else if (control && (e.Key == Key.Multiply))
+            {
+                Machine.Video.ToggleMonochrome();
+            }
+            else if (control && (e.Key == Key.Subtract))
+            {
+                Machine.Video.ToggleFullScreen();
+            }
+
+            Update();
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
@@ -112,7 +135,7 @@ namespace Jellyfish.Virtu.Services
                 return 0x1B;
 
             case Key.Back:
-                return 0x7F;
+                return control ? -1 : 0x7F;
 
             case Key.Space:
                 return ' ';
@@ -257,51 +280,6 @@ namespace Jellyfish.Virtu.Services
 
             case Key.OemPeriod:
                 return shift ? '>' : '.';
-
-            case Key.NumPad1:
-                return '1';
-
-            case Key.NumPad2:
-                return '2';
-
-            case Key.NumPad3:
-                return '3';
-
-            case Key.NumPad4:
-                return '4';
-
-            case Key.NumPad5:
-                return '5';
-
-            case Key.NumPad6:
-                return '6';
-
-            case Key.NumPad7:
-                return '7';
-
-            case Key.NumPad8:
-                return '8';
-
-            case Key.NumPad9:
-                return '9';
-
-            case Key.NumPad0:
-                return '0';
-
-            case Key.Decimal:
-                return '.';
-
-            case Key.Divide:
-                return '/';
-
-            case Key.Multiply:
-                return '*';
-
-            case Key.Subtract:
-                return '-';
-
-            case Key.Add:
-                return '+';
             }
 
             return -1;

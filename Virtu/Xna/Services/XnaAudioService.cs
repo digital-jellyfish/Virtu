@@ -30,7 +30,7 @@ namespace Jellyfish.Virtu.Services
             }
         }
 
-        private void OnDirectSoundUpdate(object sender, DirectSoundUpdateEventArgs e)
+        private void OnDirectSoundUpdate(object sender, DirectSoundUpdateEventArgs e) // audio thread
         {
             Update(e.BufferSize, (source, count) => 
             {

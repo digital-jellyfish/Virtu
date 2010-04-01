@@ -10,6 +10,12 @@ namespace Jellyfish.Library
     public class ApplicationBase : Application
     {
         [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+        public ApplicationBase() : 
+            this(null)
+        {
+        }
+
+        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
         public ApplicationBase(string name)
         {
             Name = name;
@@ -21,8 +27,8 @@ namespace Jellyfish.Library
         private void OnApplicationDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             MessageBox.Show(GetExceptionMessage(e.Exception), GetExceptionCaption("Application Dispatcher Exception", true));
-            Shutdown();
             e.Handled = true;
+            Shutdown();
         }
 
         private void OnAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -55,8 +61,7 @@ namespace Jellyfish.Library
             {
                 message.Append(exception.Message.ToString());
                 message.Append(Environment.NewLine);
-                message.Append(Environment.NewLine);
-                message.Append(exception.ToString()); // includes stack trace
+                message.Append(exception.StackTrace.ToString());
             }
 
             return message.ToString();

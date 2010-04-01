@@ -18,7 +18,6 @@ namespace Jellyfish.Virtu
             _gamePortService = Machine.Services.GetService<GamePortService>();
 
             _keyboardService.AsciiKeyDown += (sender, e) => Latch = e.AsciiKey;
-            Machine.Video.VSync += OnVideoVSync;
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
@@ -119,30 +118,6 @@ namespace Jellyfish.Virtu
         public void ResetStrobe()
         {
             Strobe = false;
-        }
-
-        private void OnVideoVSync(object sender, EventArgs e)
-        {
-            if (_keyboardService.IsResetKeyDown)
-            {
-                Machine.Reset();
-                _keyboardService.WaitForResetKeyUp();
-            }
-            else if (_keyboardService.IsCpuThrottleKeyDown)
-            {
-                Machine.Cpu.ToggleThrottle();
-                _keyboardService.WaitForKeyUp();
-            }
-            else if (_keyboardService.IsVideoFullScreenKeyDown)
-            {
-                Machine.Video.ToggleFullScreen();
-                _keyboardService.WaitForKeyUp();
-            }
-            else if (_keyboardService.IsVideoMonochromeKeyDown)
-            {
-                Machine.Video.ToggleMonochrome();
-                _keyboardService.WaitForKeyUp();
-            }
         }
 
         public bool IsAnyKeyDown { get { return _keyboardService.IsAnyKeyDown; } }

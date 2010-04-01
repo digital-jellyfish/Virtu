@@ -40,7 +40,7 @@ namespace Jellyfish.Virtu.Services
             _pixelsDirty = true;
         }
 
-        public override void Update()
+        public override void Update() // main thread
         {
             if (_window.IsActive && (_isFullScreen != IsFullScreen))
             {

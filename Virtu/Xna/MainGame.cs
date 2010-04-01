@@ -7,7 +7,7 @@ namespace Jellyfish.Virtu
 {
     public sealed class MainGame : GameBase
     {
-        public MainGame() :
+        public MainGame() : 
             base("Virtu")
         {
             Components.Add(new FrameRateCounter(this) { DrawOrder = 1, FontName = "Consolas" });
@@ -46,6 +46,7 @@ namespace Jellyfish.Virtu
                 _audioService.Dispose();
                 _videoService.Dispose();
             }
+
             base.Dispose(disposing);
         }
 
@@ -58,6 +59,7 @@ namespace Jellyfish.Virtu
         {
             _keyboardService.Update();
             _gamePortService.Update();
+
             base.Update(gameTime);
         }
 
@@ -65,6 +67,7 @@ namespace Jellyfish.Virtu
         {
             GraphicsDevice.Clear(Color.Black);
             _videoService.Update();
+
             base.Draw(gameTime);
         }
 

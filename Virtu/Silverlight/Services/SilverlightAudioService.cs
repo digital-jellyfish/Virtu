@@ -26,8 +26,16 @@ namespace Jellyfish.Virtu.Services
             //_page.Closed += (sender, e) => _media.Stop(); // SL is missing Closed / Unloaded event
         }
 
-        private void OnMediaSourceUpdate(object sender, WaveMediaStreamSourceUpdateEventArgs e)
+        private void OnMediaSourceUpdate(object sender, WaveMediaStreamSourceUpdateEventArgs e) // audio thread
         {
+            //if (_count++ % (1000 / SampleLatency) == 0)
+            //{
+            //    _page.Dispatcher.BeginInvoke(new Action(() =>
+            //    {
+            //        ((MainPage)_page)._debug.Text += string.Concat(DateTime.Now, " OnMediaSourceUpdate", Environment.NewLine);
+            //    }));
+            //}
+
             Update(e.BufferSize, (source, count) => 
             {
                 Buffer.BlockCopy(source, 0, e.Buffer, 0, count);
@@ -37,5 +45,6 @@ namespace Jellyfish.Virtu.Services
         private UserControl _page;
         private MediaElement _media;
         private WaveMediaStreamSource _mediaSource = new WaveMediaStreamSource(SampleRate, SampleChannels, SampleBits, SampleSize, SampleLatency);
+        //private int _count;
     }
 }

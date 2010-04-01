@@ -32,8 +32,16 @@ namespace Jellyfish.Virtu.Services
             base.Dispose(disposing);
         }
 
-        private void OnDirectSoundUpdate(object sender, DirectSoundUpdateEventArgs e)
+        private void OnDirectSoundUpdate(object sender, DirectSoundUpdateEventArgs e) // audio thread
         {
+            //if (_count++ % (1000 / SampleLatency) == 0)
+            //{
+            //    _window.Dispatcher.BeginInvoke(new Action(() =>
+            //    {
+            //        ((MainWindow)_window)._debug.Text += string.Concat(DateTime.Now, " OnDirectSoundUpdate", Environment.NewLine);
+            //    }));
+            //}
+
             Update(e.BufferSize, (source, count) => 
             {
                 Marshal.Copy(source, 0, e.Buffer, count);
@@ -42,5 +50,6 @@ namespace Jellyfish.Virtu.Services
 
         private Window _window;
         private DirectSound _directSound = new DirectSound(SampleRate, SampleChannels, SampleBits, SampleSize);
+        //private int _count;
     }
 }

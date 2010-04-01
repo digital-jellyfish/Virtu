@@ -24,6 +24,11 @@ namespace Jellyfish.Virtu.Services
             }
         }
 
+        public void Reset()
+        {
+            Buffer.BlockCopy(SampleZero, 0, _buffer, 0, SampleSize);
+        }
+
         public override void Stop() // main thread
         {
             _readEvent.Set(); // signal events; avoids deadlock
@@ -49,7 +54,9 @@ namespace Jellyfish.Virtu.Services
         public const int SampleChannels = 1;
         public const int SampleBits = 8;
         public const int SampleLatency = 40; // ms
-        public const int SampleSize = (int)(SampleRate * SampleLatency / 1000f) * SampleChannels * SampleBits / 8;
+        public const int SampleSize = (SampleRate * SampleLatency / 1000) * SampleChannels * (SampleBits / 8);
+
+        private static readonly byte[] SampleZero = new byte[SampleSize];
 
         private byte[] _buffer = new byte[SampleSize];
         private int _index;

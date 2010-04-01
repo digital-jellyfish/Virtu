@@ -10,7 +10,7 @@ namespace Jellyfish.Virtu.Services
         {
         }
 
-        public override void Update()
+        public override void Update() // main thread
         {
             _lastState = _state;
             _state = GamePad.GetState(PlayerIndex.One);
