@@ -106,10 +106,12 @@ namespace Jellyfish.Virtu.Services
             {
                 Machine.Video.ToggleMonochrome();
             }
+#if WINDOWS
             else if ((control && (key == Keys.Subtract)) || (gamePadControl && (key == Keys.D0)))
             {
                 Machine.Video.ToggleFullScreen();
             }
+#endif
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]

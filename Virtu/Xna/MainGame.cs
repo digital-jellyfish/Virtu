@@ -11,13 +11,7 @@ namespace Jellyfish.Virtu
             base("Virtu")
         {
             Components.Add(new FrameRateCounter(this) { DrawOrder = 1, FontName = "Consolas" });
-#if XBOX
-            GraphicsDeviceManager.PreferredBackBufferWidth = 640;
-            GraphicsDeviceManager.PreferredBackBufferHeight = 480;
-#else
-            GraphicsDeviceManager.PreferredBackBufferWidth = 560;
-            GraphicsDeviceManager.PreferredBackBufferHeight = 384;
-#endif
+
             _storageService = new XnaStorageService(_machine, this);
             _keyboardService = new XnaKeyboardService(_machine);
             _gamePortService = new XnaGamePortService(_machine);

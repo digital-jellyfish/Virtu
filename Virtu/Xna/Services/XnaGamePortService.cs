@@ -21,10 +21,10 @@ namespace Jellyfish.Virtu.Services
                 Vector2 right = _state.ThumbSticks.Right;
                 GamePadDPad dpad = _state.DPad;
 
-                Paddle0 = (int)((1f + left.X) * PaddleScale);
-                Paddle1 = (int)((1f - left.Y) * PaddleScale); // invert y
-                Paddle2 = (int)((1f + right.X) * PaddleScale);
-                Paddle3 = (int)((1f - right.Y) * PaddleScale); // invert y
+                Paddle0 = (int)((1 + left.X) * PaddleScale);
+                Paddle1 = (int)((1 - left.Y) * PaddleScale); // invert y
+                Paddle2 = (int)((1 + right.X) * PaddleScale);
+                Paddle3 = (int)((1 - right.Y) * PaddleScale); // invert y
 
                 Joystick0 = GetJoystick(ref left, ref dpad);
                 Joystick1 = GetJoystick(ref right);
@@ -55,7 +55,7 @@ namespace Jellyfish.Virtu.Services
             return new Joystick(isUp, isLeft, isRight, isDown);
         }
 
-        private const float PaddleScale = 128f;
+        private const int PaddleScale = 128;
         private const float JoystickDeadZone = 0.5f;
 
         private GamePadState _state;

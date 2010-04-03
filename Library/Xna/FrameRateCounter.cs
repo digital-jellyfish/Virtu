@@ -14,7 +14,7 @@ namespace Jellyfish.Library
             FontName = "Default";
 
             //game.IsFixedTimeStep = true; // fixed (default)
-            //game.TargetElapsedTime = TimeSpan.FromSeconds(1f / 60f);
+            //game.TargetElapsedTime = TimeSpan.FromSeconds(1 / 60f);
 
             //game.IsFixedTimeStep = false; // flatout
             //game.GraphicsDeviceManager.SynchronizeWithVerticalRetrace = false;
