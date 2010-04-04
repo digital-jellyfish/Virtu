@@ -37,16 +37,14 @@ namespace Jellyfish.Virtu.Services
 
         protected void Update(int bufferSize, Action<byte[], int> updateBuffer) // audio thread
         {
-            if (updateBuffer == null)
-            {
-                throw new ArgumentNullException("updateBuffer");
-            }
-
             if (Machine.State == MachineState.Running)
             {
                 _readEvent.WaitOne();
             }
-            updateBuffer(_buffer, bufferSize);
+            if (updateBuffer != null)
+            {
+                updateBuffer(_buffer, bufferSize);
+            }
             _writeEvent.Set();
         }
 

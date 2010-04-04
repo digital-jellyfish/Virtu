@@ -48,38 +48,6 @@
       <Namespaces>
        <Namespace Name="Jellyfish.Virtu">
         <Types>
-         <Type Name="DiskDsk">
-          <Members>
-           <Member Name="#Read3Nibbles(System.Byte,System.Byte,System.Byte,System.Int32)">
-            <Messages>
-             <Message Id="nibble" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2009-12-11 09:07:49Z">
-              <Issue>
-               <Item>'DiskDsk.Read3Nibbles(byte, byte, byte, int)'</Item>
-               <Item>'nibble'</Item>
-               <Item>'byte'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#WriteTrack(System.Int32,System.Int32,System.Byte[])">
-            <Messages>
-             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-12-11 09:07:49Z">
-              <Issue Name="TooGeneric">
-               <Item>'DiskDsk.WriteTrack(int, int, byte[])'</Item>
-               <Item>'Exception'</Item>
-              </Issue>
-             </Message>
-             <Message Id="readVolume" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2009-12-11 09:07:49Z">
-              <Issue>
-               <Item>'DiskDsk.WriteTrack(int, int, byte[])'</Item>
-               <Item>'readVolume'</Item>
-               <Item>'int'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
-         </Type>
          <Type Name="MainWindow">
           <Members>
            <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
@@ -102,60 +70,10 @@
      </Module>
     </Modules>
    </Target>
-   <Target Name="$(ProjectDir)/Xna/bin/Jellyfish.Virtu.exe">
-    <Modules>
-     <Module Name="jellyfish.virtu.exe">
-      <Namespaces>
-       <Namespace Name="Jellyfish.Virtu">
-        <Types>
-         <Type Name="DiskDsk">
-          <Members>
-           <Member Name="#Read3Nibbles(System.Byte,System.Byte,System.Byte,System.Int32)">
-            <Messages>
-             <Message Id="nibble" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2009-12-11 09:07:49Z">
-              <Issue>
-               <Item>'DiskDsk.Read3Nibbles(byte, byte, byte, int)'</Item>
-               <Item>'nibble'</Item>
-               <Item>'byte'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#WriteTrack(System.Int32,System.Int32,System.Byte[])">
-            <Messages>
-             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-12-11 09:07:49Z">
-              <Issue Name="TooGeneric">
-               <Item>'DiskDsk.WriteTrack(int, int, byte[])'</Item>
-               <Item>'Exception'</Item>
-              </Issue>
-             </Message>
-             <Message Id="readVolume" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2009-12-11 09:07:49Z">
-              <Issue>
-               <Item>'DiskDsk.WriteTrack(int, int, byte[])'</Item>
-               <Item>'readVolume'</Item>
-               <Item>'int'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
-         </Type>
-        </Types>
-       </Namespace>
-      </Namespaces>
-     </Module>
-    </Modules>
-   </Target>
   </Targets>
   <Rules>
    <Rule TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800">
     <Resolution Name="Parameter">{0}, a parameter, is cast to type {1} multiple times in method {2}. Cache the result of the 'as' operator or direct cast in order to eliminate the redundant {3} instruction.</Resolution>
-   </Rule>
-   <Rule TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201">
-    <Resolution Name="TooGeneric">{0} creates an exception of type {1}, an exception type that is not sufficiently specific and should never be raised by user code. If this exception instance might be thrown, use a different exception type.</Resolution>
-   </Rule>
-   <Rule TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804">
-    <Resolution Name="Default">{0} declares a variable, {1}, of type {2}, which is never used or is only assigned to. Use this variable or remove it.</Resolution>
    </Rule>
   </Rules>
  </FxCopReport>

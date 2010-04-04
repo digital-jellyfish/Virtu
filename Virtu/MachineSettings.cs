@@ -304,6 +304,7 @@ namespace Jellyfish.Virtu.Settings
         public VideoSettings Video { get; set; }
 
         public const string FileName = "Settings.xml";
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public static readonly XNamespace Namespace = "http://schemas.jellyfish.co.nz/virtu/settings";
     }
 

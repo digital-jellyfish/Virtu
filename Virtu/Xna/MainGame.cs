@@ -15,11 +15,7 @@ namespace Jellyfish.Virtu
             _storageService = new XnaStorageService(_machine, this);
             _keyboardService = new XnaKeyboardService(_machine);
             _gamePortService = new XnaGamePortService(_machine);
-#if XBOX
-            _audioService = new AudioService(_machine); // not connected
-#else
             _audioService = new XnaAudioService(_machine, this);
-#endif
             _videoService = new XnaVideoService(_machine, this);
 
             _machine.Services.AddService(typeof(StorageService), _storageService);
