@@ -88,7 +88,7 @@ namespace Jellyfish.Virtu
             _speaker = Machine.Speaker;
             _video = Machine.Video;
 
-            Stream romStream = StorageService.GetResourceStream("AppleIIe.rom", 0x4000);
+            var romStream = StorageService.GetResourceStream("AppleIIe.rom", 0x4000);
             romStream.Seek(0x0100, SeekOrigin.Current);
             romStream.ReadBlock(_romInternalRegionC1CF, 0x0000, 0x0F00);
             romStream.ReadBlock(_romRegionD0DF, 0x0000, 0x1000);

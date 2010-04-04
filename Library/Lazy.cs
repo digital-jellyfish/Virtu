@@ -19,7 +19,7 @@ namespace Jellyfish.Library
                     T value = _initializer();
                     if (Interlocked.CompareExchange(ref _value, value, null) != null)
                     {
-                        IDisposable disposable = value as IDisposable; // dispose preempted instance
+                        var disposable = value as IDisposable; // dispose preempted instance
                         if (disposable != null)
                         {
                             disposable.Dispose();

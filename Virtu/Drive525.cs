@@ -16,7 +16,7 @@ namespace Jellyfish.Virtu
 
         public void InsertDisk(string fileName, bool isWriteProtected)
         {
-            using (FileStream stream = File.OpenRead(fileName))
+            using (var stream = File.OpenRead(fileName))
             {
                 InsertDisk(fileName, stream, isWriteProtected);
             }

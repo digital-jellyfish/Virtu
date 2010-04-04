@@ -30,7 +30,7 @@ namespace Jellyfish.Virtu.Services
 
         public override void Update() // main thread
         {
-            KeyboardDevice keyboard = System.Windows.Input.Keyboard.PrimaryDevice;
+            var keyboard = System.Windows.Input.Keyboard.PrimaryDevice;
             if (_updateAnyKeyDown)
             {
                 _updateAnyKeyDown = false;

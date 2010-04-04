@@ -29,7 +29,7 @@ namespace Jellyfish.Library
 
         protected override void Update(GameTime gameTime)
         {
-            GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
+            var gamePadState = GamePad.GetState(PlayerIndex.One);
             if (gamePadState.Buttons.Back == ButtonState.Pressed)
             {
                 Exit();

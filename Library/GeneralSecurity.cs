@@ -208,7 +208,7 @@ namespace Jellyfish.Library
             WriteLock();
             try
             {
-                AccessControlSections sectionsModified = GetAccessControlSectionsModified();
+                var sectionsModified = GetAccessControlSectionsModified();
                 if (sectionsModified != AccessControlSections.None)
                 {
                     Persist(handle, sectionsModified);
@@ -226,7 +226,7 @@ namespace Jellyfish.Library
             WriteLock();
             try
             {
-                AccessControlSections sectionsModified = GetAccessControlSectionsModified();
+                var sectionsModified = GetAccessControlSectionsModified();
                 if (sectionsModified != AccessControlSections.None)
                 {
                     Persist(name, sectionsModified);
@@ -241,7 +241,7 @@ namespace Jellyfish.Library
 
         private AccessControlSections GetAccessControlSectionsModified()
         {
-            AccessControlSections sectionsModified = AccessControlSections.None;
+            var sectionsModified = AccessControlSections.None;
             if (AccessRulesModified)
             {
                 sectionsModified = AccessControlSections.Access;

@@ -18,7 +18,7 @@ namespace Jellyfish.Library
 
         public string ToHexString() // little endian
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
             builder.AppendHex(_formatTag);
             builder.AppendHex(_channels);

@@ -47,7 +47,7 @@ namespace Jellyfish.Library
                 throw new ArgumentNullException("value");
             }
 
-            SafeGlobalAllocHandle alloc = Allocate(value.Length);
+            var alloc = Allocate(value.Length);
             Marshal.Copy(value, 0, alloc.DangerousGetHandle(), value.Length);
 
             return alloc;
@@ -61,7 +61,7 @@ namespace Jellyfish.Library
 
         private static SafeGlobalAllocHandle Allocate(uint flags, int size)
         {
-            SafeGlobalAllocHandle alloc = NativeMethods.GlobalAlloc(flags, (IntPtr)size);
+            var alloc = NativeMethods.GlobalAlloc(flags, (IntPtr)size);
             if (alloc.IsInvalid)
             {
                 throw new Win32Exception();
@@ -110,7 +110,7 @@ namespace Jellyfish.Library
                 throw new ArgumentNullException("value");
             }
 
-            SafeLocalAllocHandle alloc = Allocate(value.Length);
+            var alloc = Allocate(value.Length);
             Marshal.Copy(value, 0, alloc.DangerousGetHandle(), value.Length);
 
             return alloc;
@@ -124,7 +124,7 @@ namespace Jellyfish.Library
 
         private static SafeLocalAllocHandle Allocate(uint flags, int size)
         {
-            SafeLocalAllocHandle alloc = NativeMethods.LocalAlloc(flags, (IntPtr)size);
+            var alloc = NativeMethods.LocalAlloc(flags, (IntPtr)size);
             if (alloc.IsInvalid)
             {
                 throw new Win32Exception();

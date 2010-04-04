@@ -4,7 +4,7 @@ namespace Jellyfish.Virtu
     {
         static void Main()
         {
-            using (MainGame game = new MainGame())
+            using (var game = new MainGame())
             {
                 game.Run();
             }

@@ -921,7 +921,7 @@ namespace Jellyfish.Virtu
         {
             UpdateSettings();
 
-            EventHandler handler = VSync;
+            var handler = VSync;
             if (handler != null)
             {
                 handler(this, EventArgs.Empty);
@@ -937,7 +937,7 @@ namespace Jellyfish.Virtu
 
         private void UpdateSettings()
         {
-            VideoSettings settings = Machine.Settings.Video;
+            var settings = Machine.Settings.Video;
 
             _colorPalette[ColorMono00] = settings.Color.Black;
             _colorPalette[ColorMono01] = settings.Color.Monochrome;

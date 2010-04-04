@@ -66,7 +66,7 @@ namespace Jellyfish.Virtu.Services
 
         private void SetImageSize()
         {
-            Content content = Application.Current.Host.Content;
+            var content = Application.Current.Host.Content;
             int uniformScale = Math.Min((int)content.ActualWidth / BitmapWidth, (int)content.ActualHeight / BitmapHeight);
             _image.Width = uniformScale * BitmapWidth;
             _image.Height = uniformScale * BitmapHeight;

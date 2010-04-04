@@ -64,8 +64,8 @@ namespace Jellyfish.Virtu.Services
 
         private void OnGraphicsDeviceManagerPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
-            DisplayMode displayMode = e.GraphicsDeviceInformation.Adapter.CurrentDisplayMode;
-            PresentationParameters presentationParameters = e.GraphicsDeviceInformation.PresentationParameters;
+            var displayMode = e.GraphicsDeviceInformation.Adapter.CurrentDisplayMode;
+            var presentationParameters = e.GraphicsDeviceInformation.PresentationParameters;
 
 #if WINDOWS
             if (presentationParameters.IsFullScreen)

@@ -14,7 +14,7 @@ namespace Jellyfish.Library
                 throw new ArgumentNullException("action");
             }
 
-            GCHandle gcHandle = new GCHandle();
+            var gcHandle = new GCHandle();
             try
             {
                 gcHandle = GCHandle.Alloc(value, GCHandleType.Pinned);

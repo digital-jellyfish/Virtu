@@ -45,7 +45,7 @@ namespace Jellyfish.Virtu.Services
                 }
             }
 
-            ModifierKeys modifiers = System.Windows.Input.Keyboard.Modifiers;
+            var modifiers = System.Windows.Input.Keyboard.Modifiers;
             bool control = ((modifiers & ModifierKeys.Control) != 0);
 
             IsOpenAppleKeyDown = ((modifiers & ModifierKeys.Alt) != 0) || IsKeyDown(Key.NumPad0);
@@ -85,7 +85,7 @@ namespace Jellyfish.Virtu.Services
             _states[(int)e.Key] = false;
             _updateAnyKeyDown = true;
 
-            ModifierKeys modifiers = System.Windows.Input.Keyboard.Modifiers;
+            var modifiers = System.Windows.Input.Keyboard.Modifiers;
             bool control = ((modifiers & ModifierKeys.Control) != 0);
 
             if (e.Key == Key.CapsLock)
@@ -121,7 +121,7 @@ namespace Jellyfish.Virtu.Services
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
         private int GetAsciiKey(Key key, int platformKeyCode)
         {
-            ModifierKeys modifiers = System.Windows.Input.Keyboard.Modifiers;
+            var modifiers = System.Windows.Input.Keyboard.Modifiers;
             bool control = ((modifiers & ModifierKeys.Control) != 0);
             bool shift = ((modifiers & ModifierKeys.Shift) != 0);
             bool capsLock = shift ^ _capsLock;

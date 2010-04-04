@@ -67,12 +67,12 @@ namespace Jellyfish.Library
 
             GCHandleHelpers.Pin(new WaveFormat(_sampleRate, _sampleChannels, _sampleBits), waveFormat => 
             {
-                BufferDescription description = new BufferDescription(BufferCapabilities.CtrlPositionNotify | BufferCapabilities.CtrlVolume, BlockCount * _sampleSize, waveFormat);
+                var description = new BufferDescription(BufferCapabilities.CtrlPositionNotify | BufferCapabilities.CtrlVolume, BlockCount * _sampleSize, waveFormat);
                 _device.CreateSoundBuffer(description, out _buffer, IntPtr.Zero);
             });
             ClearBuffer();
 
-            BufferPositionNotify[] positionEvents = new BufferPositionNotify[BlockCount]
+            var positionEvents = new BufferPositionNotify[BlockCount]
             {
                 new BufferPositionNotify(0 * _sampleSize, _position1Event), new BufferPositionNotify(1 * _sampleSize, _position2Event)
             };
@@ -85,10 +85,7 @@ namespace Jellyfish.Library
 
         private void ClearBuffer()
         {
-            UpdateBuffer(0, 0, BufferLock.EntireBuffer, (buffer, bufferSize) => 
-            {
-                MarshalHelpers.ZeroMemory(buffer, bufferSize);
-            });
+            UpdateBuffer(0, 0, BufferLock.EntireBuffer, (buffer, bufferSize) => MarshalHelpers.ZeroMemory(buffer, bufferSize));
         }
 
         private void RestoreBuffer()
@@ -106,10 +103,7 @@ namespace Jellyfish.Library
             EventHandler<DirectSoundUpdateEventArgs> handler = Update;
             if (handler != null)
             {
-                UpdateBuffer(block * _sampleSize, _sampleSize, BufferLock.None, (buffer, bufferSize) => 
-                {
-                    handler(this, DirectSoundUpdateEventArgs.Create(buffer, bufferSize));
-                });
+                UpdateBuffer(block * _sampleSize, _sampleSize, BufferLock.None, (buffer, bufferSize) => handler(this, DirectSoundUpdateEventArgs.Create(buffer, bufferSize)));
             }
         }
 
@@ -154,7 +148,7 @@ namespace Jellyfish.Library
         {
             Initialize();
 
-            EventWaitHandle[] eventHandles = new EventWaitHandle[] { _position1Event, _position2Event, _stopEvent };
+            var eventHandles = new EventWaitHandle[] { _position1Event, _position2Event, _stopEvent };
             int index = WaitHandle.WaitAny(eventHandles);
 
             while (index < BlockCount)

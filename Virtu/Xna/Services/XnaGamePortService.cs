@@ -17,9 +17,9 @@ namespace Jellyfish.Virtu.Services
 
             if (_state.IsConnected && (_state != _lastState))
             {
-                Vector2 left = _state.ThumbSticks.Left;
-                Vector2 right = _state.ThumbSticks.Right;
-                GamePadDPad dpad = _state.DPad;
+                var left = _state.ThumbSticks.Left;
+                var right = _state.ThumbSticks.Right;
+                var dpad = _state.DPad;
 
                 Paddle0 = (int)((1 + left.X) * PaddleScale);
                 Paddle1 = (int)((1 - left.Y) * PaddleScale); // invert y

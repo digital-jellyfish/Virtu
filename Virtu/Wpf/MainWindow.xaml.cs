@@ -53,8 +53,7 @@ namespace Jellyfish.Virtu
 
         private void OnDiskButtonClick(int drive)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Disk Files (*.dsk;*.nib)|*.dsk;*.nib|All Files (*.*)|*.*";
+            var dialog = new OpenFileDialog() { Filter = "Disk Files (*.dsk;*.nib)|*.dsk;*.nib|All Files (*.*)|*.*" };
 
             bool? result = dialog.ShowDialog();
             if (result.HasValue && result.Value)

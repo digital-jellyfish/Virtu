@@ -25,7 +25,7 @@ namespace Jellyfish.Virtu
 
         public bool ReadButton0()
         {
-            GamePortSettings settings = Machine.Settings.GamePort;
+            var settings = Machine.Settings.GamePort;
 
             return (_gamePortService.IsButton0Down || _keyboardService.IsOpenAppleKeyDown || 
                 (settings.UseKeyboard && (settings.Key.Button0 > 0) && _keyboardService.IsKeyDown(settings.Key.Button0)));
@@ -33,7 +33,7 @@ namespace Jellyfish.Virtu
 
         public bool ReadButton1()
         {
-            GamePortSettings settings = Machine.Settings.GamePort;
+            var settings = Machine.Settings.GamePort;
 
             return (_gamePortService.IsButton1Down || _keyboardService.IsCloseAppleKeyDown || 
                 (settings.UseKeyboard && (settings.Key.Button1 > 0) && _keyboardService.IsKeyDown(settings.Key.Button1)));
@@ -41,7 +41,7 @@ namespace Jellyfish.Virtu
 
         public bool ReadButton2()
         {
-            GamePortSettings settings = Machine.Settings.GamePort;
+            var settings = Machine.Settings.GamePort;
 
             return (_gamePortService.IsButton2Down || 
                 (settings.UseKeyboard && (settings.Key.Button2 > 0) && _keyboardService.IsKeyDown(settings.Key.Button2)));
@@ -55,7 +55,7 @@ namespace Jellyfish.Virtu
             int paddle2 = _gamePortService.Paddle2;
             int paddle3 = _gamePortService.Paddle3;
 
-            GamePortSettings settings = Machine.Settings.GamePort;
+            var settings = Machine.Settings.GamePort;
 
             if (settings.UseKeyboard) // override
             {

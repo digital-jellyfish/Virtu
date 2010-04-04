@@ -32,7 +32,7 @@ namespace Jellyfish.Library
 
         private string GetExceptionCaption(string title, bool isTerminating)
         {
-            StringBuilder caption = new StringBuilder();
+            var caption = new StringBuilder();
             if (!string.IsNullOrEmpty(Name))
             {
                 caption.Append(Name);
@@ -49,7 +49,7 @@ namespace Jellyfish.Library
 
         private static string GetExceptionMessage(Exception exception)
         {
-            StringBuilder message = new StringBuilder();
+            var message = new StringBuilder();
             if (exception != null)
             {
                 message.Append(exception.Message.ToString());

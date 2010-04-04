@@ -28,7 +28,7 @@ namespace Jellyfish.Virtu
                 return Latch;
             }
 
-            KeyboardSettings settings = Machine.Settings.Keyboard;
+            var settings = Machine.Settings.Keyboard;
 
             if (settings.UseGamePort)
             {

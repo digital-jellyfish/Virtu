@@ -21,9 +21,9 @@ namespace Jellyfish.Virtu.Services
 
             try
             {
-                using (IsolatedStorageFile store = GetStore())
+                using (var store = GetStore())
                 {
-                    using (IsolatedStorageFileStream stream = new IsolatedStorageFileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, store))
+                    using (var stream = new IsolatedStorageFileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, store))
                     {
                         reader(stream);
                     }
@@ -46,9 +46,9 @@ namespace Jellyfish.Virtu.Services
 
             try
             {
-                using (IsolatedStorageFile store = GetStore())
+                using (var store = GetStore())
                 {
-                    using (IsolatedStorageFileStream stream = new IsolatedStorageFileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, store))
+                    using (var stream = new IsolatedStorageFileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, store))
                     {
                         writer(stream);
                     }

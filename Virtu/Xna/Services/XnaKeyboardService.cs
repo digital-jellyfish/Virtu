@@ -23,7 +23,7 @@ namespace Jellyfish.Virtu.Services
             _lastState = _state;
             _state = Microsoft.Xna.Framework.Input.Keyboard.GetState();
 
-            GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
+            var gamePadState = GamePad.GetState(PlayerIndex.One);
             bool gamePadControl = (gamePadState.Buttons.LeftStick == ButtonState.Pressed);
 
             if (_state != _lastState)

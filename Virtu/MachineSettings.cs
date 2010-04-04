@@ -67,20 +67,20 @@ namespace Jellyfish.Virtu.Settings
         {
             try
             {
-                using (XmlReader reader = XmlReader.Create(stream))
+                using (var reader = XmlReader.Create(stream))
                 {
-                    XNamespace ns = Namespace;
-                    XElement root = XElement.Load(reader);
-                    XElement cpu = root.Element(ns + "Cpu");
+                    var ns = Namespace;
+                    var root = XElement.Load(reader);
+                    var cpu = root.Element(ns + "Cpu");
                     Cpu = new CpuSettings
                     {
                         Is65C02 = (bool)cpu.Attribute("Is65C02"), 
                         IsThrottled = (bool)cpu.Attribute("IsThrottled"), 
                         Multiplier = (int)cpu.Attribute("Multiplier")
                     };
-                    XElement diskII = root.Element(ns + "DiskII");
-                    XElement disk1 = diskII.Element(ns + "Disk1");
-                    XElement disk2 = diskII.Element(ns + "Disk2");
+                    var diskII = root.Element(ns + "DiskII");
+                    var disk1 = diskII.Element(ns + "Disk1");
+                    var disk2 = diskII.Element(ns + "Disk2");
                     DiskII = new DiskIISettings
                     {
                         Disk1 = new DiskSettings
@@ -94,11 +94,11 @@ namespace Jellyfish.Virtu.Settings
                             IsWriteProtected = (bool)disk2.Attribute("IsWriteProtected")
                         },
                     };
-                    XElement keyboard = root.Element(ns + "Keyboard");
-                    XElement key = keyboard.Element(ns + "Key");
-                    XElement joystick0 = key.Element(ns + "Joystick0");
-                    XElement joystick1 = key.Element(ns + "Joystick1");
-                    XElement buttons = key.Element(ns + "Buttons");
+                    var keyboard = root.Element(ns + "Keyboard");
+                    var key = keyboard.Element(ns + "Key");
+                    var joystick0 = key.Element(ns + "Joystick0");
+                    var joystick1 = key.Element(ns + "Joystick1");
+                    var buttons = key.Element(ns + "Buttons");
                     Keyboard = new KeyboardSettings
                     {
                         UseGamePort = (bool)keyboard.Attribute("UseGamePort"), 
@@ -131,7 +131,7 @@ namespace Jellyfish.Virtu.Settings
                             Button2 = (int)buttons.Attribute("Button2")
                         }
                     };
-                    XElement gamePort = root.Element(ns + "GamePort");
+                    var gamePort = root.Element(ns + "GamePort");
                     key = gamePort.Element(ns + "Key");
                     joystick0 = key.Element(ns + "Joystick0");
                     joystick1 = key.Element(ns + "Joystick1");
@@ -168,8 +168,8 @@ namespace Jellyfish.Virtu.Settings
                             Button2 = (int)buttons.Attribute("Button2")
                         }
                     };
-                    XElement video = root.Element(ns + "Video");
-                    XElement color = video.Element(ns + "Color");
+                    var video = root.Element(ns + "Video");
+                    var color = video.Element(ns + "Color");
                     Video = new VideoSettings
                     {
                         IsFullScreen = (bool)video.Attribute("IsFullScreen"), 
@@ -205,8 +205,8 @@ namespace Jellyfish.Virtu.Settings
 
         public void Serialize(Stream stream)
         {
-            XNamespace ns = Namespace;
-            XElement xml = new XElement(ns + "MachineSettings",
+            var ns = Namespace;
+            var xml = new XElement(ns + "MachineSettings",
                 new XElement(ns + "Cpu",
                     new XAttribute("Is65C02", Cpu.Is65C02),
                     new XAttribute("IsThrottled", Cpu.IsThrottled),
@@ -291,7 +291,7 @@ namespace Jellyfish.Virtu.Settings
                         new XAttribute("White", Video.Color.White),
                         new XAttribute("Monochrome", Video.Color.Monochrome))));
 
-            using (XmlWriter writer = XmlWriter.Create(stream))
+            using (var writer = XmlWriter.Create(stream))
             {
                 xml.WriteTo(writer);
             }
@@ -304,7 +304,7 @@ namespace Jellyfish.Virtu.Settings
         public VideoSettings Video { get; set; }
 
         public const string FileName = "Settings.xml";
-        public const string Namespace = "http://schemas.jellyfish.co.nz/virtu/settings";
+        public static readonly XNamespace Namespace = "http://schemas.jellyfish.co.nz/virtu/settings";
     }
 
     public sealed class CpuSettings

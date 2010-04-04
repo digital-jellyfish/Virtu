@@ -65,7 +65,7 @@ namespace Jellyfish.Library
         private static SafeFileHandle CreateFile(string fileName, uint fileAccess, uint fileShare, uint fileMode, uint fileOptions, GeneralSecurity fileSecurity, 
             bool inheritable)
         {
-            SafeFileHandle file = new SafeFileHandle();
+            var file = new SafeFileHandle();
 
             GeneralSecurity.GetSecurityAttributes(fileSecurity, inheritable, securityAttributes => 
             {

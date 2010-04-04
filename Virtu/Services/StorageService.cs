@@ -21,8 +21,8 @@ namespace Jellyfish.Virtu.Services
 
         public static Stream GetResourceStream(string resourceName, int resourceSize)
         {
-            ResourceManager resourceManager = new ResourceManager("Jellyfish.Virtu.g", Assembly.GetExecutingAssembly()) { IgnoreCase = true };
-            Stream resourceStream = (Stream)resourceManager.GetObject(resourceName);
+            var resourceManager = new ResourceManager("Jellyfish.Virtu.g", Assembly.GetExecutingAssembly()) { IgnoreCase = true };
+            var resourceStream = (Stream)resourceManager.GetObject(resourceName);
             if (resourceStream == null)
             {
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, SR.ResourceNotFound, resourceName));

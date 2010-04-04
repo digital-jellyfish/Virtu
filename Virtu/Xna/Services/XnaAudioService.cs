@@ -32,10 +32,7 @@ namespace Jellyfish.Virtu.Services
 
         private void OnDirectSoundUpdate(object sender, DirectSoundUpdateEventArgs e) // audio thread
         {
-            Update(e.BufferSize, (source, count) => 
-            {
-                Marshal.Copy(source, 0, e.Buffer, count);
-            });
+            Update(e.BufferSize, (source, count) => Marshal.Copy(source, 0, e.Buffer, count));
         }
 
         private GameBase _game;

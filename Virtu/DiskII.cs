@@ -16,7 +16,7 @@ namespace Jellyfish.Virtu
             _drives[0].InsertDisk("Default.dsk", StorageService.GetResourceStream("Default.dsk", 0x23000), false);
 
 #if WINDOWS
-            DiskIISettings settings = Machine.Settings.DiskII;
+            var settings = Machine.Settings.DiskII;
             if (settings.Disk1.Name.Length > 0)
             {
                 _drives[0].InsertDisk(settings.Disk1.Name, settings.Disk1.IsWriteProtected);
