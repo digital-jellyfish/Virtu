@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Jellyfish.Library;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Storage;
 
 namespace Jellyfish.Virtu.Services
@@ -58,6 +57,6 @@ namespace Jellyfish.Virtu.Services
         }
 
         private GameBase _game;
-        private Lazy<StorageDevice> _storageDevice = new Lazy<StorageDevice>(() => Guide.EndShowStorageDeviceSelector(Guide.BeginShowStorageDeviceSelector(null, null)));
+        private Lazy<StorageDevice> _storageDevice = new Lazy<StorageDevice>(() => StorageDevice.EndShowSelector(StorageDevice.BeginShowSelector(null, null)));
     }
 }

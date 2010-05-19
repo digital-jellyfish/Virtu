@@ -58,11 +58,11 @@ namespace Jellyfish.Virtu
             bool? result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
             {
-                using (FileStream stream = File.OpenRead(dialog.FileName))
+                using (var stream = File.OpenRead(dialog.FileName))
                 {
                     _machine.Pause();
                     _machine.DiskII.Drives[drive].InsertDisk(dialog.FileName, stream, false);
-                    DiskIISettings settings = _machine.Settings.DiskII;
+                    var settings = _machine.Settings.DiskII;
                     if (drive == 0)
                     {
                         settings.Disk1.Name = dialog.FileName;

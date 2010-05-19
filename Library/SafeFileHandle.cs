@@ -1,17 +1,15 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.AccessControl;
-using System.Security.Permissions;
 using Microsoft.Win32.SafeHandles;
 
 namespace Jellyfish.Library
 {
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+    [SecurityCritical]
     public sealed class SafeFileHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
@@ -27,6 +25,7 @@ namespace Jellyfish.Library
             SetHandle(existingHandle);
         }
 
+        [SecurityCritical]
         public static SafeFileHandle CreateFile(string fileName, FileAccess fileAccess, FileShare fileShare, FileMode fileMode, GeneralSecurity fileSecurity)
         {
             if (fileMode == FileMode.Append)
@@ -41,6 +40,7 @@ namespace Jellyfish.Library
         }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [SecurityCritical]
         protected override bool ReleaseHandle()
         {
             return NativeMethods.CloseHandle(handle);
@@ -62,6 +62,7 @@ namespace Jellyfish.Library
             fileSecurity.Persist(this);
         }
 
+        [SecurityCritical]
         private static SafeFileHandle CreateFile(string fileName, uint fileAccess, uint fileShare, uint fileMode, uint fileOptions, GeneralSecurity fileSecurity, 
             bool inheritable)
         {
@@ -72,13 +73,14 @@ namespace Jellyfish.Library
                 file = NativeMethods.CreateFile(fileName, fileAccess, fileShare, securityAttributes, fileMode, fileOptions, IntPtr.Zero);
                 if (file.IsInvalid)
                 {
-                    throw new Win32Exception();
+                    Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
                 }
             });
 
             return file;
         }
 
+        [SecurityCritical]
         [SuppressUnmanagedCodeSecurity]
         private static class NativeMethods
         {

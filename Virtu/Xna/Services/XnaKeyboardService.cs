@@ -300,7 +300,7 @@ namespace Jellyfish.Virtu.Services
         }
 
         private static readonly Keys[] KeyValues = 
-#if XBOX
+#if WINDOWS_PHONE || XBOX
             (from key in 
                 (from field in typeof(Keys).GetFields() // missing Enum.GetValues; use reflection
                 where field.IsLiteral

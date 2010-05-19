@@ -25,11 +25,11 @@ namespace Jellyfish.Virtu.Services
             var resourceStream = (Stream)resourceManager.GetObject(resourceName);
             if (resourceStream == null)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, SR.ResourceNotFound, resourceName));
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.ResourceNotFound, resourceName));
             }
             if ((resourceSize > 0) && (resourceStream.Length != resourceSize))
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, SR.ResourceInvalid, resourceName));
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Strings.ResourceInvalid, resourceName));
             }
 
             return resourceStream;

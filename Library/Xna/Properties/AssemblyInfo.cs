@@ -6,10 +6,10 @@ using Jellyfish.Library;
 
 [assembly: AssemblyTitle("Library")]
 [assembly: AssemblyDescription("Common Library")]
-#if XBOX
+#if WINDOWS_PHONE
+[assembly: AssemblyProduct("Jellyfish.Library.Xna.Phone")]
+#elif XBOX
 [assembly: AssemblyProduct("Jellyfish.Library.Xna.Xbox")]
-#elif ZUNE
-[assembly: AssemblyProduct("Jellyfish.Library.Xna.Zune")]
 #else
 [assembly: AssemblyProduct("Jellyfish.Library.Xna")]
 #endif
@@ -17,11 +17,9 @@ using Jellyfish.Library;
 [assembly: AssemblyCopyright("Copyright © 2009-2010 Digital Jellyfish Design Ltd")]
 [assembly: AssemblyComment("Developed by Sean Fausett")]
 
-[assembly: AssemblyVersion("0.1.1.0")]
-#if WINDOWS
-[assembly: AssemblyFileVersion("0.1.1.0")]
-#endif
-[assembly: AssemblyInformationalVersion("0.1.1.0")]
+[assembly: AssemblyVersion("0.1.2.0")]
+[assembly: AssemblyFileVersion("0.1.2.0")]
+[assembly: AssemblyInformationalVersion("0.1.2.0")]
 
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]

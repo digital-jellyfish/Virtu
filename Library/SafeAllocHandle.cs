@@ -1,15 +1,13 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Security.Permissions;
 using Microsoft.Win32.SafeHandles;
 
 namespace Jellyfish.Library
 {
-    [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode = true)]
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+    [SecurityCritical]
     public abstract class SafeAllocHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
@@ -19,7 +17,7 @@ namespace Jellyfish.Library
         }
     }
 
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+    [SecurityCritical]
     public sealed class SafeGlobalAllocHandle : SafeAllocHandle
     {
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
@@ -35,11 +33,13 @@ namespace Jellyfish.Library
             SetHandle(existingHandle);
         }
 
+        [SecurityCritical]
         public static SafeGlobalAllocHandle Allocate(int size)
         {
             return Allocate(0x0, size);
         }
 
+        [SecurityCritical]
         public static SafeGlobalAllocHandle Allocate(byte[] value)
         {
             if (value == null)
@@ -54,25 +54,29 @@ namespace Jellyfish.Library
         }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [SecurityCritical]
         protected override bool ReleaseHandle()
         {
             return (NativeMethods.GlobalFree(handle) == IntPtr.Zero);
         }
 
+        [SecurityCritical]
         private static SafeGlobalAllocHandle Allocate(uint flags, int size)
         {
             var alloc = NativeMethods.GlobalAlloc(flags, (IntPtr)size);
             if (alloc.IsInvalid)
             {
-                throw new Win32Exception();
+                Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
             }
 
             return alloc;
         }
 
+        [SecurityCritical]
         [SuppressUnmanagedCodeSecurity]
         private static class NativeMethods
         {
+            [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
             [DllImport("kernel32.dll", SetLastError = true)]
             public static extern SafeGlobalAllocHandle GlobalAlloc(uint dwFlags, IntPtr sizetBytes);
 
@@ -82,7 +86,7 @@ namespace Jellyfish.Library
         }
     }
 
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+    [SecurityCritical]
     public sealed class SafeLocalAllocHandle : SafeAllocHandle
     {
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
@@ -98,11 +102,13 @@ namespace Jellyfish.Library
             SetHandle(existingHandle);
         }
 
+        [SecurityCritical]
         public static SafeLocalAllocHandle Allocate(int size)
         {
             return Allocate(0x0, size);
         }
 
+        [SecurityCritical]
         public static SafeLocalAllocHandle Allocate(byte[] value)
         {
             if (value == null)
@@ -117,25 +123,29 @@ namespace Jellyfish.Library
         }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [SecurityCritical]
         protected override bool ReleaseHandle()
         {
             return (NativeMethods.LocalFree(handle) == IntPtr.Zero);
         }
 
+        [SecurityCritical]
         private static SafeLocalAllocHandle Allocate(uint flags, int size)
         {
             var alloc = NativeMethods.LocalAlloc(flags, (IntPtr)size);
             if (alloc.IsInvalid)
             {
-                throw new Win32Exception();
+                Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
             }
 
             return alloc;
         }
 
+        [SecurityCritical]
         [SuppressUnmanagedCodeSecurity]
         private static class NativeMethods
         {
+            [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
             [DllImport("kernel32.dll", SetLastError = true)]
             public static extern SafeLocalAllocHandle LocalAlloc(uint dwFlags, IntPtr sizetBytes);
 

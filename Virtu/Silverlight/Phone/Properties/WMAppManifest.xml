@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Deployment xmlns="http://schemas.microsoft.com/windowsphone/2009/deployment" AppPlatformVersion="7.0">
+    <App xmlns="" ProductID="{89a50370-1ed9-4cf1-ad08-043b6e6f3c90}" Title="Virtu" RuntimeType="SilverLight" Version="1.0.0.0" Genre="NormalApp" Author="" Description="" Publisher="">
+        <IconPath IsRelative="true" IsResource="false">AppIcon.png</IconPath>
+        <Capabilities>
+            <Capability Name="ID_CAP_NETWORKING" />
+            <Capability Name="ID_CAP_LOCATION" />
+            <Capability Name="ID_CAP_SENSORS" />
+            <Capability Name="ID_CAP_MICROPHONE" />
+            <Capability Name="ID_CAP_MEDIALIB" />
+            <Capability Name="ID_CAP_GAMERSERVICES" />
+            <Capability Name="ID_CAP_PHONEDIALER" />
+            <Capability Name="ID_CAP_PUSH_NOTIFICATION" />
+            <Capability Name="ID_CAP_WEBBROWSERCOMPONENT" />
+        </Capabilities>
+        <Tasks>
+            <DefaultTask Name="_default" PlaceHolderString="Default task" />
+        </Tasks>
+        <Tokens>
+            <PrimaryToken TokenID="Jellyfish.Virtu.Silverlight.Phone.Token" TaskName="_default">
+                <TemplateType5>
+                    <BackgroundImageURI IsRelative="true" IsResource="false">Background.png</BackgroundImageURI>
+                    <Count>0</Count>
+                    <Title>Virtu</Title>
+                </TemplateType5>
+            </PrimaryToken>
+        </Tokens>
+    </App>
+</Deployment>

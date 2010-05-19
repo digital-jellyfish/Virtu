@@ -1,37 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D59B29AC-1105-410D-A88D-61E9C98B0C4B}</ProjectGuid>
+    <ProjectGuid>{C152D47E-BBC1-4C35-8646-465180720A72}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Jellyfish.Virtu</RootNamespace>
     <AssemblyName>Jellyfish.Virtu</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\Jellyfish.snk</AssemblyOriginatorKeyFile>
-    <ApplicationIcon>Properties\AppleIcon.ico</ApplicationIcon>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>
-    </NoWarn>
-    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
@@ -39,31 +39,22 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>
-    </NoWarn>
-    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
     <Reference Include="System.Deployment" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="PresentationCore">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="PresentationFramework">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="MainApp.xaml">
@@ -114,17 +105,8 @@
     <Compile Include="..\GlobalSuppressions.cs">
       <Link>GlobalSuppressions.cs</Link>
     </Compile>
-    <Compile Include="..\Services\AudioService.cs">
-      <Link>Services\AudioService.cs</Link>
-    </Compile>
-    <Compile Include="..\Services\GamePortService.cs">
-      <Link>Services\GamePortService.cs</Link>
-    </Compile>
     <Compile Include="..\Keyboard.cs">
       <Link>Core\Keyboard.cs</Link>
-    </Compile>
-    <Compile Include="..\Services\KeyboardService.cs">
-      <Link>Services\KeyboardService.cs</Link>
     </Compile>
     <Compile Include="..\Machine.cs">
       <Link>Core\Machine.cs</Link>
@@ -135,12 +117,6 @@
     <Compile Include="..\MachineEvents.cs">
       <Link>Core\MachineEvents.cs</Link>
     </Compile>
-    <Compile Include="..\Services\MachineService.cs">
-      <Link>Services\MachineService.cs</Link>
-    </Compile>
-    <Compile Include="..\Services\MachineServices.cs">
-      <Link>Services\MachineServices.cs</Link>
-    </Compile>
     <Compile Include="..\MachineSettings.cs">
       <Link>Core\MachineSettings.cs</Link>
     </Compile>
@@ -150,14 +126,35 @@
     <Compile Include="..\MemoryData.cs">
       <Link>Core\MemoryData.cs</Link>
     </Compile>
-    <Compile Include="..\Properties\SR.Designer.cs">
-      <Link>Properties\SR.Designer.cs</Link>
+    <Compile Include="..\Properties\Strings.Designer.cs">
+      <Link>Properties\Strings.Designer.cs</Link>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>SR.resx</DependentUpon>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="..\Services\AudioService.cs">
+      <Link>Services\AudioService.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\GamePortService.cs">
+      <Link>Services\GamePortService.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\IsolatedStorageService.cs">
+      <Link>Services\IsolatedStorageService.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\KeyboardService.cs">
+      <Link>Services\KeyboardService.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\MachineService.cs">
+      <Link>Services\MachineService.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\MachineServices.cs">
+      <Link>Services\MachineServices.cs</Link>
     </Compile>
     <Compile Include="..\Services\StorageService.cs">
       <Link>Services\StorageService.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\VideoService.cs">
+      <Link>Services\VideoService.cs</Link>
     </Compile>
     <Compile Include="..\Speaker.cs">
       <Link>Core\Speaker.cs</Link>
@@ -168,42 +165,35 @@
     <Compile Include="..\VideoData.cs">
       <Link>Core\VideoData.cs</Link>
     </Compile>
-    <Compile Include="..\Services\VideoService.cs">
-      <Link>Services\VideoService.cs</Link>
-    </Compile>
-    <Compile Include="..\Xna\Services\XnaGamePortService.cs">
-      <Link>Services\XnaGamePortService.cs</Link>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\WpfAudioService.cs" />
     <Compile Include="Services\WpfKeyboardService.cs" />
     <Compile Include="Services\WpfStorageService.cs" />
     <Compile Include="Services\WpfVideoService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\Properties\Strings.resx">
+      <Link>Properties\Strings.resx</Link>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\Disks\Default.dsk">
+      <Link>Disks\Default.dsk</Link>
+    </Resource>
     <Resource Include="..\Roms\AppleIIe.rom">
       <Link>Roms\AppleIIe.rom</Link>
     </Resource>
     <Resource Include="..\Roms\DiskII.rom">
       <Link>Roms\DiskII.rom</Link>
     </Resource>
-    <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\Properties\SR.resx">
-      <Link>Properties\SR.resx</Link>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SR.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Properties\AppleIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Library\Wpf\Jellyfish.Library.Wpf.csproj">
-      <Project>{D47A24A9-1590-4E8A-A406-BC66D5891BFA}</Project>
-      <Name>Jellyfish.Library.Wpf</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
@@ -211,9 +201,10 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="..\Disks\Default.dsk">
-      <Link>Disks\Default.dsk</Link>
-    </Resource>
+    <ProjectReference Include="..\..\Library\Wpf\Jellyfish.Library.Wpf.csproj">
+      <Project>{93900841-7250-4D3A-837E-43EE3FD118DC}</Project>
+      <Name>Jellyfish.Library.Wpf</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

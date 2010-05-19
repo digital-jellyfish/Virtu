@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.AccessControl;
-using System.Security.Permissions;
 using System.Security.Principal;
 
 namespace Jellyfish.Library
@@ -10,7 +10,6 @@ namespace Jellyfish.Library
     [StructLayout(LayoutKind.Sequential)]
     public sealed class SecurityAttributes
     {
-        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
         public SecurityAttributes()
         {
             _length = Marshal.SizeOf(typeof(SecurityAttributes));
@@ -118,13 +117,13 @@ namespace Jellyfish.Library
             base.AddAuditRule(rule);
         }
 
-        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+        [SecurityCritical]
         public void GetSecurityAttributes(bool inheritable, Action<SecurityAttributes> action)
         {
             GetSecurityAttributes(this, inheritable, action);
         }
 
-        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+        [SecurityCritical]
         public static void GetSecurityAttributes(ObjectSecurity security, bool inheritable, Action<SecurityAttributes> action)
         {
             if (action == null)

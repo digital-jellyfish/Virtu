@@ -50,7 +50,7 @@ namespace Jellyfish.Virtu.Services
 
         protected void OnAsciiKeyDown(int asciiKey)
         {
-            EventHandler<AsciiKeyEventArgs> handler = AsciiKeyDown;
+            var handler = AsciiKeyDown;
             if (handler != null)
             {
                 handler(this, AsciiKeyEventArgs.Create(asciiKey));

@@ -13,7 +13,7 @@ namespace Jellyfish.Virtu
 
         public override void Initialize()
         {
-            _drives[0].InsertDisk("Default.dsk", StorageService.GetResourceStream("Default.dsk", 0x23000), false);
+            _drives[0].InsertDisk("Default.dsk", StorageService.GetResourceStream("Disks/Default.dsk", 0x23000), false);
 
 #if WINDOWS
             var settings = Machine.Settings.DiskII;

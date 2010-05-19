@@ -39,6 +39,8 @@ namespace Jellyfish.Virtu.Services
                 _timer.Dispose();
 #endif
             }
+
+            base.Dispose(disposing);
         }
 
 #if WINDOWS

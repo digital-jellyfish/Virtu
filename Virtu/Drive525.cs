@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security;
 using Jellyfish.Library;
 
 namespace Jellyfish.Virtu
@@ -14,6 +15,9 @@ namespace Jellyfish.Virtu
             DriveArmStepDelta[3] = new int[] { 0,  1,  0,  1, -1,  0, -1,  0,  0,  1,  0,  1, -1,  0, -1,  0 }; // phase 3
         }
 
+#if !XBOX
+        [SecurityCritical]
+#endif
         public void InsertDisk(string fileName, bool isWriteProtected)
         {
             using (var stream = File.OpenRead(fileName))

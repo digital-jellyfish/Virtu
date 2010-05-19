@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Threading;
 
 namespace Jellyfish.Library
@@ -26,6 +27,7 @@ namespace Jellyfish.Library
 
     public sealed partial class DirectSound : IDisposable
     {
+        [SecurityCritical]
         public DirectSound(int sampleRate, int sampleChannels, int sampleBits, int sampleSize)
         {
             _sampleRate = sampleRate;
@@ -55,6 +57,7 @@ namespace Jellyfish.Library
             _thread.Join();
         }
 
+        [SecurityCritical]
         private void Initialize()
         {
             int hresult = NativeMethods.DirectSoundCreate(IntPtr.Zero, out _device, IntPtr.Zero);
@@ -83,6 +86,7 @@ namespace Jellyfish.Library
             _buffer.Play(0, 0, BufferPlay.Looping);
         }
 
+        [SecurityCritical]
         private void ClearBuffer()
         {
             UpdateBuffer(0, 0, BufferLock.EntireBuffer, (buffer, bufferSize) => MarshalHelpers.ZeroMemory(buffer, bufferSize));
@@ -100,7 +104,7 @@ namespace Jellyfish.Library
 
         private void UpdateBuffer(int block)
         {
-            EventHandler<DirectSoundUpdateEventArgs> handler = Update;
+            var handler = Update;
             if (handler != null)
             {
                 UpdateBuffer(block * _sampleSize, _sampleSize, BufferLock.None, (buffer, bufferSize) => handler(this, DirectSoundUpdateEventArgs.Create(buffer, bufferSize)));
@@ -144,6 +148,7 @@ namespace Jellyfish.Library
             }
         }
 
+        [SecurityCritical]
         private void Run() // com mta thread
         {
             Initialize();

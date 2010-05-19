@@ -97,6 +97,7 @@ namespace Jellyfish.Library
             void SetNotificationPositions(int dwPositionNotifies, [MarshalAs(UnmanagedType.LPArray)] BufferPositionNotify[] pcPositionNotifies);
         }
 
+        [SecurityCritical]
         [SuppressUnmanagedCodeSecurity]
         private static class NativeMethods
         {

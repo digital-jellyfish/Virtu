@@ -13,11 +13,11 @@ namespace Jellyfish.Virtu
         {
             InitializeComponent();
 
-            _storageService = new SilverlightStorageService(_machine);
+            _storageService = new IsolatedStorageService(_machine);
             _keyboardService = new SilverlightKeyboardService(_machine, this);
             _gamePortService = new GamePortService(_machine); // not connected
             _audioService = new SilverlightAudioService(_machine, this, _media);
-            _videoService = new SilverlightVideoService(_machine, _image);
+            _videoService = new SilverlightVideoService(_machine, this, _image);
 
             _machine.Services.AddService(typeof(StorageService), _storageService);
             _machine.Services.AddService(typeof(KeyboardService), _keyboardService);

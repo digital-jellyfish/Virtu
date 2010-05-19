@@ -25,7 +25,7 @@ namespace Jellyfish.Virtu
     {
         public void AddEvent(int delta, Action action)
         {
-            LinkedListNode<MachineEvent> node = _used.First;
+            var node = _used.First;
             for (; node != null; node = node.Next)
             {
                 if (delta < node.Value.Delta)
@@ -39,7 +39,7 @@ namespace Jellyfish.Virtu
                 }
             }
 
-            LinkedListNode<MachineEvent> newNode = _free.First;
+            var newNode = _free.First;
             if (newNode != null)
             {
                 _free.RemoveFirst();
@@ -65,7 +65,7 @@ namespace Jellyfish.Virtu
         {
             int delta = 0;
 
-            for (LinkedListNode<MachineEvent> node = _used.First; node != null; node = node.Next)
+            for (var node = _used.First; node != null; node = node.Next)
             {
                 delta += node.Value.Delta;
                 if (object.ReferenceEquals(node.Value.Action, action)) // assumes delegate cached
@@ -79,7 +79,7 @@ namespace Jellyfish.Virtu
 
         public void HandleEvents(int delta)
         {
-            LinkedListNode<MachineEvent> node = _used.First;
+            var node = _used.First;
             node.Value.Delta -= delta;
 
             while (node.Value.Delta <= 0)

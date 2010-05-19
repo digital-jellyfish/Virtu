@@ -10,7 +10,7 @@ namespace Jellyfish.Virtu
         public Cpu(Machine machine) : 
             base(machine)
         {
-            ExecuteOpcode65N02 = new Action[OpcodeCount]
+            ExecuteOpCode65N02 = new Action[OpCodeCount]
             {
                 Execute65X02Brk00, Execute65X02Ora01, Execute65N02Nop02, Execute65N02Nop03, 
                 Execute65N02Nop04, Execute65X02Ora05, Execute65X02Asl06, Execute65N02Nop07, 
@@ -78,7 +78,7 @@ namespace Jellyfish.Virtu
                 Execute65N02NopFC, Execute65N02SbcFD, Execute65N02IncFE, Execute65N02NopFF
             };
 
-            ExecuteOpcode65C02 = new Action[OpcodeCount]
+            ExecuteOpCode65C02 = new Action[OpCodeCount]
             {
                 Execute65X02Brk00, Execute65X02Ora01, Execute65C02Nop02, Execute65C02Nop03, 
                 Execute65C02Tsb04, Execute65X02Ora05, Execute65X02Asl06, Execute65C02Nop07, 
@@ -178,9 +178,9 @@ namespace Jellyfish.Virtu
         public int Execute()
         {
             CC = 0;
-            Opcode = _memory.Read(RPC);
+            OpCode = _memory.Read(RPC);
             RPC = (RPC + 1) & 0xFFFF;
-            _executeOpcode[Opcode]();
+            _executeOpCode[OpCode]();
             Cycles += CC;
 
             return CC;
@@ -386,7 +386,7 @@ namespace Jellyfish.Virtu
         }
         #endregion
 
-        #region Core Opcode Actions
+        #region Core OpCode Actions
         private void ExecuteAdc65N02(int data, int cc)
         {
             if ((RP & PD) == 0x0)
@@ -1123,7 +1123,7 @@ namespace Jellyfish.Virtu
         }
         #endregion
 
-        #region 6502 Opcode Actions
+        #region 6502 OpCode Actions
         private void Execute65X02And21() // and (zpg, x)
         {
             GetAddressZpgIndX();
@@ -1858,7 +1858,7 @@ namespace Jellyfish.Virtu
         }
         #endregion
 
-        #region 65N02 Opcode Actions
+        #region 65N02 OpCode Actions
         private void Execute65N02Adc61() // adc (zpg, x)
         {
             GetAddressZpgIndX();
@@ -2520,7 +2520,7 @@ namespace Jellyfish.Virtu
         }
         #endregion
 
-        #region 65C02 Opcode Actions
+        #region 65C02 OpCode Actions
         private void Execute65C02Adc61() // adc (zpg, x)
         {
             GetAddressZpgIndX();
@@ -3212,7 +3212,7 @@ namespace Jellyfish.Virtu
 
         private void UpdateSettings()
         {
-            _executeOpcode = Machine.Settings.Cpu.Is65C02 ? ExecuteOpcode65C02 : ExecuteOpcode65N02;
+            _executeOpCode = Machine.Settings.Cpu.Is65C02 ? ExecuteOpCode65C02 : ExecuteOpCode65N02;
         }
 
         public int RA { get; private set; }
@@ -3223,11 +3223,11 @@ namespace Jellyfish.Virtu
         public int RPC { get; private set; }
         public int EA { get; private set; }
         public int CC { get; private set; }
-        public int Opcode { get; private set; }
+        public int OpCode { get; private set; }
         public long Cycles { get; private set; }
 
         private Memory _memory;
 
-        private Action[] _executeOpcode;
+        private Action[] _executeOpCode;
     }
 }

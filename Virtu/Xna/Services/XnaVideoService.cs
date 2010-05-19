@@ -26,10 +26,12 @@ namespace Jellyfish.Virtu.Services
             _game.GraphicsDeviceService.DeviceReset += (sender, e) => SetTexturePosition();
         }
 
-        [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "y*560")]
+        [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow")]
         public override void SetPixel(int x, int y, uint color)
         {
-            _pixels[y * TextureWidth + x] = color;
+            uint rgbaColor = ((color << 16) & 0xFF0000) | (color & 0x00FF00) | ((color >> 16) & 0x0000FF); // convert from BGRA to RGBA
+            _pixels[y * TextureWidth + x] = rgbaColor;
+            _pixels[(y + 1) * TextureWidth + x] = (_textureScale < 1) ? rgbaColor : 0x0;
             _pixelsDirty = true;
         }
 
@@ -47,8 +49,7 @@ namespace Jellyfish.Virtu.Services
                 _texture.SetData(_pixels);
             }
 
-            _spriteBatch.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate, SaveStateMode.None);
-            _graphicsDevice.SamplerStates[0].MagFilter = TextureFilter.Point;
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, null, null);
             _spriteBatch.Draw(_texture, _texturePosition, null, Color.White, 0, Vector2.Zero, _textureScale, SpriteEffects.None, 0);
             _spriteBatch.End();
         }
@@ -60,6 +61,8 @@ namespace Jellyfish.Virtu.Services
                 _spriteBatch.Dispose();
                 _texture.Dispose();
             }
+
+            base.Dispose(disposing);
         }
 
         private void OnGraphicsDeviceManagerPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -67,7 +70,29 @@ namespace Jellyfish.Virtu.Services
             var displayMode = e.GraphicsDeviceInformation.Adapter.CurrentDisplayMode;
             var presentationParameters = e.GraphicsDeviceInformation.PresentationParameters;
 
-#if WINDOWS
+#if WINDOWS_PHONE
+            bool portraitOrientation = (presentationParameters.DisplayOrientation & DisplayOrientation.Portrait) != 0;
+            if (portraitOrientation)
+            {
+                _textureScale = Math.Min((float)displayMode.TitleSafeArea.Width / TextureWidth, (float)displayMode.TitleSafeArea.Height / TextureHeight);
+                presentationParameters.BackBufferWidth = displayMode.Width; // always use portrait display mode
+                presentationParameters.BackBufferHeight = displayMode.Height;
+            }
+            else
+            {
+                _textureScale = Math.Min((float)displayMode.TitleSafeArea.Height / TextureWidth, (float)displayMode.TitleSafeArea.Width / TextureHeight);
+                presentationParameters.BackBufferWidth = displayMode.Height; // always use landscape display mode
+                presentationParameters.BackBufferHeight = displayMode.Width;
+            }
+            if (_textureScale > 1)
+            {
+                _textureScale = (float)Math.Floor(_textureScale); // integer scale up
+            }
+#elif XBOX
+            _textureScale = Math.Min(displayMode.TitleSafeArea.Width / TextureWidth, displayMode.TitleSafeArea.Height / TextureHeight);
+            presentationParameters.BackBufferWidth = displayMode.Width; // always use display mode
+            presentationParameters.BackBufferHeight = displayMode.Height;
+#else
             if (presentationParameters.IsFullScreen)
             {
                 _textureScale = Math.Min((int)SystemParameters.PrimaryScreenWidth / TextureWidth, (int)SystemParameters.PrimaryScreenHeight / TextureHeight);
@@ -77,13 +102,9 @@ namespace Jellyfish.Virtu.Services
             else
             {
                 _textureScale = Math.Min((int)SystemParameters.FullPrimaryScreenWidth / TextureWidth, (int)SystemParameters.FullPrimaryScreenHeight / TextureHeight);
-                presentationParameters.BackBufferWidth = _textureScale * TextureWidth;
-                presentationParameters.BackBufferHeight = _textureScale * TextureHeight;
+                presentationParameters.BackBufferWidth = (int)_textureScale * TextureWidth;
+                presentationParameters.BackBufferHeight = (int)_textureScale * TextureHeight;
             }
-#else
-            _textureScale = Math.Min(displayMode.TitleSafeArea.Width / TextureWidth, displayMode.TitleSafeArea.Height / TextureHeight);
-            presentationParameters.BackBufferWidth = displayMode.Width; // always use display mode
-            presentationParameters.BackBufferHeight = displayMode.Height;
 #endif
         }
 
@@ -91,7 +112,7 @@ namespace Jellyfish.Virtu.Services
         {
             _graphicsDevice = _game.GraphicsDevice;
             _spriteBatch = new SpriteBatch(_graphicsDevice);
-            _texture = new Texture2D(_graphicsDevice, TextureWidth, TextureHeight, 1, TextureUsage.None, SurfaceFormat.Bgr32);
+            _texture = new Texture2D(_graphicsDevice, TextureWidth, TextureHeight, false, SurfaceFormat.Color);
             _pixels = new uint[TextureWidth * TextureHeight];
             SetTexturePosition();
         }
@@ -110,7 +131,7 @@ namespace Jellyfish.Virtu.Services
         private SpriteBatch _spriteBatch;
         private Texture2D _texture;
         private Vector2 _texturePosition;
-        private int _textureScale;
+        private float _textureScale;
         private uint[] _pixels;
         private bool _pixelsDirty;
     }

@@ -893,7 +893,7 @@ namespace Jellyfish.Virtu
 
         private void FlushScreen()
         {
-            Action<int> flushRowMode = FlushRowMode[_memory.VideoMode];
+            var flushRowMode = FlushRowMode[_memory.VideoMode];
 
             for (int y = 0; y < Height; y += CellHeight)
             {

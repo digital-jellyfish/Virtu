@@ -10,9 +10,21 @@ namespace Jellyfish.Virtu
         public MainGame() : 
             base("Virtu")
         {
-            Components.Add(new FrameRateCounter(this) { DrawOrder = 1, FontName = "Consolas" });
+#if WINDOWS_PHONE
+            GraphicsDeviceManager.IsFullScreen = true;
+            GraphicsDeviceManager.PreferredBackBufferWidth = 480; // TODO remove; works around known ctp issue
+            GraphicsDeviceManager.PreferredBackBufferHeight = 800;
+#endif
+            var frameRateCounter = new FrameRateCounter(this); // no initializers; avoids CA2000
+            Components.Add(frameRateCounter);
+            frameRateCounter.DrawOrder = 1;
+            frameRateCounter.FontName = "Consolas";
 
+#if WINDOWS_PHONE
+            _storageService = new IsolatedStorageService(_machine);
+#else
             _storageService = new XnaStorageService(_machine, this);
+#endif
             _keyboardService = new XnaKeyboardService(_machine);
             _gamePortService = new XnaGamePortService(_machine);
             _audioService = new XnaAudioService(_machine, this);

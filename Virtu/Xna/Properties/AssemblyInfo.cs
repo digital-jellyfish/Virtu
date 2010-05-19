@@ -6,7 +6,9 @@ using Jellyfish.Library;
 
 [assembly: AssemblyTitle("Virtu")]
 [assembly: AssemblyDescription("Apple IIe Emulator")]
-#if XBOX
+#if WINDOWS_PHONE
+[assembly: AssemblyProduct("Jellyfish.Virtu.Xna.Phone")]
+#elif XBOX
 [assembly: AssemblyProduct("Jellyfish.Virtu.Xna.Xbox")]
 #else
 [assembly: AssemblyProduct("Jellyfish.Virtu.Xna")]
@@ -15,11 +17,9 @@ using Jellyfish.Library;
 [assembly: AssemblyCopyright("Copyright © 1995-2010 Digital Jellyfish Design Ltd")]
 [assembly: AssemblyComment("Developed by Sean Fausett & Nick Westgate")]
 
-[assembly: AssemblyVersion("0.8.1.0")]
-#if WINDOWS
-[assembly: AssemblyFileVersion("0.8.1.0")]
-#endif
-[assembly: AssemblyInformationalVersion("0.8.1.0")]
+[assembly: AssemblyVersion("0.8.2.0")]
+[assembly: AssemblyFileVersion("0.8.2.0")]
+[assembly: AssemblyInformationalVersion("0.8.2.0")]
 
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]

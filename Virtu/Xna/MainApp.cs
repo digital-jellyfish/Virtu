@@ -1,5 +1,6 @@
 namespace Jellyfish.Virtu
 {
+#if WINDOWS || XBOX
     static class MainApp
     {
         static void Main()
@@ -10,4 +11,5 @@ namespace Jellyfish.Virtu
             }
         }
     }
+#endif
 }

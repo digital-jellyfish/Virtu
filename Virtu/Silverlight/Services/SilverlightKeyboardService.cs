@@ -303,7 +303,7 @@ namespace Jellyfish.Virtu.Services
                         return shift ? '>' : '.';
                     }
                     break;
-
+#if !WINDOWS_PHONE
                 case PlatformID.MacOSX:
                     switch (platformKeyCode)
                     {
@@ -341,7 +341,7 @@ namespace Jellyfish.Virtu.Services
                         return shift ? '>' : '.';
                     }
                     break;
-
+#endif
                 case PlatformID.Unix:
                     switch (platformKeyCode)
                     {

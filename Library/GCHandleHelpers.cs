@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
+using System.Security;
 
 namespace Jellyfish.Library
 {
     public static class GCHandleHelpers
     {
-        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+        [SecurityCritical]
         public static void Pin(object value, Action<IntPtr> action)
         {
             if (action == null)

@@ -19,7 +19,6 @@ namespace Jellyfish.Library
             GraphicsDeviceManager = new GraphicsDeviceManager(this);
             GraphicsDeviceService = (IGraphicsDeviceService)Services.GetService(typeof(IGraphicsDeviceService));
 
-            Components.Add(new GamerServicesComponent(this));
             Content.RootDirectory = "Content";
             if (!string.IsNullOrEmpty(Name))
             {

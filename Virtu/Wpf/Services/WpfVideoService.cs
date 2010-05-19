@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Permissions;
+using System.Security;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -11,7 +11,8 @@ namespace Jellyfish.Virtu.Services
 {
     public sealed class WpfVideoService : VideoService
     {
-        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+        [SecurityCritical]
+        [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
         public WpfVideoService(Machine machine, Window window, Image image) : 
             base(machine)
         {
@@ -26,14 +27,13 @@ namespace Jellyfish.Virtu.Services
 
             _window = window;
             _image = image;
-
             _image.Source = _bitmap;
-            SetImageSize();
 
+            _window.SizeChanged += (sender, e) => SetImageSize();
             SystemEvents.DisplaySettingsChanged += (sender, e) => SetImageSize();
         }
 
-        [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "y*560")]
+        [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow")]
         public override void SetPixel(int x, int y, uint color)
         {
             _pixels[y * BitmapWidth + x] = color;
@@ -42,12 +42,11 @@ namespace Jellyfish.Virtu.Services
 
         public override void Update() // main thread
         {
-            if (_window.IsActive && (_isFullScreen != IsFullScreen))
+            if (_isFullScreen != IsFullScreen)
             {
                 if (IsFullScreen)
                 {
                     _window.SizeToContent = SizeToContent.Manual;
-                    _window.Topmost = true;
                     _window.WindowStyle = WindowStyle.None;
                     _window.WindowState = WindowState.Maximized;
                 }
@@ -55,11 +54,9 @@ namespace Jellyfish.Virtu.Services
                 {
                     _window.WindowState = WindowState.Normal;
                     _window.WindowStyle = WindowStyle.SingleBorderWindow;
-                    _window.Topmost = false;
                     _window.SizeToContent = SizeToContent.WidthAndHeight;
                 }
                 _isFullScreen = IsFullScreen;
-                SetImageSize();
             }
 
             if (_pixelsDirty)
@@ -75,6 +72,7 @@ namespace Jellyfish.Virtu.Services
                 Math.Min((int)SystemParameters.FullPrimaryScreenWidth / BitmapWidth, (int)SystemParameters.FullPrimaryScreenHeight / BitmapHeight);
             _image.Width = uniformScale * BitmapWidth;
             _image.Height = uniformScale * BitmapHeight;
+            Machine.Video.DirtyScreen();
         }
 
         private const int BitmapWidth = 560;

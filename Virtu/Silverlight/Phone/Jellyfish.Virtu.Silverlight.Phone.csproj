@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9F1025D2-E23B-4CDC-AC63-150941013963}</ProjectGuid>
+    <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Jellyfish.Virtu</RootNamespace>
+    <AssemblyName>Jellyfish.Virtu</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <TargetFrameworkProfile>WindowsPhone</TargetFrameworkProfile>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <SilverlightApplication>true</SilverlightApplication>
+    <SupportedCultures>
+    </SupportedCultures>
+    <XapOutputs>true</XapOutputs>
+    <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
+    <XapFilename>Jellyfish.Virtu.xap</XapFilename>
+    <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
+    <SilverlightAppEntry>Jellyfish.Virtu.MainApp</SilverlightAppEntry>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE;CODE_ANALYSIS</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE;CODE_ANALYSIS</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Phone.Controls" />
+    <Reference Include="Microsoft.Phone.Controls.Navigation" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="MainApp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+    <Page Include="MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="MainApp.xaml.cs">
+      <DependentUpon>MainApp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Cassette.cs">
+      <Link>Core\Cassette.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Cpu.cs">
+      <Link>Core\Cpu.cs</Link>
+    </Compile>
+    <Compile Include="..\..\CpuData.cs">
+      <Link>Core\CpuData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Disk525.cs">
+      <Link>Core\Disk525.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DiskDsk.cs">
+      <Link>Core\DiskDsk.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DiskII.cs">
+      <Link>Core\DiskII.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DiskNib.cs">
+      <Link>Core\DiskNib.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Drive525.cs">
+      <Link>Core\Drive525.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GamePort.cs">
+      <Link>Core\GamePort.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GlobalSuppressions.cs">
+      <Link>GlobalSuppressions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Keyboard.cs">
+      <Link>Core\Keyboard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Machine.cs">
+      <Link>Core\Machine.cs</Link>
+    </Compile>
+    <Compile Include="..\..\MachineComponent.cs">
+      <Link>Core\MachineComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\MachineEvents.cs">
+      <Link>Core\MachineEvents.cs</Link>
+    </Compile>
+    <Compile Include="..\..\MachineSettings.cs">
+      <Link>Core\MachineSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Memory.cs">
+      <Link>Core\Memory.cs</Link>
+    </Compile>
+    <Compile Include="..\..\MemoryData.cs">
+      <Link>Core\MemoryData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Properties\Strings.Designer.cs">
+      <Link>Properties\Strings.Designer.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="..\..\Services\AudioService.cs">
+      <Link>Services\AudioService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Services\GamePortService.cs">
+      <Link>Services\GamePortService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Services\IsolatedStorageService.cs">
+      <Link>Services\IsolatedStorageService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Services\KeyboardService.cs">
+      <Link>Services\KeyboardService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Services\MachineService.cs">
+      <Link>Services\MachineService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Services\MachineServices.cs">
+      <Link>Services\MachineServices.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Services\StorageService.cs">
+      <Link>Services\StorageService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Services\VideoService.cs">
+      <Link>Services\VideoService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Speaker.cs">
+      <Link>Core\Speaker.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Video.cs">
+      <Link>Core\Video.cs</Link>
+    </Compile>
+    <Compile Include="..\..\VideoData.cs">
+      <Link>Core\VideoData.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\SilverlightAudioService.cs">
+      <Link>Services\SilverlightAudioService.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\SilverlightKeyboardService.cs">
+      <Link>Services\SilverlightKeyboardService.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\SilverlightVideoService.cs">
+      <Link>Services\SilverlightVideoService.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AppManifest.xml" />
+    <None Include="Properties\WMAppManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AppIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Background.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\Properties\Strings.resx">
+      <Link>Properties\Strings.resx</Link>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\..\Disks\Default.dsk">
+      <Link>Disks\Default.dsk</Link>
+    </Resource>
+    <Resource Include="..\..\Roms\AppleIIe.rom">
+      <Link>Roms\AppleIIe.rom</Link>
+    </Resource>
+    <Resource Include="..\..\Roms\DiskII.rom">
+      <Link>Roms\DiskII.rom</Link>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\..\CustomDictionary.xml">
+      <Link>CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Library\Silverlight\Phone\Jellyfish.Library.Silverlight.Phone.csproj">
+      <Project>{D4880706-29A6-449C-A2A6-3058C37583DA}</Project>
+      <Name>Jellyfish.Library.Silverlight.Phone</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions />
+</Project>

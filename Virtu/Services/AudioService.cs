@@ -19,7 +19,9 @@ namespace Jellyfish.Virtu.Services
                 _readEvent.Set();
                 if (Machine.Settings.Cpu.IsThrottled)
                 {
+#if !WINDOWS_PHONE // TODO remove; implement phone audio
                     _writeEvent.WaitOne();
+#endif
                 }
             }
         }

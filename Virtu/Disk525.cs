@@ -14,6 +14,15 @@ namespace Jellyfish.Virtu
 
         public static Disk525 CreateDisk(string name, byte[] data, bool isWriteProtected)
         {
+            if (name == null)
+            {
+                throw new ArgumentNullException("name");
+            }
+            if (data == null)
+            {
+                throw new ArgumentNullException("data");
+            }
+
             if (name.EndsWith(".nib", StringComparison.OrdinalIgnoreCase) && (data.Length == TrackCount * TrackSize))
             {
                 return new DiskNib(name, data, isWriteProtected);

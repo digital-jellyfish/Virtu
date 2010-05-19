@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace Jellyfish.Library
@@ -7,16 +8,31 @@ namespace Jellyfish.Library
     {
         public static StringBuilder AppendHex(this StringBuilder builder, short value) // little endian
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException("builder");
+            }
+
             return builder.AppendFormat(CultureInfo.InvariantCulture, "{0:X2}{1:X2}", value & 0xFF, value >> 8);
         }
 
         public static StringBuilder AppendHex(this StringBuilder builder, int value) // little endian
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException("builder");
+            }
+
             return builder.AppendFormat(CultureInfo.InvariantCulture, "{0:X2}{1:X2}{2:X2}{3:X2}", value & 0xFF, (value >> 8) & 0xFF, (value >> 16) & 0xFF, value >> 24);
         }
 
         public static StringBuilder AppendWithoutGarbage(this StringBuilder builder, int value)
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException("builder");
+            }
+
             if (value < 0)
             {
                 builder.Append('-');

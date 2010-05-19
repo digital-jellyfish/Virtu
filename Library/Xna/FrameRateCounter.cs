@@ -36,17 +36,22 @@ namespace Jellyfish.Library
             _frameRateBuilder.Length = 0;
             _frameRateBuilder.AppendWithoutGarbage(_frameRate).Append(" fps");
 
-            _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-            //_spriteBatch.DrawString(_spriteFont, fps, Position - Vector2.UnitX, Color.Black); // rough outline
-            //_spriteBatch.DrawString(_spriteFont, fps, Position + Vector2.UnitX, Color.Black);
-            //_spriteBatch.DrawString(_spriteFont, fps, Position - Vector2.UnitY, Color.Black);
-            //_spriteBatch.DrawString(_spriteFont, fps, Position + Vector2.UnitY, Color.Black);
+            _spriteBatch.Begin();
+            //_spriteBatch.DrawString(_spriteFont, _frameRateBuilder, Position - Vector2.UnitX, Color.Black); // rough outline
+            //_spriteBatch.DrawString(_spriteFont, _frameRateBuilder, Position + Vector2.UnitX, Color.Black);
+            //_spriteBatch.DrawString(_spriteFont, _frameRateBuilder, Position - Vector2.UnitY, Color.Black);
+            //_spriteBatch.DrawString(_spriteFont, _frameRateBuilder, Position + Vector2.UnitY, Color.Black);
             _spriteBatch.DrawString(_spriteFont, _frameRateBuilder, Position, FontColor);
             _spriteBatch.End();
         }
 
         public override void Update(GameTime gameTime)
         {
+            if (gameTime == null)
+            {
+                throw new ArgumentNullException("gameTime");
+            }
+
             _elapsedTime += gameTime.ElapsedGameTime.Ticks;
 
             if (_elapsedTime >= TimeSpan.TicksPerSecond)
