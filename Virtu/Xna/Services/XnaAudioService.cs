@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
-using System.Threading;
 using Jellyfish.Library;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Jellyfish.Virtu.Services
 {
     public sealed class XnaAudioService : AudioService
     {
-        [SuppressMessage("Microsoft.Mobility", "CA1601:DoNotUseTimersThatPreventPowerStateChanges")]
         public XnaAudioService(Machine machine, GameBase game) : 
             base(machine)
         {
@@ -19,47 +16,28 @@ namespace Jellyfish.Virtu.Services
 
             _game = game;
 
-#if WINDOWS
-            _directSound.Start(_game.Window.Handle);
-            _directSound.Update += OnDirectSoundUpdate;
-            _game.Exiting += (sender, e) => _directSound.Stop();
-#else
-            _timer = new Timer(OnTimerUpdate, null, 0, SampleLatency);
-            _game.Exiting += (sender, e) => _timer.Change(Timeout.Infinite, Timeout.Infinite);
-#endif
+            _dynamicSoundEffect.BufferNeeded += OnDynamicSoundEffectBufferNeeded;
+            _game.Exiting += (sender, e) => _dynamicSoundEffect.Stop();
+
+            _dynamicSoundEffect.Play();
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-#if WINDOWS
-                _directSound.Dispose();
-#else
-                _timer.Dispose();
-#endif
+                _dynamicSoundEffect.Dispose();
             }
 
             base.Dispose(disposing);
         }
 
-#if WINDOWS
-        private void OnDirectSoundUpdate(object sender, DirectSoundUpdateEventArgs e) // audio thread
+        private void OnDynamicSoundEffectBufferNeeded(object sender, EventArgs e) // audio thread
         {
-            Update(e.BufferSize, (source, count) => Marshal.Copy(source, 0, e.Buffer, count));
+            Update(SampleSize, (source, count) => _dynamicSoundEffect.SubmitBuffer(source, 0, count));
         }
-#else
-        private void OnTimerUpdate(object state) // audio thread
-        {
-            Update(0, null);
-        }
-#endif
 
         private GameBase _game;
-#if WINDOWS
-        private DirectSound _directSound = new DirectSound(SampleRate, SampleChannels, SampleBits, SampleSize);
-#else
-        private Timer _timer;
-#endif
+        private DynamicSoundEffectInstance _dynamicSoundEffect = new DynamicSoundEffectInstance(SampleRate, (AudioChannels)SampleChannels);
     }
 }

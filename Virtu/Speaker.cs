@@ -34,7 +34,7 @@ namespace Jellyfish.Virtu
         private void FlushOutputEvent()
         {
             UpdateCycles();
-            _audioService.Output(_highCycles * 255 / _totalCycles); // quick and dirty decimation
+            _audioService.Output(_highCycles * short.MaxValue / _totalCycles); // quick and dirty decimation
             _highCycles = _totalCycles = 0;
 
             Machine.Events.AddEvent(CyclesPerFlush * Machine.Settings.Cpu.Multiplier, _flushOutputEvent);

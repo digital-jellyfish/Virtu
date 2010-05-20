@@ -101,12 +101,6 @@
     <Compile Include="..\AssemblyCommentAttribute.cs">
       <Link>AssemblyCommentAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\DirectSound.cs">
-      <Link>DirectSound.cs</Link>
-    </Compile>
-    <Compile Include="..\DirectSoundInterop.cs">
-      <Link>DirectSoundInterop.cs</Link>
-    </Compile>
     <Compile Include="..\GCHandleHelpers.cs">
       <Link>GCHandleHelpers.cs</Link>
     </Compile>
@@ -139,9 +133,6 @@
     </Compile>
     <Compile Include="..\StringBuilderExtensions.cs">
       <Link>StringBuilderExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\WaveFormat.cs">
-      <Link>WaveFormat.cs</Link>
     </Compile>
     <Compile Include="..\XmlSerializerHelpers.cs">
       <Link>XmlSerializerHelpers.cs</Link>

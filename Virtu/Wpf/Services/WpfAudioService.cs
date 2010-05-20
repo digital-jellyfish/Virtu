@@ -44,10 +44,7 @@ namespace Jellyfish.Virtu.Services
             //    });
             //}
 
-            Update(e.BufferSize, (source, count) => 
-            {
-                Marshal.Copy(source, 0, e.Buffer, count);
-            });
+            Update(e.BufferSize, (source, count) => Marshal.Copy(source, 0, e.Buffer, count));
         }
 
         private Window _window;

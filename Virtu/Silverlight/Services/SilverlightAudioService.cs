@@ -38,10 +38,7 @@ namespace Jellyfish.Virtu.Services
             //    });
             //}
 
-            Update(e.BufferSize, (source, count) => 
-            {
-                Buffer.BlockCopy(source, 0, e.Buffer, 0, count);
-            });
+            Update(e.BufferSize, (source, count) => Buffer.BlockCopy(source, 0, e.Buffer, 0, count));
         }
 
         private UserControl _page;

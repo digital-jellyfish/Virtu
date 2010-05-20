@@ -12,16 +12,15 @@ namespace Jellyfish.Virtu.Services
 
         public void Output(int data) // machine thread
         {
-            _buffer[_index] = (byte)data;
-            _index = (_index + 1) % SampleSize;
+            _buffer[_index + 0] = (byte)(data & 0xFF);
+            _buffer[_index + 1] = (byte)((data >> 8) & 0xFF);
+            _index = (_index + 2) % SampleSize;
             if (_index == 0)
             {
                 _readEvent.Set();
                 if (Machine.Settings.Cpu.IsThrottled)
                 {
-#if !WINDOWS_PHONE // TODO remove; implement phone audio
                     _writeEvent.WaitOne();
-#endif
                 }
             }
         }
@@ -52,7 +51,7 @@ namespace Jellyfish.Virtu.Services
 
         public const int SampleRate = 44100; // hz
         public const int SampleChannels = 1;
-        public const int SampleBits = 8;
+        public const int SampleBits = 16;
         public const int SampleLatency = 40; // ms
         public const int SampleSize = (SampleRate * SampleLatency / 1000) * SampleChannels * (SampleBits / 8);
 
