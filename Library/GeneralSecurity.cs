@@ -36,8 +36,7 @@ namespace Jellyfish.Library
         {
         }
 
-        public GeneralAccessRule(IdentityReference identity, int rights, bool isInherited, InheritanceFlags inheritance, PropagationFlags propagation, 
-            AccessControlType type) : 
+        public GeneralAccessRule(IdentityReference identity, int rights, bool isInherited, InheritanceFlags inheritance, PropagationFlags propagation, AccessControlType type) : 
             base(identity, rights, isInherited, inheritance, propagation, type)
         {
         }
@@ -57,8 +56,7 @@ namespace Jellyfish.Library
         {
         }
 
-        public GeneralAuditRule(IdentityReference identity, int rights, bool isInherited, InheritanceFlags inheritance, PropagationFlags propagation, 
-            AuditFlags audit) : 
+        public GeneralAuditRule(IdentityReference identity, int rights, bool isInherited, InheritanceFlags inheritance, PropagationFlags propagation, AuditFlags audit) : 
             base(identity, rights, isInherited, inheritance, propagation, audit)
         {
         }
@@ -73,34 +71,22 @@ namespace Jellyfish.Library
         {
         }
 
-        public GeneralSecurity(bool isContainer, ResourceType resourceType, SafeHandle handle) : 
-            base(isContainer, resourceType, handle, AccessControlSections.Access | AccessControlSections.Group | AccessControlSections.Owner)
-        {
-        }
-
-        public GeneralSecurity(bool isContainer, ResourceType resourceType, SafeHandle handle, AccessControlSections includeSections) : 
+        public GeneralSecurity(bool isContainer, ResourceType resourceType, SafeHandle handle, AccessControlSections includeSections = AccessControlSections.Access | AccessControlSections.Group | AccessControlSections.Owner) : 
             base(isContainer, resourceType, handle, includeSections)
         {
         }
 
-        public GeneralSecurity(bool isContainer, ResourceType resourceType, string name) : 
-            base(isContainer, resourceType, name, AccessControlSections.Access | AccessControlSections.Group | AccessControlSections.Owner)
-        {
-        }
-
-        public GeneralSecurity(bool isContainer, ResourceType resourceType, string name, AccessControlSections includeSections) : 
+        public GeneralSecurity(bool isContainer, ResourceType resourceType, string name, AccessControlSections includeSections = AccessControlSections.Access | AccessControlSections.Group | AccessControlSections.Owner) : 
             base(isContainer, resourceType, name, includeSections)
         {
         }
 
-        public override AccessRule AccessRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, 
-            PropagationFlags propagationFlags, AccessControlType type)
+        public override AccessRule AccessRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
         {
             return new GeneralAccessRule(identityReference, accessMask, isInherited, inheritanceFlags, propagationFlags, type);
         }
 
-        public override AuditRule AuditRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, 
-            PropagationFlags propagationFlags, AuditFlags flags)
+        public override AuditRule AuditRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
         {
             return new GeneralAuditRule(identityReference, accessMask, isInherited, inheritanceFlags, propagationFlags, flags);
         }
@@ -118,13 +104,13 @@ namespace Jellyfish.Library
         }
 
         [SecurityCritical]
-        public void GetSecurityAttributes(bool inheritable, Action<SecurityAttributes> action)
+        public void GetSecurityAttributes(Action<SecurityAttributes> action, bool inheritable = false)
         {
-            GetSecurityAttributes(this, inheritable, action);
+            GetSecurityAttributes(this, action, inheritable);
         }
 
         [SecurityCritical]
-        public static void GetSecurityAttributes(ObjectSecurity security, bool inheritable, Action<SecurityAttributes> action)
+        public static void GetSecurityAttributes(ObjectSecurity security, Action<SecurityAttributes> action, bool inheritable = false)
         {
             if (action == null)
             {

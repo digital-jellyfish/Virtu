@@ -55,7 +55,7 @@ namespace Jellyfish.Virtu.Services
         public const int SampleLatency = 40; // ms
         public const int SampleSize = (SampleRate * SampleLatency / 1000) * SampleChannels * (SampleBits / 8);
 
-        private static readonly byte[] SampleZero = new byte[SampleSize];
+        protected static readonly byte[] SampleZero = new byte[SampleSize];
 
         private byte[] _buffer = new byte[SampleSize];
         private int _index;

@@ -71,7 +71,7 @@ namespace Jellyfish.Virtu.Services
             int asciiKey = GetAsciiKey(e.Key, e.PlatformKeyCode);
             if (asciiKey >= 0)
             {
-                OnAsciiKeyDown(asciiKey);
+                Machine.Keyboard.Latch = asciiKey;
                 e.Handled = true;
             }
 

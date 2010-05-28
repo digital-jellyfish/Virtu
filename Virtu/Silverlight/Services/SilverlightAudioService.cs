@@ -20,15 +20,25 @@ namespace Jellyfish.Virtu.Services
 
             _page = page;
             _media = media;
+            _mediaSource = new WaveMediaStreamSource(SampleRate, SampleChannels, SampleBits, SampleSize, SampleLatency, OnMediaSourceUpdate);
 
             _page.Loaded += (sender, e) => { _media.SetSource(_mediaSource); _media.Play(); };
-            _mediaSource.Update += OnMediaSourceUpdate;
 #if !WINDOWS_PHONE
             _page.Unloaded += (sender, e) => _media.Stop();
 #endif
         }
 
-        private void OnMediaSourceUpdate(object sender, WaveMediaStreamSourceUpdateEventArgs e) // audio thread
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _mediaSource.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+        private void OnMediaSourceUpdate(byte[] buffer, int bufferSize) // audio thread
         {
             //if (_count++ % (1000 / SampleLatency) == 0)
             //{
@@ -38,12 +48,12 @@ namespace Jellyfish.Virtu.Services
             //    });
             //}
 
-            Update(e.BufferSize, (source, count) => Buffer.BlockCopy(source, 0, e.Buffer, 0, count));
+            Update(bufferSize, (source, count) => Buffer.BlockCopy(source, 0, buffer, 0, count));
         }
 
         private UserControl _page;
         private MediaElement _media;
-        private WaveMediaStreamSource _mediaSource = new WaveMediaStreamSource(SampleRate, SampleChannels, SampleBits, SampleSize, SampleLatency);
+        private WaveMediaStreamSource _mediaSource;
         //private int _count;
     }
 }

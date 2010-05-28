@@ -14,7 +14,7 @@ namespace Jellyfish.Library
     {
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         public SafeFileHandle() : 
-            base(true)
+            base(ownsHandle: true)
         {
         }
 
@@ -64,18 +64,18 @@ namespace Jellyfish.Library
 
         [SecurityCritical]
         private static SafeFileHandle CreateFile(string fileName, uint fileAccess, uint fileShare, uint fileMode, uint fileOptions, GeneralSecurity fileSecurity, 
-            bool inheritable)
+            bool inheritable = false)
         {
             var file = new SafeFileHandle();
 
-            GeneralSecurity.GetSecurityAttributes(fileSecurity, inheritable, securityAttributes => 
+            GeneralSecurity.GetSecurityAttributes(fileSecurity, securityAttributes => 
             {
                 file = NativeMethods.CreateFile(fileName, fileAccess, fileShare, securityAttributes, fileMode, fileOptions, IntPtr.Zero);
                 if (file.IsInvalid)
                 {
                     Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
                 }
-            });
+            }, inheritable);
 
             return file;
         }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Jellyfish.Virtu.Services;
-using Jellyfish.Virtu.Settings;
 
 namespace Jellyfish.Virtu
 {
@@ -16,8 +14,6 @@ namespace Jellyfish.Virtu
         {
             _keyboardService = Machine.Services.GetService<KeyboardService>();
             _gamePortService = Machine.Services.GetService<GamePortService>();
-
-            _keyboardService.AsciiKeyDown += (sender, e) => Latch = e.AsciiKey;
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
@@ -121,9 +117,8 @@ namespace Jellyfish.Virtu
         }
 
         public bool IsAnyKeyDown { get { return _keyboardService.IsAnyKeyDown; } }
+        public int Latch { get { return _latch; } set { _latch = value; Strobe = true; } }
         public bool Strobe { get; private set; }
-
-        private int Latch { get { return _latch; } set { _latch = value; Strobe = true; } }
 
         private KeyboardService _keyboardService;
         private GamePortService _gamePortService;

@@ -14,12 +14,7 @@ namespace Jellyfish.Virtu.Services
         {
         }
 
-        public static Stream GetResourceStream(string resourceName)
-        {
-            return GetResourceStream(resourceName, 0);
-        }
-
-        public static Stream GetResourceStream(string resourceName, int resourceSize)
+        public static Stream GetResourceStream(string resourceName, int resourceSize = 0)
         {
             var resourceManager = new ResourceManager("Jellyfish.Virtu.g", Assembly.GetExecutingAssembly()) { IgnoreCase = true };
             var resourceStream = (Stream)resourceManager.GetObject(resourceName);

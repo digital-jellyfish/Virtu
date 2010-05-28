@@ -39,17 +39,17 @@ namespace Jellyfish.Virtu.Services
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
         public T GetService<T>()
         {
-            return (T)GetService(typeof(T));
-        }
-
-        public object GetService(Type serviceType)
-        {
-            return _serviceProviders.ContainsKey(serviceType) ? _serviceProviders[serviceType] : null;
+            return (T)((IServiceProvider)this).GetService(typeof(T));
         }
 
         public void RemoveService(Type serviceType)
         {
             _serviceProviders.Remove(serviceType);
+        }
+
+        object IServiceProvider.GetService(Type serviceType)
+        {
+            return _serviceProviders.ContainsKey(serviceType) ? _serviceProviders[serviceType] : null;
         }
 
         private Dictionary<Type, MachineService> _serviceProviders = new Dictionary<Type, MachineService>();

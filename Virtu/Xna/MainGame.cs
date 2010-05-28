@@ -15,6 +15,8 @@ namespace Jellyfish.Virtu
             GraphicsDeviceManager.PreferredBackBufferWidth = 480; // TODO remove; works around known ctp issue
             GraphicsDeviceManager.PreferredBackBufferHeight = 800;
 #endif
+            IsMouseVisible = true;
+
             var frameRateCounter = new FrameRateCounter(this); // no initializers; avoids CA2000
             Components.Add(frameRateCounter);
             frameRateCounter.DrawOrder = 1;

@@ -19,6 +19,7 @@ namespace Jellyfish.Virtu.Services
             _dynamicSoundEffect.BufferNeeded += OnDynamicSoundEffectBufferNeeded;
             _game.Exiting += (sender, e) => _dynamicSoundEffect.Stop();
 
+            _dynamicSoundEffect.SubmitBuffer(SampleZero);
             _dynamicSoundEffect.Play();
         }
 

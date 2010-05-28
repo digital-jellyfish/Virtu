@@ -1,26 +1,7 @@
 ﻿using System;
-using System.Threading;
 
 namespace Jellyfish.Virtu.Services
 {
-    public sealed class AsciiKeyEventArgs : EventArgs
-    {
-        private AsciiKeyEventArgs()
-        {
-        }
-
-        public static AsciiKeyEventArgs Create(int asciiKey)
-        {
-            _instance.AsciiKey = asciiKey;
-
-            return _instance;  // use singleton; avoids garbage
-        }
-
-        public int AsciiKey { get; private set; }
-
-        private static readonly AsciiKeyEventArgs _instance = new AsciiKeyEventArgs();
-    }
-
     public abstract class KeyboardService : MachineService
     {
         protected KeyboardService(Machine machine) : 
@@ -47,17 +28,6 @@ namespace Jellyfish.Virtu.Services
                 Machine.Unpause();
             }
         }
-
-        protected void OnAsciiKeyDown(int asciiKey)
-        {
-            var handler = AsciiKeyDown;
-            if (handler != null)
-            {
-                handler(this, AsciiKeyEventArgs.Create(asciiKey));
-            }
-        }
-
-        public event EventHandler<AsciiKeyEventArgs> AsciiKeyDown;
 
         public bool IsAnyKeyDown { get; protected set; }
         public bool IsOpenAppleKeyDown { get; protected set; }

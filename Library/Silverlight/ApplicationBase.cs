@@ -6,12 +6,7 @@ namespace Jellyfish.Library
 {
     public class ApplicationBase : Application
     {
-        public ApplicationBase() : 
-            this(null)
-        {
-        }
-
-        public ApplicationBase(string name)
+        public ApplicationBase(string name = null)
         {
             Name = name;
 
@@ -21,7 +16,7 @@ namespace Jellyfish.Library
 
         private void OnApplicationUnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(GetExceptionMessage(e.ExceptionObject), GetExceptionCaption("Application Exception", false), MessageBoxButton.OK);
+            MessageBox.Show(GetExceptionMessage(e.ExceptionObject), GetExceptionCaption("Application Exception"), MessageBoxButton.OK);
             e.Handled = true;
         }
 
@@ -30,7 +25,7 @@ namespace Jellyfish.Library
         //    MessageBox.Show(GetExceptionMessage(e.ExceptionObject as Exception), GetExceptionCaption("AppDomain Exception", e.IsTerminating), MessageBoxButton.OK);
         //}
 
-        private string GetExceptionCaption(string title, bool isTerminating)
+        private string GetExceptionCaption(string title, bool isTerminating = false)
         {
             var caption = new StringBuilder();
             if (!string.IsNullOrEmpty(Name))

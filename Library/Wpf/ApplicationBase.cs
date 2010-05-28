@@ -10,13 +10,7 @@ namespace Jellyfish.Library
     public class ApplicationBase : Application
     {
         [SecurityCritical]
-        public ApplicationBase() : 
-            this(null)
-        {
-        }
-
-        [SecurityCritical]
-        public ApplicationBase(string name)
+        public ApplicationBase(string name = null)
         {
             Name = name;
 
@@ -26,7 +20,7 @@ namespace Jellyfish.Library
 
         private void OnApplicationDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(GetExceptionMessage(e.Exception), GetExceptionCaption("Application Dispatcher Exception", true));
+            MessageBox.Show(GetExceptionMessage(e.Exception), GetExceptionCaption("Application Dispatcher Exception", isTerminating: true));
             e.Handled = true;
             Shutdown();
         }
@@ -36,7 +30,7 @@ namespace Jellyfish.Library
             MessageBox.Show(GetExceptionMessage(e.ExceptionObject as Exception), GetExceptionCaption("AppDomain Exception", e.IsTerminating));
         }
 
-        private string GetExceptionCaption(string title, bool isTerminating)
+        private string GetExceptionCaption(string title, bool isTerminating = false)
         {
             var caption = new StringBuilder();
             caption.AppendFormat("[{0}] ", Process.GetCurrentProcess().Id);

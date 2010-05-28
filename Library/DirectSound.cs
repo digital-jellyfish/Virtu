@@ -5,30 +5,10 @@ using System.Threading;
 
 namespace Jellyfish.Library
 {
-    public sealed class DirectSoundUpdateEventArgs : EventArgs
-    {
-        private DirectSoundUpdateEventArgs()
-        {
-        }
-
-        public static DirectSoundUpdateEventArgs Create(IntPtr buffer, int bufferSize)
-        {
-            _instance.Buffer = buffer;
-            _instance.BufferSize = bufferSize;
-
-            return _instance;  // use singleton; avoids garbage
-        }
-
-        public IntPtr Buffer { get; private set; }
-        public int BufferSize { get; private set; }
-
-        private static readonly DirectSoundUpdateEventArgs _instance = new DirectSoundUpdateEventArgs();
-    }
-
     public sealed partial class DirectSound : IDisposable
     {
         [SecurityCritical]
-        public DirectSound(int sampleRate, int sampleChannels, int sampleBits, int sampleSize)
+        public DirectSound(int sampleRate, int sampleChannels, int sampleBits, int sampleSize, Action<IntPtr, int> updater)
         {
             _sampleRate = sampleRate;
             _sampleChannels = sampleChannels;
@@ -36,6 +16,7 @@ namespace Jellyfish.Library
             _sampleSize = sampleSize;
 
             _thread = new Thread(Run) { Name = "DirectSound" };
+            _updater = updater;
         }
 
         public void Dispose()
@@ -102,16 +83,7 @@ namespace Jellyfish.Library
             }
         }
 
-        private void UpdateBuffer(int block)
-        {
-            var handler = Update;
-            if (handler != null)
-            {
-                UpdateBuffer(block * _sampleSize, _sampleSize, BufferLock.None, (buffer, bufferSize) => handler(this, DirectSoundUpdateEventArgs.Create(buffer, bufferSize)));
-            }
-        }
-
-        private void UpdateBuffer(int offset, int count, BufferLock flags, Action<IntPtr, int> updateBuffer)
+        private void UpdateBuffer(int offset, int count, BufferLock flags, Action<IntPtr, int> updater)
         {
             RestoreBuffer();
 
@@ -122,11 +94,11 @@ namespace Jellyfish.Library
             {
                 if (buffer1 != IntPtr.Zero)
                 {
-                    updateBuffer(buffer1, buffer1Size);
+                    updater(buffer1, buffer1Size);
                 }
                 if (buffer2 != IntPtr.Zero)
                 {
-                    updateBuffer(buffer2, buffer2Size);
+                    updater(buffer2, buffer2Size);
                 }
             }
             finally
@@ -158,14 +130,12 @@ namespace Jellyfish.Library
 
             while (index < BlockCount)
             {
-                UpdateBuffer((index + 1) % BlockCount); // update next block in circular buffer
+                UpdateBuffer(((index + 1) % BlockCount) * _sampleSize, _sampleSize, BufferLock.None, _updater); // update next block in circular buffer
                 index = WaitHandle.WaitAny(eventHandles);
             }
 
             Uninitialize();
         }
-
-        public event EventHandler<DirectSoundUpdateEventArgs> Update;
 
         private const int BlockCount = 2;
 
@@ -178,6 +148,7 @@ namespace Jellyfish.Library
         private IntPtr _window;
         private IDirectSound _device;
         private IDirectSoundBuffer _buffer;
+        private Action<IntPtr, int> _updater;
 
         private AutoResetEvent _position1Event = new AutoResetEvent(false);
         private AutoResetEvent _position2Event = new AutoResetEvent(false);

@@ -33,8 +33,7 @@ namespace Jellyfish.Library
         {
             _frameCount++;
 
-            _frameRateBuilder.Length = 0;
-            _frameRateBuilder.AppendWithoutGarbage(_frameRate).Append(" fps");
+            _frameRateBuilder.Clear().AppendWithoutGarbage(_frameRate).Append(" fps");
 
             _spriteBatch.Begin();
             //_spriteBatch.DrawString(_spriteFont, _frameRateBuilder, Position - Vector2.UnitX, Color.Black); // rough outline

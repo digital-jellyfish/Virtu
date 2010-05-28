@@ -22,7 +22,7 @@ namespace Jellyfish.Library
     {
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         public SafeGlobalAllocHandle() : 
-            base(true)
+            base(ownsHandle: true)
         {
         }
 
@@ -31,12 +31,6 @@ namespace Jellyfish.Library
             base(ownsHandle)
         {
             SetHandle(existingHandle);
-        }
-
-        [SecurityCritical]
-        public static SafeGlobalAllocHandle Allocate(int size)
-        {
-            return Allocate(0x0, size);
         }
 
         [SecurityCritical]
@@ -53,15 +47,8 @@ namespace Jellyfish.Library
             return alloc;
         }
 
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [SecurityCritical]
-        protected override bool ReleaseHandle()
-        {
-            return (NativeMethods.GlobalFree(handle) == IntPtr.Zero);
-        }
-
-        [SecurityCritical]
-        private static SafeGlobalAllocHandle Allocate(uint flags, int size)
+        public static SafeGlobalAllocHandle Allocate(int size, uint flags = 0x0)
         {
             var alloc = NativeMethods.GlobalAlloc(flags, (IntPtr)size);
             if (alloc.IsInvalid)
@@ -70,6 +57,13 @@ namespace Jellyfish.Library
             }
 
             return alloc;
+        }
+
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [SecurityCritical]
+        protected override bool ReleaseHandle()
+        {
+            return (NativeMethods.GlobalFree(handle) == IntPtr.Zero);
         }
 
         [SecurityCritical]
@@ -91,7 +85,7 @@ namespace Jellyfish.Library
     {
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         public SafeLocalAllocHandle() : 
-            base(true)
+            base(ownsHandle: true)
         {
         }
 
@@ -100,12 +94,6 @@ namespace Jellyfish.Library
             base(ownsHandle)
         {
             SetHandle(existingHandle);
-        }
-
-        [SecurityCritical]
-        public static SafeLocalAllocHandle Allocate(int size)
-        {
-            return Allocate(0x0, size);
         }
 
         [SecurityCritical]
@@ -122,15 +110,8 @@ namespace Jellyfish.Library
             return alloc;
         }
 
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [SecurityCritical]
-        protected override bool ReleaseHandle()
-        {
-            return (NativeMethods.LocalFree(handle) == IntPtr.Zero);
-        }
-
-        [SecurityCritical]
-        private static SafeLocalAllocHandle Allocate(uint flags, int size)
+        public static SafeLocalAllocHandle Allocate(int size, uint flags = 0x0)
         {
             var alloc = NativeMethods.LocalAlloc(flags, (IntPtr)size);
             if (alloc.IsInvalid)
@@ -139,6 +120,13 @@ namespace Jellyfish.Library
             }
 
             return alloc;
+        }
+
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [SecurityCritical]
+        protected override bool ReleaseHandle()
+        {
+            return (NativeMethods.LocalFree(handle) == IntPtr.Zero);
         }
 
         [SecurityCritical]

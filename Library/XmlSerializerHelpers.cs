@@ -8,13 +8,7 @@ namespace Jellyfish.Library
     public static class XmlSerializerHelpers
     {
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
-        public static T Deserialize<T>(Stream stream)
-        {
-            return Deserialize<T>(stream, null);
-        }
-
-        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
-        public static T Deserialize<T>(Stream stream, string defaultNamespace)
+        public static T Deserialize<T>(Stream stream, string defaultNamespace = null)
         {
             using (var reader = XmlReader.Create(stream))
             {
@@ -23,12 +17,7 @@ namespace Jellyfish.Library
             }
         }
 
-        public static void Serialize<T>(Stream stream, T instance)
-        {
-            Serialize<T>(stream, instance, null);
-        }
-
-        public static void Serialize<T>(Stream stream, T instance, string defaultNamespace)
+        public static void Serialize<T>(Stream stream, T instance, string defaultNamespace = null)
         {
             using (var writer = XmlWriter.Create(stream))
             {
