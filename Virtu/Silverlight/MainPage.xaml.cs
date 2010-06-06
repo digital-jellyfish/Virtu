@@ -13,12 +13,14 @@ namespace Jellyfish.Virtu
         {
             InitializeComponent();
 
+            _debugService = new SilverlightDebugService(_machine, this);
             _storageService = new IsolatedStorageService(_machine);
             _keyboardService = new SilverlightKeyboardService(_machine, this);
             _gamePortService = new GamePortService(_machine); // not connected
             _audioService = new SilverlightAudioService(_machine, this, _media);
             _videoService = new SilverlightVideoService(_machine, this, _image);
 
+            _machine.Services.AddService(typeof(DebugService), _debugService);
             _machine.Services.AddService(typeof(StorageService), _storageService);
             _machine.Services.AddService(typeof(KeyboardService), _keyboardService);
             _machine.Services.AddService(typeof(GamePortService), _gamePortService);
@@ -36,6 +38,7 @@ namespace Jellyfish.Virtu
         public void Dispose()
         {
             _machine.Dispose();
+            _debugService.Dispose();
             _storageService.Dispose();
             _keyboardService.Dispose();
             _gamePortService.Dispose();
@@ -68,6 +71,7 @@ namespace Jellyfish.Virtu
 
         private Machine _machine = new Machine();
 
+        private DebugService _debugService;
         private StorageService _storageService;
         private KeyboardService _keyboardService;
         private GamePortService _gamePortService;

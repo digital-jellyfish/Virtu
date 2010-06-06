@@ -38,10 +38,7 @@ namespace Jellyfish.Virtu.Services
         {
             //if (_count++ % (1000 / SampleLatency) == 0)
             //{
-            //    _window.Dispatcher.BeginInvoke(() => 
-            //    {
-            //        ((MainWindow)_window)._debug.Text += string.Concat(DateTime.Now, " OnDirectSoundUpdate", Environment.NewLine);
-            //    });
+            //    DebugService.WriteLine("OnDirectSoundUpdate");
             //}
 
             Update(bufferSize, (source, count) => Marshal.Copy(source, 0, buffer, count));

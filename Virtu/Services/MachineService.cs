@@ -35,5 +35,6 @@ namespace Jellyfish.Virtu.Services
         }
 
         protected Machine Machine { get; private set; }
+        protected DebugService DebugService { get { return Machine.Services.GetService<DebugService>(); } }
     }
 }

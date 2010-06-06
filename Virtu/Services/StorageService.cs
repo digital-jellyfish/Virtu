@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -14,6 +15,7 @@ namespace Jellyfish.Virtu.Services
         {
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static Stream GetResourceStream(string resourceName, int resourceSize = 0)
         {
             var resourceManager = new ResourceManager("Jellyfish.Virtu.g", Assembly.GetExecutingAssembly()) { IgnoreCase = true };

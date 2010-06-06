@@ -21,8 +21,9 @@ namespace Jellyfish.Virtu.Services
             _page = page;
             _media = media;
             _mediaSource = new WaveMediaStreamSource(SampleRate, SampleChannels, SampleBits, SampleSize, SampleLatency, OnMediaSourceUpdate);
+            _media.SetSource(_mediaSource);
 
-            _page.Loaded += (sender, e) => { _media.SetSource(_mediaSource); _media.Play(); };
+            _page.Loaded += (sender, e) => _media.Play();
 #if !WINDOWS_PHONE
             _page.Unloaded += (sender, e) => _media.Stop();
 #endif
@@ -42,10 +43,7 @@ namespace Jellyfish.Virtu.Services
         {
             //if (_count++ % (1000 / SampleLatency) == 0)
             //{
-            //    _page.Dispatcher.BeginInvoke(() => 
-            //    {
-            //        ((MainPage)_page)._debug.Text += string.Concat(DateTime.Now, " OnMediaSourceUpdate", Environment.NewLine);
-            //    });
+            //    DebugService.WriteLine("OnMediaSourceUpdate");
             //}
 
             Update(bufferSize, (source, count) => Buffer.BlockCopy(source, 0, buffer, 0, count));

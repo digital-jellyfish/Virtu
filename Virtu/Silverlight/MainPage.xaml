@@ -13,9 +13,9 @@
         <Grid>
             <Image x:Name="_image" MinWidth="280" MinHeight="192"/>
             <MediaElement x:Name="_media"/>
-            <!--<ScrollViewer BorderThickness="0" IsTabStop="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer BorderThickness="0" IsTabStop="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
                 <TextBlock x:Name="_debug" FontFamily="Consolas" FontSize="12" Foreground="White"/>
-            </ScrollViewer>-->
+            </ScrollViewer>
         </Grid>
     </tk:DockPanel>
 </UserControl>

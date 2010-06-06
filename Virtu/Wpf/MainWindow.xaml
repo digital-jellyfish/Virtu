@@ -11,9 +11,9 @@
         </StackPanel>
         <Grid>
             <Image x:Name="_image" MinWidth="560" MinHeight="384" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-            <!--<ScrollViewer BorderThickness="0" Focusable="False" IsTabStop="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer BorderThickness="0" Focusable="False" IsTabStop="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
                 <TextBlock x:Name="_debug" FontFamily="Consolas" FontSize="12" Foreground="White"/>
-            </ScrollViewer>-->
+            </ScrollViewer>
         </Grid>
     </DockPanel>
 </Window>

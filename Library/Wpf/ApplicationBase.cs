@@ -10,7 +10,13 @@ namespace Jellyfish.Library
     public class ApplicationBase : Application
     {
         [SecurityCritical]
-        public ApplicationBase(string name = null)
+        public ApplicationBase() : 
+            this(null)
+        {
+        }
+
+        [SecurityCritical]
+        public ApplicationBase(string name)
         {
             Name = name;
 

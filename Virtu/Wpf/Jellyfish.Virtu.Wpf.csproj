@@ -135,6 +135,9 @@
     <Compile Include="..\Services\AudioService.cs">
       <Link>Services\AudioService.cs</Link>
     </Compile>
+    <Compile Include="..\Services\DebugService.cs">
+      <Link>Services\DebugService.cs</Link>
+    </Compile>
     <Compile Include="..\Services\GamePortService.cs">
       <Link>Services\GamePortService.cs</Link>
     </Compile>
@@ -167,6 +170,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\WpfAudioService.cs" />
+    <Compile Include="Services\WpfDebugService.cs" />
     <Compile Include="Services\WpfKeyboardService.cs" />
     <Compile Include="Services\WpfStorageService.cs" />
     <Compile Include="Services\WpfVideoService.cs" />

@@ -47,6 +47,8 @@ namespace Jellyfish.Library
             return alloc;
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "flags")]
         [SecurityCritical]
         public static SafeGlobalAllocHandle Allocate(int size, uint flags = 0x0)
         {
@@ -110,6 +112,8 @@ namespace Jellyfish.Library
             return alloc;
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "flags")]
         [SecurityCritical]
         public static SafeLocalAllocHandle Allocate(int size, uint flags = 0x0)
         {

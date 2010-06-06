@@ -62,7 +62,7 @@ namespace Jellyfish.Virtu.Services
 
         private void OnWindowKeyDown(object sender, KeyEventArgs e)
         {
-            //((MainWindow)_window)._debug.Text += string.Concat("OnWindowKeyDn: Key=", e.Key, Environment.NewLine);
+            //DebugService.WriteLine(string.Concat("OnWindowKeyDn: Key=", e.Key));
 
             _states[(int)((e.Key == Key.System) ? e.SystemKey : e.Key)] = true;
             _updateAnyKeyDown = false;
@@ -80,7 +80,7 @@ namespace Jellyfish.Virtu.Services
 
         private void OnWindowKeyUp(object sender, KeyEventArgs e)
         {
-            //((MainWindow)_window)._debug.Text += string.Concat("OnWindowKeyUp: Key=", e.Key, Environment.NewLine);
+            //DebugService.WriteLine(string.Concat("OnWindowKeyUp: Key=", e.Key));
 
             _states[(int)((e.Key == Key.System) ? e.SystemKey : e.Key)] = false;
             _updateAnyKeyDown = true;

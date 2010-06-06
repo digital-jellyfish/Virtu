@@ -62,7 +62,7 @@ namespace Jellyfish.Virtu.Services
 
         private void OnPageKeyDown(object sender, KeyEventArgs e)
         {
-            //((MainPage)_page)._debug.Text += string.Concat("OnPageKeyDn: Key=", e.Key, " PlatformKeyCode=", e.PlatformKeyCode, Environment.NewLine);
+            //DebugService.WriteLine(string.Concat("OnPageKeyDn: Key=", e.Key, " PlatformKeyCode=", e.PlatformKeyCode));
 
             _states[(int)e.Key] = true;
             _updateAnyKeyDown = false;
@@ -80,7 +80,7 @@ namespace Jellyfish.Virtu.Services
 
         private void OnPageKeyUp(object sender, KeyEventArgs e)
         {
-            //((MainPage)_page)._debug.Text += string.Concat("OnPageKeyUp: Key=", e.Key, " PlatformKeyCode=", e.PlatformKeyCode, Environment.NewLine);
+            //DebugService.WriteLine(string.Concat("OnPageKeyUp: Key=", e.Key, " PlatformKeyCode=", e.PlatformKeyCode));
 
             _states[(int)e.Key] = false;
             _updateAnyKeyDown = true;

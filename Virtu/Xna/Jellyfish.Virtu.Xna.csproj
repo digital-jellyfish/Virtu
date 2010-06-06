@@ -159,6 +159,9 @@
     <Compile Include="..\Services\AudioService.cs">
       <Link>Services\AudioService.cs</Link>
     </Compile>
+    <Compile Include="..\Services\DebugService.cs">
+      <Link>Services\DebugService.cs</Link>
+    </Compile>
     <Compile Include="..\Services\GamePortService.cs">
       <Link>Services\GamePortService.cs</Link>
     </Compile>

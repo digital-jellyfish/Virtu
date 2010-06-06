@@ -141,6 +141,9 @@
     <Compile Include="..\..\Services\AudioService.cs">
       <Link>Services\AudioService.cs</Link>
     </Compile>
+    <Compile Include="..\..\Services\DebugService.cs">
+      <Link>Services\DebugService.cs</Link>
+    </Compile>
     <Compile Include="..\..\Services\GamePortService.cs">
       <Link>Services\GamePortService.cs</Link>
     </Compile>
@@ -173,6 +176,9 @@
     </Compile>
     <Compile Include="..\Services\SilverlightAudioService.cs">
       <Link>Services\SilverlightAudioService.cs</Link>
+    </Compile>
+    <Compile Include="..\Services\SilverlightDebugService.cs">
+      <Link>Services\SilverlightDebugService.cs</Link>
     </Compile>
     <Compile Include="..\Services\SilverlightKeyboardService.cs">
       <Link>Services\SilverlightKeyboardService.cs</Link>

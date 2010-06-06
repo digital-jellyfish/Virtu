@@ -71,11 +71,13 @@ namespace Jellyfish.Library
         {
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public GeneralSecurity(bool isContainer, ResourceType resourceType, SafeHandle handle, AccessControlSections includeSections = AccessControlSections.Access | AccessControlSections.Group | AccessControlSections.Owner) : 
             base(isContainer, resourceType, handle, includeSections)
         {
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public GeneralSecurity(bool isContainer, ResourceType resourceType, string name, AccessControlSections includeSections = AccessControlSections.Access | AccessControlSections.Group | AccessControlSections.Owner) : 
             base(isContainer, resourceType, name, includeSections)
         {
@@ -103,12 +105,14 @@ namespace Jellyfish.Library
             base.AddAuditRule(rule);
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         [SecurityCritical]
         public void GetSecurityAttributes(Action<SecurityAttributes> action, bool inheritable = false)
         {
             GetSecurityAttributes(this, action, inheritable);
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         [SecurityCritical]
         public static void GetSecurityAttributes(ObjectSecurity security, Action<SecurityAttributes> action, bool inheritable = false)
         {

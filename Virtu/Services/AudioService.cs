@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Jellyfish.Virtu.Services
@@ -13,7 +14,7 @@ namespace Jellyfish.Virtu.Services
         public void Output(int data) // machine thread
         {
             _buffer[_index + 0] = (byte)(data & 0xFF);
-            _buffer[_index + 1] = (byte)((data >> 8) & 0xFF);
+            _buffer[_index + 1] = (byte)(data >> 8);
             _index = (_index + 2) % SampleSize;
             if (_index == 0)
             {
@@ -55,6 +56,7 @@ namespace Jellyfish.Virtu.Services
         public const int SampleLatency = 40; // ms
         public const int SampleSize = (SampleRate * SampleLatency / 1000) * SampleChannels * (SampleBits / 8);
 
+        [SuppressMessage("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
         protected static readonly byte[] SampleZero = new byte[SampleSize];
 
         private byte[] _buffer = new byte[SampleSize];

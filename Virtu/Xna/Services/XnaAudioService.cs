@@ -35,10 +35,16 @@ namespace Jellyfish.Virtu.Services
 
         private void OnDynamicSoundEffectBufferNeeded(object sender, EventArgs e) // audio thread
         {
+            //if (_count++ % (1000 / SampleLatency) == 0)
+            //{
+            //    DebugService.WriteLine("OnDynamicSoundEffectBufferNeeded");
+            //}
+
             Update(SampleSize, (source, count) => _dynamicSoundEffect.SubmitBuffer(source, 0, count));
         }
 
         private GameBase _game;
         private DynamicSoundEffectInstance _dynamicSoundEffect = new DynamicSoundEffectInstance(SampleRate, (AudioChannels)SampleChannels);
+        //private int _count;
     }
 }

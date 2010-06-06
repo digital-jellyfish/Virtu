@@ -22,6 +22,7 @@ namespace Jellyfish.Virtu
             frameRateCounter.DrawOrder = 1;
             frameRateCounter.FontName = "Consolas";
 
+            _debugService = new DebugService(_machine);
 #if WINDOWS_PHONE
             _storageService = new IsolatedStorageService(_machine);
 #else
@@ -32,6 +33,7 @@ namespace Jellyfish.Virtu
             _audioService = new XnaAudioService(_machine, this);
             _videoService = new XnaVideoService(_machine, this);
 
+            _machine.Services.AddService(typeof(DebugService), _debugService);
             _machine.Services.AddService(typeof(StorageService), _storageService);
             _machine.Services.AddService(typeof(KeyboardService), _keyboardService);
             _machine.Services.AddService(typeof(GamePortService), _gamePortService);
@@ -44,6 +46,7 @@ namespace Jellyfish.Virtu
             if (disposing)
             {
                 _machine.Dispose();
+                _debugService.Dispose();
                 _storageService.Dispose();
                 _keyboardService.Dispose();
                 _gamePortService.Dispose();
@@ -82,6 +85,7 @@ namespace Jellyfish.Virtu
 
         private Machine _machine = new Machine();
 
+        private DebugService _debugService;
         private StorageService _storageService;
         private KeyboardService _keyboardService;
         private GamePortService _gamePortService;
