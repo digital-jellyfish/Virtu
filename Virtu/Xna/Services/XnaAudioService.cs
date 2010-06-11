@@ -23,6 +23,11 @@ namespace Jellyfish.Virtu.Services
             _dynamicSoundEffect.Play();
         }
 
+        public override void SetVolume(double volume) // machine thread
+        {
+            _dynamicSoundEffect.Volume = (float)volume;
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

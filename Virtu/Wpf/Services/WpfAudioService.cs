@@ -24,6 +24,11 @@ namespace Jellyfish.Virtu.Services
             _window.Closed += (sender, e) => _directSound.Stop();
         }
 
+        public override void SetVolume(double volume) // machine thread
+        {
+            _directSound.SetVolume(volume);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

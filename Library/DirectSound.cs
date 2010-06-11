@@ -26,6 +26,15 @@ namespace Jellyfish.Library
             _stopEvent.Close();
         }
 
+        public void SetVolume(double volume)
+        {
+            int attenuation = (volume < 0.01) ? (int)BufferVolume.Min : (int)Math.Floor(100 * 20 * Math.Log10(volume)); // 100 db
+            if (_buffer != null)
+            {
+                _buffer.SetVolume(attenuation);
+            }
+        }
+
         public void Start(IntPtr window)
         {
             _window = window;
@@ -61,8 +70,6 @@ namespace Jellyfish.Library
                 new BufferPositionNotify(0 * _sampleSize, _position1Event), new BufferPositionNotify(1 * _sampleSize, _position2Event)
             };
             ((IDirectSoundNotify)_buffer).SetNotificationPositions(positionEvents.Length, positionEvents);
-
-            _buffer.SetVolume(-1500); // 50 %
 
             _buffer.Play(0, 0, BufferPlay.Looping);
         }
@@ -113,10 +120,12 @@ namespace Jellyfish.Library
             {
                 _buffer.Stop();
                 Marshal.ReleaseComObject(_buffer);
+                _buffer = null;
             }
             if (_device != null)
             {
                 Marshal.ReleaseComObject(_device);
+                _device = null;
             }
         }
 

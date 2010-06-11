@@ -4,9 +4,9 @@ using System.Threading;
 
 namespace Jellyfish.Virtu.Services
 {
-    public class AudioService : MachineService
+    public abstract class AudioService : MachineService
     {
-        public AudioService(Machine machine) : 
+        protected AudioService(Machine machine) : 
             base(machine)
         {
         }
@@ -30,6 +30,8 @@ namespace Jellyfish.Virtu.Services
         {
             Buffer.BlockCopy(SampleZero, 0, _buffer, 0, SampleSize);
         }
+
+        public abstract void SetVolume(double volume); // machine thread
 
         public override void Stop() // main thread
         {

@@ -154,8 +154,7 @@ namespace Jellyfish.Virtu
             _memory = Machine.Memory;
 
             UpdateSettings();
-
-            Machine.Video.VSync += OnVideoVSync;
+            Machine.Video.VSync += (sender, e) => UpdateSettings();
         }
 
         public override void Reset()
@@ -3204,11 +3203,6 @@ namespace Jellyfish.Virtu
             WriteAbs(ExecuteTsb(ReadAbs(), 6));
         }
         #endregion
-
-        private void OnVideoVSync(object sender, EventArgs e)
-        {
-            UpdateSettings();
-        }
 
         private void UpdateSettings()
         {

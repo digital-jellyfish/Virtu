@@ -20,6 +20,8 @@ namespace Jellyfish.Library
         [Flags]
         private enum BufferStatus { Playing = 0x00000001, BufferLost = 0x00000002, Looping = 0x00000004, Terminated = 0x00000020 }
 
+        private enum BufferVolume { Min = -10000, Max = 0 }
+
         private enum CooperativeLevel { Normal = 1, Priority = 2 }
 
         [StructLayout(LayoutKind.Sequential)]

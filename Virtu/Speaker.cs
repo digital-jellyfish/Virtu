@@ -15,6 +15,9 @@ namespace Jellyfish.Virtu
         {
             _audioService = Machine.Services.GetService<AudioService>();
 
+            UpdateSettings();
+            Machine.Video.VSync += (sender, e) => UpdateSettings();
+
             Machine.Events.AddEvent(CyclesPerFlush * Machine.Settings.Cpu.Multiplier, _flushOutputEvent);
         }
 
@@ -49,6 +52,11 @@ namespace Jellyfish.Virtu
             }
             _totalCycles += delta;
             _lastCycles = Machine.Cpu.Cycles;
+        }
+
+        private void UpdateSettings()
+        {
+            _audioService.SetVolume(Machine.Settings.Audio.Volume);
         }
 
         private const int CyclesPerFlush = 23;

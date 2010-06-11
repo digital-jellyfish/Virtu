@@ -36,6 +36,7 @@ namespace Jellyfish.Virtu.Settings
                     Button0 = 0, Button1 = 0, Button2 = 0
                 }
             };
+            Audio = new AudioSettings { Volume = 0.5 };
             Video = new VideoSettings
             {
                 IsFullScreen = false, IsMonochrome = false, ScannerOptions = ScannerOptions.None, 
@@ -168,6 +169,11 @@ namespace Jellyfish.Virtu.Settings
                             Button2 = (int)buttons.Attribute("Button2")
                         }
                     };
+                    var audio = root.Element(ns + "Audio");
+                    Audio = new AudioSettings
+                    {
+                        Volume = (double)audio.Attribute("Volume")
+                    };
                     var video = root.Element(ns + "Video");
                     var color = video.Element(ns + "Color");
                     Video = new VideoSettings
@@ -268,6 +274,8 @@ namespace Jellyfish.Virtu.Settings
                             new XAttribute("Button0", Keyboard.Key.Button0),
                             new XAttribute("Button1", Keyboard.Key.Button1),
                             new XAttribute("Button2", Keyboard.Key.Button2)))),
+                new XElement(ns + "Audio",
+                    new XAttribute("Volume", Audio.Volume)),
                 new XElement(ns + "Video",
                     new XAttribute("IsFullScreen", Video.IsFullScreen),
                     new XAttribute("IsMonochrome", Video.IsMonochrome),
@@ -301,6 +309,7 @@ namespace Jellyfish.Virtu.Settings
         public DiskIISettings DiskII { get; set; }
         public KeyboardSettings Keyboard { get; set; }
         public GamePortSettings GamePort { get; set; }
+        public AudioSettings Audio { get; set; }
         public VideoSettings Video { get; set; }
 
         public const string FileName = "Settings.xml";
@@ -359,6 +368,11 @@ namespace Jellyfish.Virtu.Settings
         public bool UseKeyboard { get; set; }
         public KeySettings Key { get; set; }
     }
+
+    public sealed class AudioSettings
+    {
+        public double Volume { get; set; }
+    };
 
     public sealed class ColorSettings
     {

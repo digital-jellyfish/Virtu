@@ -29,6 +29,11 @@ namespace Jellyfish.Virtu.Services
 #endif
         }
 
+        public override void SetVolume(double volume) // machine thread
+        {
+            _media.Dispatcher.BeginInvoke(() => _media.Volume = volume);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
