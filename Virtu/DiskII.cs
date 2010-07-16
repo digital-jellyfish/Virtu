@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Jellyfish.Virtu.Services;
-using Jellyfish.Virtu.Settings;
 
 namespace Jellyfish.Virtu
 {

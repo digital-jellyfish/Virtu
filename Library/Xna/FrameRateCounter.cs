@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,12 +13,6 @@ namespace Jellyfish.Library
         {
             FontColor = Color.White;
             FontName = "Default";
-
-            //game.IsFixedTimeStep = true; // fixed (default)
-            //game.TargetElapsedTime = TimeSpan.FromSeconds(1 / 60f);
-
-            //game.IsFixedTimeStep = false; // flatout
-            //game.GraphicsDeviceManager.SynchronizeWithVerticalRetrace = false;
         }
 
         protected override void LoadContent()
@@ -29,6 +24,7 @@ namespace Jellyfish.Library
             Position = new Vector2(titleSafeArea.X, titleSafeArea.Y);
         }
 
+        [SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase")]
         public override void Draw(GameTime gameTime)
         {
             _frameCount++;
@@ -44,6 +40,7 @@ namespace Jellyfish.Library
             _spriteBatch.End();
         }
 
+        [SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase")]
         public override void Update(GameTime gameTime)
         {
             if (gameTime == null)

@@ -18,10 +18,12 @@
     <XnaOutputType>Game</XnaOutputType>
     <XapFilename>$(AssemblyName).xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
-    <XnaWindowsPhoneManifestTemplate>Properties\WindowsPhoneManifest.xml</XnaWindowsPhoneManifestTemplate>
+    <XnaWindowsPhoneManifestTemplate>Properties\WMAppManifest.xml</XnaWindowsPhoneManifestTemplate>
     <ApplicationIcon>AppIcon.ico</ApplicationIcon>
     <Thumbnail>AppThumbnail.png</Thumbnail>
     <GameStartupType>Jellyfish.Virtu.MainGame</GameStartupType>
+    <TileImage>Background.png</TileImage>
+    <TileTitle>Virtu</TileTitle>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Windows Phone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -189,14 +191,19 @@
     <Compile Include="MainGame.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\AppManifest.xml">
+      <XnaPlatformSpecific>true</XnaPlatformSpecific>
+    </None>
+    <None Include="Properties\WMAppManifest.xml">
+      <XnaPlatformSpecific>true</XnaPlatformSpecific>
+    </None>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Properties\AppManifest.xml" />
-    <Content Include="Properties\WindowsPhoneManifest.xml" />
     <Content Include="AppIcon.ico" />
-    <Content Include="AppThumbnail.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="AppThumbnail.png" />
+    <Content Include="Background.png">
+      <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </Content>
   </ItemGroup>
   <ItemGroup>

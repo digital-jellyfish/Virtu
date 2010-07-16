@@ -8,6 +8,7 @@ namespace Jellyfish.Virtu
             base("Virtu")
         {
             InitializeComponent();
+            InitializePhoneApplication();
         }
     }
 }

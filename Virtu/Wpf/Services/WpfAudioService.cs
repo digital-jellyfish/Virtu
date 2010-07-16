@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Windows;
+using System.Windows.Controls;
 using Jellyfish.Library;
 
 namespace Jellyfish.Virtu.Services
@@ -9,19 +10,22 @@ namespace Jellyfish.Virtu.Services
     public sealed class WpfAudioService : AudioService
     {
         [SecurityCritical]
-        public WpfAudioService(Machine machine, Window window) : 
+        public WpfAudioService(Machine machine, UserControl page) : 
             base(machine)
         {
-            if (window == null)
+            if (page == null)
             {
-                throw new ArgumentNullException("window");
+                throw new ArgumentNullException("page");
             }
 
-            _window = window;
             _directSound = new DirectSound(SampleRate, SampleChannels, SampleBits, SampleSize, OnDirectSoundUpdate);
 
-            _window.SourceInitialized += (sender, e) => _directSound.Start(_window.GetHandle());
-            _window.Closed += (sender, e) => _directSound.Stop();
+            page.Loaded += (sender, e) => 
+            {
+                var window = Window.GetWindow(page);
+                _directSound.Start(window.GetHandle());
+                window.Closed += (_sender, _e) => _directSound.Stop();
+            };
         }
 
         public override void SetVolume(double volume) // machine thread
@@ -49,7 +53,6 @@ namespace Jellyfish.Virtu.Services
             Update(bufferSize, (source, count) => Marshal.Copy(source, 0, buffer, count));
         }
 
-        private Window _window;
         private DirectSound _directSound;
         //private int _count;
     }

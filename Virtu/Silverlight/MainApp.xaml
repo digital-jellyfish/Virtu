@@ -4,7 +4,7 @@
     xmlns:jl="clr-namespace:Jellyfish.Library;assembly=Jellyfish.Library"
     xmlns:jv="clr-namespace:Jellyfish.Virtu;assembly=Jellyfish.Virtu">
     <Application.RootVisual>
-        <jv:MainPage/>
+        <jv:MainPage />
     </Application.RootVisual>
     <Application.Resources>
     </Application.Resources>

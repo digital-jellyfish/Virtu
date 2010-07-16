@@ -47,8 +47,6 @@ namespace Jellyfish.Virtu
             _storageService.Load(MachineSettings.FileName, stream => Settings.Deserialize(stream));
 
             State = MachineState.Starting;
-            Services.ForEach(service => service.Start());
-
             Thread.Start();
         }
 
@@ -68,14 +66,14 @@ namespace Jellyfish.Virtu
         public void Stop()
         {
             State = MachineState.Stopping;
-            Services.ForEach(service => service.Stop());
-
-            _pauseEvent.Set();
             _unpauseEvent.Set();
-            Thread.Join();
+            Thread.IsAliveJoin();
             State = MachineState.Stopped;
 
-            _storageService.Save(MachineSettings.FileName, stream => Settings.Serialize(stream));
+            if (_storageService != null)
+            {
+                _storageService.Save(MachineSettings.FileName, stream => Settings.Serialize(stream));
+            }
         }
 
         private void Run() // machine thread

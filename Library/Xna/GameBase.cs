@@ -1,5 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.GamerServices;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -16,16 +17,21 @@ namespace Jellyfish.Library
         {
             Name = name;
 
+            Content.RootDirectory = "Content";
             GraphicsDeviceManager = new GraphicsDeviceManager(this);
+#if WINDOWS_PHONE
+            GraphicsDeviceManager.IsFullScreen = true;
+            TargetElapsedTime = TimeSpan.FromTicks(333333); // 30 fps
+#endif
             GraphicsDeviceService = (IGraphicsDeviceService)Services.GetService(typeof(IGraphicsDeviceService));
 
-            Content.RootDirectory = "Content";
             if (!string.IsNullOrEmpty(Name))
             {
                 Window.Title = Name;
             }
         }
 
+        [SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase")]
         protected override void Update(GameTime gameTime)
         {
             var gamePadState = GamePad.GetState(PlayerIndex.One);

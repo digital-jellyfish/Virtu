@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Jellyfish.Library;
 using Jellyfish.Virtu.Properties;
 
 namespace Jellyfish.Virtu.Services
@@ -29,11 +28,6 @@ namespace Jellyfish.Virtu.Services
             }
 
             _serviceProviders.Add(serviceType, serviceProvider);
-        }
-
-        public void ForEach(Action<MachineService> action)
-        {
-            _serviceProviders.Values.ForEach(action);
         }
 
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]

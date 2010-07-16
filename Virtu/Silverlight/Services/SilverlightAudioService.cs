@@ -18,14 +18,13 @@ namespace Jellyfish.Virtu.Services
                 throw new ArgumentNullException("media");
             }
 
-            _page = page;
             _media = media;
             _mediaSource = new WaveMediaStreamSource(SampleRate, SampleChannels, SampleBits, SampleSize, SampleLatency, OnMediaSourceUpdate);
             _media.SetSource(_mediaSource);
 
-            _page.Loaded += (sender, e) => _media.Play();
+            page.Loaded += (sender, e) => _media.Play();
 #if !WINDOWS_PHONE
-            _page.Unloaded += (sender, e) => _media.Stop();
+            page.Unloaded += (sender, e) => _media.Stop();
 #endif
         }
 
@@ -54,7 +53,6 @@ namespace Jellyfish.Virtu.Services
             Update(bufferSize, (source, count) => Buffer.BlockCopy(source, 0, buffer, 0, count));
         }
 
-        private UserControl _page;
         private MediaElement _media;
         private WaveMediaStreamSource _mediaSource;
         //private int _count;

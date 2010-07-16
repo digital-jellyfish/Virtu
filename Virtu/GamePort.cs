@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Jellyfish.Library;
 using Jellyfish.Virtu.Services;
-using Jellyfish.Virtu.Settings;
 
 namespace Jellyfish.Virtu
 {

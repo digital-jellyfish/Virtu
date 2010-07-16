@@ -1,6 +1,11 @@
-﻿using System;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Windows;
+#if WINDOWS_PHONE
+using System.Windows.Navigation;
+using Microsoft.Phone.Controls;
+using Microsoft.Phone.Shell;
+#endif
 
 namespace Jellyfish.Library
 {
@@ -19,24 +24,25 @@ namespace Jellyfish.Library
             //AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
         }
 
-        private void OnApplicationUnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
+#if WINDOWS_PHONE
+        protected void InitializePhoneApplication()
         {
-            MessageBox.Show(GetExceptionMessage(e.ExceptionObject), GetExceptionCaption("Application Exception"), MessageBoxButton.OK);
-            e.Handled = true;
+            if (!_phoneApplicationInitialized)
+            {
+                RootFrame = new PhoneApplicationFrame();
+                RootFrame.Navigated += OnRootFrameNavigated;
+                RootFrame.NavigationFailed += OnRootFrameNavigationFailed;
+                _phoneApplicationInitialized = true;
+            }
         }
-
-        //private void OnAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        //{
-        //    MessageBox.Show(GetExceptionMessage(e.ExceptionObject as Exception), GetExceptionCaption("AppDomain Exception", e.IsTerminating), MessageBoxButton.OK);
-        //}
+#endif
 
         private string GetExceptionCaption(string title, bool isTerminating = false)
         {
             var caption = new StringBuilder();
             if (!string.IsNullOrEmpty(Name))
             {
-                caption.Append(Name);
-                caption.Append(" ");
+                caption.Append(Name).Append(' ');
             }
             caption.Append(title);
             if (isTerminating)
@@ -47,19 +53,48 @@ namespace Jellyfish.Library
             return caption.ToString();
         }
 
-        private static string GetExceptionMessage(Exception exception)
+        private void OnApplicationUnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
-            var message = new StringBuilder();
-            if (exception != null)
+            MessageBox.Show(e.ExceptionObject.ToString(), GetExceptionCaption("Application Exception"), MessageBoxButton.OK);
+            if (Debugger.IsAttached)
             {
-                message.Append(exception.Message.ToString());
-                message.Append(Environment.NewLine);
-                message.Append(exception.StackTrace.ToString());
+                Debugger.Break();
             }
-
-            return message.ToString();
         }
 
+        //private void OnAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        //{
+        //    MessageBox.Show(e.ExceptionObject.ToString(), GetExceptionCaption("AppDomain Exception", e.IsTerminating), MessageBoxButton.OK);
+        //    if (Debugger.IsAttached)
+        //    {
+        //        Debugger.Break();
+        //    }
+        //}
+
+#if WINDOWS_PHONE
+        private void OnRootFrameNavigated(object sender, NavigationEventArgs e)
+        {
+            if (RootVisual != RootFrame)
+            {
+                RootVisual = RootFrame;
+            }
+            RootFrame.Navigated -= OnRootFrameNavigated;
+        }
+
+        private void OnRootFrameNavigationFailed(object sender, NavigationFailedEventArgs e)
+        {
+            if (Debugger.IsAttached)
+            {
+                Debugger.Break();
+            }
+        }
+#endif
+
         public string Name { get; private set; }
+#if WINDOWS_PHONE
+        public PhoneApplicationFrame RootFrame { get; private set; }
+
+        private bool _phoneApplicationInitialized;
+#endif
     }
 }

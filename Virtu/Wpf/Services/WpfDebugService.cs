@@ -1,34 +1,26 @@
 ﻿using System;
+using Jellyfish.Library;
 
 namespace Jellyfish.Virtu.Services
 {
     public sealed class WpfDebugService : DebugService
     {
-        public WpfDebugService(Machine machine, MainWindow window) : 
+        public WpfDebugService(Machine machine, MainPage page) : 
             base(machine)
         {
-            if (window == null)
+            if (page == null)
             {
-                throw new ArgumentNullException("window");
+                throw new ArgumentNullException("page");
             }
 
-            _window = window;
+            _page = page;
         }
 
-        public override void WriteLine(string message)
+        protected override void OnWriteLine(string message)
         {
-            message = string.Concat(DateTime.Now, " ", message, Environment.NewLine);
-
-            if (_window.CheckAccess())
-            {
-                _window._debug.Text += message;
-            }
-            else
-            {
-                _window.Dispatcher.BeginInvoke(new Action(() => _window._debug.Text += message));
-            }
+            _page.Dispatcher.CheckInvoke(() => _page.WriteLine(message + Environment.NewLine));
         }
 
-        private MainWindow _window;
+        private MainPage _page;
     }
 }

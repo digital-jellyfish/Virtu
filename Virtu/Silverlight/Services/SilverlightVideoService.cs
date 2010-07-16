@@ -27,21 +27,18 @@ namespace Jellyfish.Virtu.Services
             _image = image;
             _image.Source = _bitmap;
 
-            var content = Application.Current.Host.Content;
-#if WINDOWS_PHONE
-            ((Page)_page).OrientationChanged += (sender, e) => SetImageSize(swapOrientation: (e.Orientation & PageOrientation.Landscape) != 0);
-#else
+#if !WINDOWS_PHONE
             _page.LayoutUpdated += (sender, e) => SetWindowSizeToContent();
-            content.FullScreenChanged += (sender, e) => SetImageSize();
+#else
+            ((PhoneApplicationPage)_page).OrientationChanged += (sender, e) => SetImageSize(swapOrientation: (e.Orientation & PageOrientation.Landscape) != 0);
 #endif
-            content.Resized += (sender, e) => SetImageSize();
+            _page.SizeChanged += (sender, e) => SetImageSize();
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow")]
         public override void SetPixel(int x, int y, uint color)
         {
             _pixels[y * BitmapWidth + x] = (int)color;
-            _pixels[(y + 1) * BitmapWidth + x] = (_imageScale < 1) ? (int)color : 0x0;
             _pixelsDirty = true;
         }
 
@@ -67,15 +64,10 @@ namespace Jellyfish.Virtu.Services
 
         private void SetImageSize(bool swapOrientation = false)
         {
-            var content = Application.Current.Host.Content;
-            _imageScale = swapOrientation ? Math.Min(content.ActualHeight / BitmapWidth, content.ActualWidth / BitmapHeight) : 
-                Math.Min(content.ActualWidth / BitmapWidth, content.ActualHeight / BitmapHeight);
-            if (_imageScale > 1)
-            {
-                _imageScale = Math.Floor(_imageScale); // integer scale up
-            }
-            _image.Width = _imageScale * BitmapWidth;
-            _image.Height = _imageScale * BitmapHeight;
+            int uniformScale = Math.Max(1, swapOrientation ? Math.Min((int)_page.RenderSize.Height / BitmapWidth, (int)_page.RenderSize.Width / BitmapHeight) : 
+                Math.Min((int)_page.RenderSize.Width / BitmapWidth, (int)_page.RenderSize.Height / BitmapHeight));
+            _image.Width = uniformScale * BitmapWidth;
+            _image.Height = uniformScale * BitmapHeight;
             Machine.Video.DirtyScreen();
         }
 
@@ -98,7 +90,6 @@ namespace Jellyfish.Virtu.Services
 
         private UserControl _page;
         private Image _image;
-        private double _imageScale;
         private WriteableBitmap _bitmap = new WriteableBitmap(BitmapWidth, BitmapHeight);
         private int[] _pixels = new int[BitmapWidth * BitmapHeight];
         private bool _pixelsDirty;

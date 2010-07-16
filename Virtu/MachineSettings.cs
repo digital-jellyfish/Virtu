@@ -36,29 +36,33 @@ namespace Jellyfish.Virtu.Settings
                     Button0 = 0, Button1 = 0, Button2 = 0
                 }
             };
+#if WINDOWS_PHONE
+            Audio = new AudioSettings { Volume = 0.85 };
+#else
             Audio = new AudioSettings { Volume = 0.5 };
+#endif
             Video = new VideoSettings
             {
                 IsFullScreen = false, IsMonochrome = false, ScannerOptions = ScannerOptions.None, 
                 Color = new ColorSettings
                 {
-                    Black = 0x000000, 
-                    DarkBlue = 0x000099, 
-                    DarkGreen = 0x117722, 
-                    MediumBlue = 0x0000FF, 
-                    Brown = 0x885500, 
-                    LightGrey = 0x99AAAA, 
-                    Green = 0x00EE11, 
-                    Aquamarine = 0x55FFAA, 
-                    DeepRed = 0xFF1111, 
-                    Purple = 0xDD00DD, 
-                    DarkGrey = 0x445555, 
-                    LightBlue = 0x33AAFF, 
-                    Orange = 0xFF4411, 
-                    Pink = 0xFF9988, 
-                    Yellow = 0xFFFF11, 
-                    White = 0xFFFFFF, 
-                    Monochrome = 0x00AA00
+                    Black = 0xFF000000, // BGRA
+                    DarkBlue = 0xFF000099, 
+                    DarkGreen = 0xFF117722, 
+                    MediumBlue = 0xFF0000FF, 
+                    Brown = 0xFF885500, 
+                    LightGrey = 0xFF99AAAA, 
+                    Green = 0xFF00EE11, 
+                    Aquamarine = 0xFF55FFAA, 
+                    DeepRed = 0xFFFF1111, 
+                    Purple = 0xFFDD00DD, 
+                    DarkGrey = 0xFF445555, 
+                    LightBlue = 0xFF33AAFF, 
+                    Orange = 0xFFFF4411, 
+                    Pink = 0xFFFF9988, 
+                    Yellow = 0xFFFFFF11, 
+                    White = 0xFFFFFFFF, 
+                    Monochrome = 0xFF00AA00
                 }
             };
         }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Jellyfish.Virtu.Services
+﻿namespace Jellyfish.Virtu.Services
 {
     public abstract class KeyboardService : MachineService
     {

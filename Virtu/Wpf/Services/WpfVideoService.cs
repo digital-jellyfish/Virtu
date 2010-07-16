@@ -1,36 +1,32 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Security;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Microsoft.Win32;
 
 namespace Jellyfish.Virtu.Services
 {
     public sealed class WpfVideoService : VideoService
     {
-        [SecurityCritical]
-        [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
-        public WpfVideoService(Machine machine, Window window, Image image) : 
+        public WpfVideoService(Machine machine, UserControl page, Image image) : 
             base(machine)
         {
-            if (window == null)
+            if (page == null)
             {
-                throw new ArgumentNullException("window");
+                throw new ArgumentNullException("page");
             }
             if (image == null)
             {
                 throw new ArgumentNullException("image");
             }
 
-            _window = window;
+            _page = page;
             _image = image;
             _image.Source = _bitmap;
 
-            _window.SizeChanged += (sender, e) => SetImageSize();
-            SystemEvents.DisplaySettingsChanged += (sender, e) => SetImageSize();
+            _page.Loaded += (sender, e) => SetWindowSizeToContent();
+            _page.SizeChanged += (sender, e) => SetImageSize();
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow")]
@@ -44,17 +40,18 @@ namespace Jellyfish.Virtu.Services
         {
             if (_isFullScreen != IsFullScreen)
             {
+                var window = Window.GetWindow(_page);
                 if (IsFullScreen)
                 {
-                    _window.SizeToContent = SizeToContent.Manual;
-                    _window.WindowStyle = WindowStyle.None;
-                    _window.WindowState = WindowState.Maximized;
+                    window.ResizeMode = ResizeMode.NoResize;
+                    window.WindowStyle = WindowStyle.None;
+                    window.WindowState = WindowState.Maximized;
                 }
                 else
                 {
-                    _window.WindowState = WindowState.Normal;
-                    _window.WindowStyle = WindowStyle.SingleBorderWindow;
-                    _window.SizeToContent = SizeToContent.WidthAndHeight;
+                    window.WindowState = WindowState.Normal;
+                    window.WindowStyle = WindowStyle.SingleBorderWindow;
+                    window.ResizeMode = ResizeMode.CanResize;
                 }
                 _isFullScreen = IsFullScreen;
             }
@@ -68,11 +65,22 @@ namespace Jellyfish.Virtu.Services
 
         private void SetImageSize()
         {
-            int uniformScale = IsFullScreen ? Math.Min((int)SystemParameters.PrimaryScreenWidth / BitmapWidth, (int)SystemParameters.PrimaryScreenHeight / BitmapHeight) : 
-                Math.Min((int)SystemParameters.FullPrimaryScreenWidth / BitmapWidth, (int)SystemParameters.FullPrimaryScreenHeight / BitmapHeight);
+            int uniformScale = Math.Max(1, Math.Min((int)_page.RenderSize.Width / BitmapWidth, (int)_page.RenderSize.Height / BitmapHeight));
             _image.Width = uniformScale * BitmapWidth;
             _image.Height = uniformScale * BitmapHeight;
             Machine.Video.DirtyScreen();
+        }
+
+        private void SetWindowSizeToContent()
+        {
+            if (!_sizedToContent)
+            {
+                _sizedToContent = true;
+                var window = Application.Current.MainWindow;
+                var size = window.DesiredSize;
+                window.Width = size.Width;
+                window.Height = size.Height;
+            }
         }
 
         private const int BitmapWidth = 560;
@@ -82,11 +90,12 @@ namespace Jellyfish.Virtu.Services
         private static readonly int BitmapStride = (BitmapWidth * BitmapPixelFormat.BitsPerPixel + 7) / 8;
         private static readonly Int32Rect BitmapRect = new Int32Rect(0, 0, BitmapWidth, BitmapHeight);
 
-        private Window _window;
+        private UserControl _page;
         private Image _image;
         private WriteableBitmap _bitmap = new WriteableBitmap(BitmapWidth, BitmapHeight, BitmapDpi, BitmapDpi, BitmapPixelFormat, null);
         private uint[] _pixels = new uint[BitmapWidth * BitmapHeight];
         private bool _pixelsDirty;
         private bool _isFullScreen;
+        private bool _sizedToContent;
     }
 }

@@ -24,26 +24,12 @@ namespace Jellyfish.Library
             AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
         }
 
-        private void OnApplicationDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
-            MessageBox.Show(GetExceptionMessage(e.Exception), GetExceptionCaption("Application Dispatcher Exception", isTerminating: true));
-            e.Handled = true;
-            Shutdown();
-        }
-
-        private void OnAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            MessageBox.Show(GetExceptionMessage(e.ExceptionObject as Exception), GetExceptionCaption("AppDomain Exception", e.IsTerminating));
-        }
-
         private string GetExceptionCaption(string title, bool isTerminating = false)
         {
             var caption = new StringBuilder();
-            caption.AppendFormat("[{0}] ", Process.GetCurrentProcess().Id);
             if (!string.IsNullOrEmpty(Name))
             {
-                caption.Append(Name);
-                caption.Append(" ");
+                caption.Append(Name).Append(' ');
             }
             caption.Append(title);
             if (isTerminating)
@@ -54,17 +40,24 @@ namespace Jellyfish.Library
             return caption.ToString();
         }
 
-        private static string GetExceptionMessage(Exception exception)
+        private void OnApplicationDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            var message = new StringBuilder();
-            if (exception != null)
+            MessageBox.Show(e.Exception.ToString(), GetExceptionCaption("Application Dispatcher Exception", isTerminating: true));
+            if (Debugger.IsAttached)
             {
-                message.Append(exception.Message.ToString());
-                message.Append(Environment.NewLine);
-                message.Append(exception.StackTrace.ToString());
+                Debugger.Break();
             }
+            e.Handled = true;
+            Shutdown();
+        }
 
-            return message.ToString();
+        private void OnAppDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.ExceptionObject.ToString(), GetExceptionCaption("AppDomain Exception", e.IsTerminating));
+            if (Debugger.IsAttached)
+            {
+                Debugger.Break();
+            }
         }
 
         public string Name { get; private set; }

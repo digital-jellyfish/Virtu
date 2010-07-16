@@ -27,9 +27,9 @@ namespace Jellyfish.Virtu.Services
 
             try
             {
-                using (var storageContainer = _storageDevice.Value.OpenContainer(_game.Name))
+                using (var storageContainer = OpenContainer())
                 {
-                    using (var stream = new FileStream(Path.Combine(storageContainer.Path, path), FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (var stream = storageContainer.OpenFile(path))
                     {
                         reader(stream);
                     }
@@ -47,13 +47,18 @@ namespace Jellyfish.Virtu.Services
                 throw new ArgumentNullException("writer");
             }
 
-            using (var storageContainer = _storageDevice.Value.OpenContainer(_game.Name))
+            using (var storageContainer = OpenContainer())
             {
-                using (var stream = new FileStream(Path.Combine(storageContainer.Path, path), FileMode.Create, FileAccess.Write, FileShare.None))
+                using (var stream = storageContainer.OpenFile(path))
                 {
                     writer(stream);
                 }
             }
+        }
+
+        private StorageContainer OpenContainer()
+        {
+            return _storageDevice.Value.EndOpenContainer(_storageDevice.Value.BeginOpenContainer(_game.Name, null, null));
         }
 
         private GameBase _game;

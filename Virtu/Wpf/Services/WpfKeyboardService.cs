@@ -1,26 +1,24 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Jellyfish.Virtu.Services
 {
     public sealed class WpfKeyboardService : KeyboardService
     {
-        public WpfKeyboardService(Machine machine, Window window) : 
+        public WpfKeyboardService(Machine machine, UserControl page) : 
             base(machine)
         {
-            if (window == null)
+            if (page == null)
             {
-                throw new ArgumentNullException("window");
+                throw new ArgumentNullException("page");
             }
 
-            _window = window;
-
-            _window.KeyDown += OnWindowKeyDown;
-            _window.KeyUp += OnWindowKeyUp;
-            _window.GotKeyboardFocus += (sender, e) => _updateAnyKeyDown = true;
+            page.KeyDown += OnPageKeyDown;
+            page.KeyUp += OnPageKeyUp;
+            page.GotKeyboardFocus += (sender, e) => _updateAnyKeyDown = true;
         }
 
         public override bool IsKeyDown(int key)
@@ -60,9 +58,9 @@ namespace Jellyfish.Virtu.Services
             return _states[(int)key];
         }
 
-        private void OnWindowKeyDown(object sender, KeyEventArgs e)
+        private void OnPageKeyDown(object sender, KeyEventArgs e)
         {
-            //DebugService.WriteLine(string.Concat("OnWindowKeyDn: Key=", e.Key));
+            //DebugService.WriteLine(string.Concat("OnPageKeyDn: Key=", e.Key));
 
             _states[(int)((e.Key == Key.System) ? e.SystemKey : e.Key)] = true;
             _updateAnyKeyDown = false;
@@ -78,9 +76,9 @@ namespace Jellyfish.Virtu.Services
             Update();
         }
 
-        private void OnWindowKeyUp(object sender, KeyEventArgs e)
+        private void OnPageKeyUp(object sender, KeyEventArgs e)
         {
-            //DebugService.WriteLine(string.Concat("OnWindowKeyUp: Key=", e.Key));
+            //DebugService.WriteLine(string.Concat("OnPageKeyUp: Key=", e.Key));
 
             _states[(int)((e.Key == Key.System) ? e.SystemKey : e.Key)] = false;
             _updateAnyKeyDown = true;
@@ -292,7 +290,6 @@ namespace Jellyfish.Virtu.Services
 
         private static readonly int KeyCount = (int)(KeyValues.Max()) + 1;
 
-        private Window _window;
         private bool[] _states = new bool[KeyCount];
         private bool _updateAnyKeyDown;
     }

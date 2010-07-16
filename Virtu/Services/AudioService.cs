@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using Jellyfish.Library;
 
 namespace Jellyfish.Virtu.Services
 {
@@ -21,7 +22,7 @@ namespace Jellyfish.Virtu.Services
                 _readEvent.Set();
                 if (Machine.Settings.Cpu.IsThrottled)
                 {
-                    _writeEvent.WaitOne();
+                    _writeEvent.WaitOne(SampleLatency * 2); // allow timeout; avoids deadlock
                 }
             }
         }
@@ -33,17 +34,11 @@ namespace Jellyfish.Virtu.Services
 
         public abstract void SetVolume(double volume); // machine thread
 
-        public override void Stop() // main thread
-        {
-            _readEvent.Set(); // signal events; avoids deadlock
-            _writeEvent.Set();
-        }
-
         protected void Update(int bufferSize, Action<byte[], int> updateBuffer) // audio thread
         {
             if (Machine.State == MachineState.Running)
             {
-                _readEvent.WaitOne();
+                _readEvent.WaitOne(SampleLatency * 2); // allow timeout; avoids deadlock
             }
             if (updateBuffer != null)
             {

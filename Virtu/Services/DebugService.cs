@@ -10,9 +10,14 @@ namespace Jellyfish.Virtu.Services
         {
         }
 
-        public virtual void WriteLine(string message)
+        public void WriteLine(string message)
         {
-            Debug.WriteLine(string.Concat(DateTime.Now, " ", message));
+            OnWriteLine(string.Concat(DateTime.Now, ' ', message));
+        }
+
+        protected virtual void OnWriteLine(string message)
+        {
+            Debug.WriteLine(message);
         }
     }
 }

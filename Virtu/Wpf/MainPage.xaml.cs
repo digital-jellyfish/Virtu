@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Jellyfish.Virtu.Services;
+using Microsoft.Win32;
 
 namespace Jellyfish.Virtu
 {
@@ -13,14 +15,14 @@ namespace Jellyfish.Virtu
         {
             InitializeComponent();
 
-            if (!DesignerProperties.IsInDesignTool)
+            if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                _debugService = new SilverlightDebugService(_machine, this);
-                _storageService = new IsolatedStorageService(_machine);
-                _keyboardService = new SilverlightKeyboardService(_machine, this);
+                _debugService = new WpfDebugService(_machine, this);
+                _storageService = new WpfStorageService(_machine);
+                _keyboardService = new WpfKeyboardService(_machine, this);
                 _gamePortService = new GamePortService(_machine); // not connected
-                _audioService = new SilverlightAudioService(_machine, this, _media);
-                _videoService = new SilverlightVideoService(_machine, this, _image);
+                _audioService = new WpfAudioService(_machine, this);
+                _videoService = new WpfVideoService(_machine, this, _image);
 
                 _machine.Services.AddService(typeof(DebugService), _debugService);
                 _machine.Services.AddService(typeof(StorageService), _storageService);
@@ -70,10 +72,19 @@ namespace Jellyfish.Virtu
             bool? result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
             {
-                using (var stream = dialog.File.OpenRead())
+                using (var stream = File.OpenRead(dialog.FileName))
                 {
                     _machine.Pause();
-                    _machine.DiskII.Drives[drive].InsertDisk(dialog.File.Name, stream, false);
+                    _machine.DiskII.Drives[drive].InsertDisk(dialog.FileName, stream, false);
+                    var settings = _machine.Settings.DiskII;
+                    if (drive == 0)
+                    {
+                        settings.Disk1.Name = dialog.FileName;
+                    }
+                    else
+                    {
+                        settings.Disk2.Name = dialog.FileName;
+                    }
                     _machine.Unpause();
                 }
             }

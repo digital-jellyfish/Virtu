@@ -63,9 +63,6 @@
     <Reference Include="Microsoft.Xna.Framework.GamerServices">
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Input.Touch">
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Microsoft.Xna.Framework.Xact">
       <Private>False</Private>
     </Reference>
@@ -202,9 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
-    <Content Include="AppThumbnail.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="AppThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Properties\Strings.resx">

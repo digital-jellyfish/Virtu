@@ -1,4 +1,5 @@
 ﻿using System;
+using Jellyfish.Library;
 
 namespace Jellyfish.Virtu.Services
 {
@@ -15,18 +16,9 @@ namespace Jellyfish.Virtu.Services
             _page = page;
         }
 
-        public override void WriteLine(string message)
+        protected override void OnWriteLine(string message)
         {
-            message = string.Concat(DateTime.Now, " ", message, Environment.NewLine);
-
-            if (_page.CheckAccess())
-            {
-                _page._debug.Text += message;
-            }
-            else
-            {
-                _page.Dispatcher.BeginInvoke(() => _page._debug.Text += message);
-            }
+            _page.Dispatcher.CheckBeginInvoke(() => _page.WriteLine(message + Environment.NewLine));
         }
 
         private MainPage _page;

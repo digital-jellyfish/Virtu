@@ -29,9 +29,7 @@ namespace Jellyfish.Virtu.Services
         [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow")]
         public override void SetPixel(int x, int y, uint color)
         {
-            uint rgbaColor = ((color << 16) & 0xFF0000) | (color & 0x00FF00) | ((color >> 16) & 0x0000FF); // convert from BGRA to RGBA
-            _pixels[y * TextureWidth + x] = rgbaColor;
-            _pixels[(y + 1) * TextureWidth + x] = (_textureScale < 1) ? rgbaColor : 0x0;
+            _pixels[y * TextureWidth + x] = (color & 0xFF00FF00) | ((color << 16) & 0x00FF0000) | ((color >> 16) & 0x000000FF); // RGBA
             _pixelsDirty = true;
         }
 
@@ -74,36 +72,32 @@ namespace Jellyfish.Virtu.Services
             bool portraitOrientation = (presentationParameters.DisplayOrientation & DisplayOrientation.Portrait) != 0;
             if (portraitOrientation)
             {
-                _textureScale = Math.Min((float)displayMode.TitleSafeArea.Width / TextureWidth, (float)displayMode.TitleSafeArea.Height / TextureHeight);
+                _textureScale = Math.Max(1, Math.Min(displayMode.TitleSafeArea.Width / TextureWidth, displayMode.TitleSafeArea.Height / TextureHeight));
                 presentationParameters.BackBufferWidth = displayMode.Width; // always use portrait display mode
                 presentationParameters.BackBufferHeight = displayMode.Height;
             }
             else
             {
-                _textureScale = Math.Min((float)displayMode.TitleSafeArea.Height / TextureWidth, (float)displayMode.TitleSafeArea.Width / TextureHeight);
+                _textureScale = Math.Max(1, Math.Min(displayMode.TitleSafeArea.Height / TextureWidth, displayMode.TitleSafeArea.Width / TextureHeight));
                 presentationParameters.BackBufferWidth = displayMode.Height; // always use landscape display mode
                 presentationParameters.BackBufferHeight = displayMode.Width;
             }
-            if (_textureScale > 1)
-            {
-                _textureScale = (float)Math.Floor(_textureScale); // integer scale up
-            }
 #elif XBOX
-            _textureScale = Math.Min(displayMode.TitleSafeArea.Width / TextureWidth, displayMode.TitleSafeArea.Height / TextureHeight);
+            _textureScale = Math.Max(1, Math.Min(displayMode.TitleSafeArea.Width / TextureWidth, displayMode.TitleSafeArea.Height / TextureHeight));
             presentationParameters.BackBufferWidth = displayMode.Width; // always use display mode
             presentationParameters.BackBufferHeight = displayMode.Height;
 #else
             if (presentationParameters.IsFullScreen)
             {
-                _textureScale = Math.Min((int)SystemParameters.PrimaryScreenWidth / TextureWidth, (int)SystemParameters.PrimaryScreenHeight / TextureHeight);
+                _textureScale = Math.Max(1, Math.Min((int)SystemParameters.PrimaryScreenWidth / TextureWidth, (int)SystemParameters.PrimaryScreenHeight / TextureHeight));
                 presentationParameters.BackBufferWidth = displayMode.Width; // avoids changing display mode
                 presentationParameters.BackBufferHeight = displayMode.Height;
             }
             else
             {
-                _textureScale = Math.Min((int)SystemParameters.FullPrimaryScreenWidth / TextureWidth, (int)SystemParameters.FullPrimaryScreenHeight / TextureHeight);
-                presentationParameters.BackBufferWidth = (int)_textureScale * TextureWidth;
-                presentationParameters.BackBufferHeight = (int)_textureScale * TextureHeight;
+                _textureScale = Math.Max(1, Math.Min((int)SystemParameters.FullPrimaryScreenWidth / TextureWidth, (int)SystemParameters.FullPrimaryScreenHeight / TextureHeight));
+                presentationParameters.BackBufferWidth = _textureScale * TextureWidth;
+                presentationParameters.BackBufferHeight = _textureScale * TextureHeight;
             }
 #endif
         }
@@ -131,7 +125,7 @@ namespace Jellyfish.Virtu.Services
         private SpriteBatch _spriteBatch;
         private Texture2D _texture;
         private Vector2 _texturePosition;
-        private float _textureScale;
+        private int _textureScale;
         private uint[] _pixels;
         private bool _pixelsDirty;
     }

@@ -10,13 +10,9 @@ namespace Jellyfish.Virtu
         public MainGame() : 
             base("Virtu")
         {
-#if WINDOWS_PHONE
-            GraphicsDeviceManager.IsFullScreen = true;
-            GraphicsDeviceManager.PreferredBackBufferWidth = 480; // TODO remove; works around known ctp issue
-            GraphicsDeviceManager.PreferredBackBufferHeight = 800;
-#endif
+#if WINDOWS
             IsMouseVisible = true;
-
+#endif
             var frameRateCounter = new FrameRateCounter(this); // no initializers; avoids CA2000
             Components.Add(frameRateCounter);
             frameRateCounter.DrawOrder = 1;

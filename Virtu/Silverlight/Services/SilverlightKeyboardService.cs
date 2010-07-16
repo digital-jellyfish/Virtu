@@ -17,11 +17,9 @@ namespace Jellyfish.Virtu.Services
                 throw new ArgumentNullException("page");
             }
 
-            _page = page;
-
-            _page.KeyDown += OnPageKeyDown;
-            _page.KeyUp += OnPageKeyUp;
-            _page.LostFocus += OnPageLostFocus;
+            page.KeyDown += OnPageKeyDown;
+            page.KeyUp += OnPageKeyUp;
+            page.LostFocus += OnPageLostFocus;
         }
 
         public override bool IsKeyDown(int key)
@@ -396,7 +394,6 @@ namespace Jellyfish.Virtu.Services
 
         private static readonly int KeyCount = (int)(KeyValues.Max()) + 1;
 
-        private UserControl _page;
         private bool[] _states = new bool[KeyCount];
         private bool _capsLock;
         private bool _updateAnyKeyDown;
