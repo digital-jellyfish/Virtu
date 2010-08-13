@@ -199,6 +199,12 @@
     <None Include="Properties\OutOfBrowserSettings.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AppIcon16.png" />
+    <Content Include="AppIcon32.png" />
+    <Content Include="AppIcon48.png" />
+    <Content Include="AppIcon128.png" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="..\Properties\Strings.resx">
       <Link>Properties\Strings.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
