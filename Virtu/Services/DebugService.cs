@@ -12,7 +12,7 @@ namespace Jellyfish.Virtu.Services
 
         public void WriteLine(string message)
         {
-            OnWriteLine(string.Concat(DateTime.Now, ' ', message));
+            OnWriteLine(string.Concat(DateTime.Now.TimeOfDay, ' ', message));
         }
 
         protected virtual void OnWriteLine(string message)
