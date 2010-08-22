@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 #if WINDOWS_PHONE
@@ -23,6 +24,17 @@ namespace Jellyfish.Library
             UnhandledException += OnApplicationUnhandledException;
             //AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
         }
+
+#if !WINDOWS_PHONE
+        protected void InitializeOutOfBrowserUpdate()
+        {
+            if (IsRunningOutOfBrowser)
+            {
+                CheckAndDownloadUpdateCompleted += OnApplicationCheckAndDownloadUpdateCompleted;
+                CheckAndDownloadUpdateAsync();
+            }
+        }
+#endif
 
 #if WINDOWS_PHONE
         protected void InitializePhoneApplication()
@@ -52,6 +64,27 @@ namespace Jellyfish.Library
 
             return caption.ToString();
         }
+
+#if !WINDOWS_PHONE
+        private void OnApplicationCheckAndDownloadUpdateCompleted(object sender, CheckAndDownloadUpdateCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                if (e.Error is PlatformNotSupportedException)
+                {
+                    MessageBox.Show("An application update is available, but it requires the latest version of Silverlight.");
+                }
+                else if (Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
+            }
+            else if (e.UpdateAvailable)
+            {
+                MessageBox.Show("An application update was downloaded. Restart the application to run the latest version.");
+            }
+        }
+#endif
 
         private void OnApplicationUnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {

@@ -29,9 +29,12 @@ namespace Jellyfish.Library
         public void SetVolume(double volume)
         {
             int attenuation = (volume < 0.01) ? (int)BufferVolume.Min : (int)Math.Floor(100 * 20 * Math.Log10(volume)); // 100 db
-            if (_buffer != null)
+            lock (_bufferLock)
             {
-                _buffer.SetVolume(attenuation);
+                if (_buffer != null)
+                {
+                    _buffer.SetVolume(attenuation);
+                }
             }
         }
 
@@ -116,11 +119,14 @@ namespace Jellyfish.Library
 
         private void Uninitialize()
         {
-            if (_buffer != null)
+            lock (_bufferLock)
             {
-                _buffer.Stop();
-                Marshal.ReleaseComObject(_buffer);
-                _buffer = null;
+                if (_buffer != null)
+                {
+                    _buffer.Stop();
+                    Marshal.ReleaseComObject(_buffer);
+                    _buffer = null;
+                }
             }
             if (_device != null)
             {
@@ -157,6 +163,7 @@ namespace Jellyfish.Library
         private IntPtr _window;
         private IDirectSound _device;
         private IDirectSoundBuffer _buffer;
+        private object _bufferLock = new object();
         private Action<IntPtr, int> _updater;
 
         private AutoResetEvent _position1Event = new AutoResetEvent(false);
