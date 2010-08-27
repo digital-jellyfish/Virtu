@@ -118,14 +118,14 @@
     <Compile Include="..\DiskDsk.cs">
       <Link>Core\DiskDsk.cs</Link>
     </Compile>
-    <Compile Include="..\DiskII.cs">
-      <Link>Core\DiskII.cs</Link>
+    <Compile Include="..\DiskIIController.cs">
+      <Link>Core\DiskIIController.cs</Link>
+    </Compile>
+    <Compile Include="..\DiskIIDrive.cs">
+      <Link>Core\DiskIIDrive.cs</Link>
     </Compile>
     <Compile Include="..\DiskNib.cs">
       <Link>Core\DiskNib.cs</Link>
-    </Compile>
-    <Compile Include="..\Drive525.cs">
-      <Link>Core\Drive525.cs</Link>
     </Compile>
     <Compile Include="..\GamePort.cs">
       <Link>Core\GamePort.cs</Link>
@@ -153,6 +153,12 @@
     </Compile>
     <Compile Include="..\MemoryData.cs">
       <Link>Core\MemoryData.cs</Link>
+    </Compile>
+    <Compile Include="..\NoSlotClock.cs">
+      <Link>Core\NoSlotClock.cs</Link>
+    </Compile>
+    <Compile Include="..\PeripheralCard.cs">
+      <Link>Core\PeripheralCard.cs</Link>
     </Compile>
     <Compile Include="..\Properties\Strings.Designer.cs">
       <Link>Properties\Strings.Designer.cs</Link>

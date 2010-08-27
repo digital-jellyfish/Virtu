@@ -42,7 +42,7 @@ namespace Jellyfish.Virtu
         {
             var settings = Machine.Settings.GamePort;
 
-            return (_gamePortService.IsButton2Down || 
+            return (_gamePortService.IsButton2Down || _keyboardService.IsShiftKeyDown || // [TN9]
                 (settings.UseKeyboard && (settings.Key.Button2 > 0) && _keyboardService.IsKeyDown(settings.Key.Button2)));
         }
 

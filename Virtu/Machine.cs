@@ -19,13 +19,24 @@ namespace Jellyfish.Virtu
 
             Cpu = new Cpu(this);
             Memory = new Memory(this);
-            DiskII = new DiskII(this);
             Keyboard = new Keyboard(this);
             GamePort = new GamePort(this);
             Cassette = new Cassette(this);
             Speaker = new Speaker(this);
             Video = new Video(this);
-            Components = new Collection<MachineComponent> { Cpu, Memory, DiskII, Keyboard, GamePort, Cassette, Speaker, Video };
+            NoSlotClock = new NoSlotClock();
+
+            var emptySlot = new PeripheralCard(this);
+            Slot1 = emptySlot;
+            Slot2 = emptySlot;
+            Slot3 = emptySlot;
+            Slot4 = emptySlot;
+            Slot5 = emptySlot;
+            Slot6 = new DiskIIController(this);
+            Slot7 = emptySlot;
+
+            Slots = new Collection<PeripheralCard> { null, Slot1, Slot2, Slot3, Slot4, Slot5, Slot6, Slot7 };
+            Components = new Collection<MachineComponent> { Cpu, Memory, Keyboard, GamePort, Cassette, Speaker, Video, Slot1, Slot2, Slot3, Slot4, Slot5, Slot6, Slot7 };
 
             Thread = new Thread(Run) { Name = "Machine" };
         }
@@ -76,6 +87,20 @@ namespace Jellyfish.Virtu
             }
         }
 
+        public DiskIIController FindDiskIIController()
+        {
+            for (int i = 7; i >= 1; i--)
+            {
+                var diskII = Slots[i] as DiskIIController;
+                if (diskII != null)
+                {
+                    return diskII;
+                }
+            }
+
+            return null;
+        }
+
         private void Run() // machine thread
         {
             Components.ForEach(component => component.Initialize());
@@ -108,12 +133,22 @@ namespace Jellyfish.Virtu
 
         public Cpu Cpu { get; private set; }
         public Memory Memory { get; private set; }
-        public DiskII DiskII { get; private set; }
         public Keyboard Keyboard { get; private set; }
         public GamePort GamePort { get; private set; }
         public Cassette Cassette { get; private set; }
         public Speaker Speaker { get; private set; }
         public Video Video { get; private set; }
+        public NoSlotClock NoSlotClock { get; private set; }
+
+        public PeripheralCard Slot1 { get; private set; }
+        public PeripheralCard Slot2 { get; private set; }
+        public PeripheralCard Slot3 { get; private set; }
+        public PeripheralCard Slot4 { get; private set; }
+        public PeripheralCard Slot5 { get; private set; }
+        public PeripheralCard Slot6 { get; private set; }
+        public PeripheralCard Slot7 { get; private set; }
+
+        public Collection<PeripheralCard> Slots { get; private set; }
         public Collection<MachineComponent> Components { get; private set; }
 
         public Thread Thread { get; private set; }

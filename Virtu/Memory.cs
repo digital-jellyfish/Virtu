@@ -81,21 +81,18 @@ namespace Jellyfish.Virtu
 
         public override void Initialize()
         {
-            _diskII = Machine.DiskII;
             _keyboard = Machine.Keyboard;
             _gamePort = Machine.GamePort;
             _cassette = Machine.Cassette;
             _speaker = Machine.Speaker;
             _video = Machine.Video;
+            _noSlotClock = Machine.NoSlotClock;
 
             var romStream = StorageService.GetResourceStream("Roms/AppleIIe.rom", 0x4000);
             romStream.Seek(0x0100, SeekOrigin.Current);
             romStream.ReadBlock(_romInternalRegionC1CF, 0x0000, 0x0F00);
             romStream.ReadBlock(_romRegionD0DF, 0x0000, 0x1000);
             romStream.ReadBlock(_romRegionE0FF, 0x0000, 0x2000);
-
-            romStream = StorageService.GetResourceStream("Roms/DiskII.rom", 0x0100);
-            romStream.ReadBlock(_romExternalRegionC1CF, 0x0500, 0x0100);
 
             if ((ReadRomRegionE0FF(0xFBB3) == 0x06) && (ReadRomRegionE0FF(0xFBBF) == 0xC1))
             {
@@ -105,14 +102,12 @@ namespace Jellyfish.Virtu
             {
                 Monitor = MonitorType.Enhanced;
             }
-
-            Buffer.BlockCopy(_romInternalRegionC1CF, 0x0700, _romExternalRegionC1CF, 0x0700, 0x0800);
         }
 
         public override void Reset() // [7-3]
         {
             ResetState(State80Col | State80Store | StateAltChrSet | StateAltZP | StateBank1 | StateHRamRd | StateHRamPreWrt | StateHRamWrt | // HRamWrt' [5-23]
-                StateHires | StatePage2 | StateRamRd | StateRamWrt | StateSlotC3Rom | StateIntCXRom | StateAn0 | StateAn1 | StateAn2 | StateAn3);
+                StateHires | StatePage2 | StateRamRd | StateRamWrt | StateIntCXRom | StateSlotC3Rom | StateIntC8Rom | StateAn0 | StateAn1 | StateAn2 | StateAn3);
             SetState(StateDRes); // An3' -> DRes [8-20]
 
             MapRegion0001();
@@ -125,8 +120,7 @@ namespace Jellyfish.Virtu
         public int Read(int address)
         {
             int region = PageRegion[address >> 8];
-
-            return (region == RegionC0C0) ? ReadIoC0XX(address) : _regionRead[region][address - RegionBaseAddress[region]];
+            return ((address & 0xF000) != 0xC000) ? _regionRead[region][address - RegionBaseAddress[region]] : ReadIoRegionC0CF(address);
         }
 
         public int ReadZeroPage(int address)
@@ -154,9 +148,29 @@ namespace Jellyfish.Virtu
         #endregion
 
         #region Read Actions
+        private int ReadIoRegionC0CF(int address)
+        {
+            switch (address & 0xFF00)
+            {
+            case 0xC000:
+                return ReadIoRegionC0C0(address);
+
+            case 0xC100: case 0xC200: case 0xC400: case 0xC500: case 0xC600: case 0xC700:
+                return ReadIoRegionC1C7(address);
+
+            case 0xC300:
+                return ReadIoRegionC3C3(address);
+
+            case 0xC800: case 0xC900: case 0xCA00: case 0xCB00: case 0xCC00: case 0xCD00: case 0xCE00: case 0xCF00:
+                return ReadIoRegionC8CF(address);
+            }
+
+            return _video.ReadFloatingBus();
+        }
+
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
-        private int ReadIoC0XX(int address)
+        private int ReadIoRegionC0C0(int address)
         {
             switch (address)
             {
@@ -181,13 +195,13 @@ namespace Jellyfish.Virtu
                 return SetBit7(_keyboard.ReadLatch(), IsRamWriteAux);
 
             case 0xC015:
-                return SetBit7(_keyboard.ReadLatch(), IsRomCXXXInternal);
+                return SetBit7(_keyboard.ReadLatch(), IsRomC1CFInternal);
 
             case 0xC016:
                 return SetBit7(_keyboard.ReadLatch(), IsZeroPageAux);
 
             case 0xC017:
-                return SetBit7(_keyboard.ReadLatch(), IsRomC3XXExternal);
+                return SetBit7(_keyboard.ReadLatch(), IsRomC3C3External);
 
             case 0xC018:
                 return SetBit7(_keyboard.ReadLatch(), Is80Store);
@@ -296,37 +310,62 @@ namespace Jellyfish.Virtu
 
             case 0xC090: case 0xC091: case 0xC092: case 0xC093: case 0xC094: case 0xC095: case 0xC096: case 0xC097: // slot1
             case 0xC098: case 0xC099: case 0xC09A: case 0xC09B: case 0xC09C: case 0xC09D: case 0xC09E: case 0xC09F:
-                break;
+                return Machine.Slot1.ReadIoRegionC0C0(address);
 
             case 0xC0A0: case 0xC0A1: case 0xC0A2: case 0xC0A3: case 0xC0A4: case 0xC0A5: case 0xC0A6: case 0xC0A7: // slot2
             case 0xC0A8: case 0xC0A9: case 0xC0AA: case 0xC0AB: case 0xC0AC: case 0xC0AD: case 0xC0AE: case 0xC0AF:
-                break;
+                return Machine.Slot2.ReadIoRegionC0C0(address);
 
             case 0xC0B0: case 0xC0B1: case 0xC0B2: case 0xC0B3: case 0xC0B4: case 0xC0B5: case 0xC0B6: case 0xC0B7: // slot3
             case 0xC0B8: case 0xC0B9: case 0xC0BA: case 0xC0BB: case 0xC0BC: case 0xC0BD: case 0xC0BE: case 0xC0BF:
-                break;
+                return Machine.Slot3.ReadIoRegionC0C0(address);
 
             case 0xC0C0: case 0xC0C1: case 0xC0C2: case 0xC0C3: case 0xC0C4: case 0xC0C5: case 0xC0C6: case 0xC0C7: // slot4
             case 0xC0C8: case 0xC0C9: case 0xC0CA: case 0xC0CB: case 0xC0CC: case 0xC0CD: case 0xC0CE: case 0xC0CF:
-                break;
+                return Machine.Slot4.ReadIoRegionC0C0(address);
 
             case 0xC0D0: case 0xC0D1: case 0xC0D2: case 0xC0D3: case 0xC0D4: case 0xC0D5: case 0xC0D6: case 0xC0D7: // slot5
             case 0xC0D8: case 0xC0D9: case 0xC0DA: case 0xC0DB: case 0xC0DC: case 0xC0DD: case 0xC0DE: case 0xC0DF:
-                break;
+                return Machine.Slot5.ReadIoRegionC0C0(address);
 
             case 0xC0E0: case 0xC0E1: case 0xC0E2: case 0xC0E3: case 0xC0E4: case 0xC0E5: case 0xC0E6: case 0xC0E7: // slot6
             case 0xC0E8: case 0xC0E9: case 0xC0EA: case 0xC0EB: case 0xC0EC: case 0xC0ED: case 0xC0EE: case 0xC0EF:
-                return _diskII.Read(address);
+                return Machine.Slot6.ReadIoRegionC0C0(address);
 
             case 0xC0F0: case 0xC0F1: case 0xC0F2: case 0xC0F3: case 0xC0F4: case 0xC0F5: case 0xC0F6: case 0xC0F7: // slot7
             case 0xC0F8: case 0xC0F9: case 0xC0FA: case 0xC0FB: case 0xC0FC: case 0xC0FD: case 0xC0FE: case 0xC0FF:
-                break;
+                return Machine.Slot7.ReadIoRegionC0C0(address);
 
             default:
                 throw new ArgumentOutOfRangeException("address");
             }
 
-            return _video.ReadFloatingBus(); // [5-40]
+            return _video.ReadFloatingBus();
+        }
+
+        private int ReadIoRegionC1C7(int address)
+        {
+            _slotRegionC8CF = (address >> 8) & 0x07;
+            return IsRomC1CFInternal ? _romInternalRegionC1CF[address - 0xC100] : Machine.Slots[_slotRegionC8CF].ReadIoRegionC1C7(address);
+        }
+
+        private int ReadIoRegionC3C3(int address)
+        {
+            _slotRegionC8CF = (address >> 8) & 0x07;
+            if (!IsRomC3C3External)
+            {
+                SetRomC8CF(true); // $C3XX sets IntC8Rom; inhibits I/O Strobe' [5-28, 7-21]
+            }
+            return _noSlotClock.Read(address, (IsRomC1CFInternal || !IsRomC3C3External) ? _romInternalRegionC1CF[address - 0xC100] : Machine.Slot3.ReadIoRegionC1C7(address));
+        }
+
+        private int ReadIoRegionC8CF(int address)
+        {
+            if (address == 0xCFFF)
+            {
+                SetRomC8CF(false); // $CFFF resets IntC8Rom [5-28, 7-21]
+            }
+            return (IsRomC1CFInternal || IsRomC8CFInternal) ? _romInternalRegionC1CF[address - 0xC100] : Machine.Slots[_slotRegionC8CF].ReadIoRegionC8CF(address);
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "address-512")]
@@ -351,7 +390,7 @@ namespace Jellyfish.Virtu
         #region Write Actions
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
-        private void WriteIoC0XX(int address, byte data)
+        private void WriteIoRegionC0C0(int address, byte data)
         {
             switch (address)
             {
@@ -368,7 +407,7 @@ namespace Jellyfish.Virtu
                 break;
 
             case 0xC006: case 0xC007:
-                SetRomCXXX(TestBit(address, 0));
+                SetRomC1CF(TestBit(address, 0));
                 break;
 
             case 0xC008: case 0xC009:
@@ -376,7 +415,7 @@ namespace Jellyfish.Virtu
                 break;
 
             case 0xC00A: case 0xC00B:
-                SetRomC3XX(TestBit(address, 0));
+                SetRomC3C3(TestBit(address, 0));
                 break;
 
             case 0xC00C: case 0xC00D: // [7-5]
@@ -455,35 +494,76 @@ namespace Jellyfish.Virtu
 
             case 0xC090: case 0xC091: case 0xC092: case 0xC093: case 0xC094: case 0xC095: case 0xC096: case 0xC097: // slot1
             case 0xC098: case 0xC099: case 0xC09A: case 0xC09B: case 0xC09C: case 0xC09D: case 0xC09E: case 0xC09F:
+                Machine.Slot1.WriteIoRegionC0C0(address, data);
                 break;
 
             case 0xC0A0: case 0xC0A1: case 0xC0A2: case 0xC0A3: case 0xC0A4: case 0xC0A5: case 0xC0A6: case 0xC0A7: // slot2
             case 0xC0A8: case 0xC0A9: case 0xC0AA: case 0xC0AB: case 0xC0AC: case 0xC0AD: case 0xC0AE: case 0xC0AF:
+                Machine.Slot2.WriteIoRegionC0C0(address, data);
                 break;
 
             case 0xC0B0: case 0xC0B1: case 0xC0B2: case 0xC0B3: case 0xC0B4: case 0xC0B5: case 0xC0B6: case 0xC0B7: // slot3
             case 0xC0B8: case 0xC0B9: case 0xC0BA: case 0xC0BB: case 0xC0BC: case 0xC0BD: case 0xC0BE: case 0xC0BF:
+                Machine.Slot3.WriteIoRegionC0C0(address, data);
                 break;
 
             case 0xC0C0: case 0xC0C1: case 0xC0C2: case 0xC0C3: case 0xC0C4: case 0xC0C5: case 0xC0C6: case 0xC0C7: // slot4
             case 0xC0C8: case 0xC0C9: case 0xC0CA: case 0xC0CB: case 0xC0CC: case 0xC0CD: case 0xC0CE: case 0xC0CF:
+                Machine.Slot4.WriteIoRegionC0C0(address, data);
                 break;
 
             case 0xC0D0: case 0xC0D1: case 0xC0D2: case 0xC0D3: case 0xC0D4: case 0xC0D5: case 0xC0D6: case 0xC0D7: // slot5
             case 0xC0D8: case 0xC0D9: case 0xC0DA: case 0xC0DB: case 0xC0DC: case 0xC0DD: case 0xC0DE: case 0xC0DF:
+                Machine.Slot5.WriteIoRegionC0C0(address, data);
                 break;
 
             case 0xC0E0: case 0xC0E1: case 0xC0E2: case 0xC0E3: case 0xC0E4: case 0xC0E5: case 0xC0E6: case 0xC0E7: // slot6
             case 0xC0E8: case 0xC0E9: case 0xC0EA: case 0xC0EB: case 0xC0EC: case 0xC0ED: case 0xC0EE: case 0xC0EF:
-                _diskII.Write(address, data);
+                Machine.Slot6.WriteIoRegionC0C0(address, data);
                 break;
 
             case 0xC0F0: case 0xC0F1: case 0xC0F2: case 0xC0F3: case 0xC0F4: case 0xC0F5: case 0xC0F6: case 0xC0F7: // slot7
             case 0xC0F8: case 0xC0F9: case 0xC0FA: case 0xC0FB: case 0xC0FC: case 0xC0FD: case 0xC0FE: case 0xC0FF:
+                Machine.Slot7.WriteIoRegionC0C0(address, data);
                 break;
 
             default:
                 throw new ArgumentOutOfRangeException("address");
+            }
+        }
+
+        private void WriteIoRegionC1C7(int address, byte data)
+        {
+            _slotRegionC8CF = (address >> 8) & 0x07;
+            if (!IsRomC1CFInternal)
+            {
+                Machine.Slots[_slotRegionC8CF].WriteIoRegionC1C7(address, data);
+            }
+        }
+
+        private void WriteIoRegionC3C3(int address, byte data)
+        {
+            _slotRegionC8CF = (address >> 8) & 0x07;
+            if (!IsRomC3C3External)
+            {
+                SetRomC8CF(true); // $C3XX sets IntC8Rom; inhibits I/O Strobe' [5-28, 7-21]
+            }
+            else if (!IsRomC1CFInternal)
+            {
+                Machine.Slot3.WriteIoRegionC1C7(address, data);
+            }
+            _noSlotClock.Write(address);
+        }
+
+        private void WriteIoRegionC8CF(int address, byte data)
+        {
+            if (address == 0xCFFF)
+            {
+                SetRomC8CF(false); // $CFFF resets IntC8Rom [5-28, 7-21]
+            }
+            if (!IsRomC1CFInternal && !IsRomC8CFInternal)
+            {
+                Machine.Slots[_slotRegionC8CF].WriteIoRegionC8CF(address, data);
             }
         }
 
@@ -991,7 +1071,7 @@ namespace Jellyfish.Virtu
             }
         }
 
-        private void WriteRomRegionC1FF(int address, byte data)
+        private void WriteRomRegionD0FF(int address, byte data)
         {
         }
         #endregion
@@ -1100,7 +1180,7 @@ namespace Jellyfish.Virtu
         private void MapRegionC0CF()
         {
             _regionRead[RegionC0C0] = null;
-            if (IsRomCXXXInternal)
+            if (IsRomC1CFInternal)
             {
                 _regionRead[RegionC1C7] = _romInternalRegionC1CF;
                 _regionRead[RegionC3C3] = _romInternalRegionC1CF;
@@ -1109,17 +1189,17 @@ namespace Jellyfish.Virtu
             else
             {
                 _regionRead[RegionC1C7] = _romExternalRegionC1CF;
-                _regionRead[RegionC3C3] = IsRomC3XXExternal ? _romExternalRegionC1CF : _romInternalRegionC1CF;
-                _regionRead[RegionC8CF] = _romExternalRegionC1CF;
+                _regionRead[RegionC3C3] = IsRomC3C3External ? _romExternalRegionC1CF : _romInternalRegionC1CF;
+                _regionRead[RegionC8CF] = !IsRomC8CFInternal ? _romExternalRegionC1CF : _romInternalRegionC1CF;
             }
             _regionWrite[RegionC0C0] = null;
             _regionWrite[RegionC1C7] = null;
             _regionWrite[RegionC3C3] = null;
             _regionWrite[RegionC8CF] = null;
-            _writeRegion[RegionC0C0] = WriteIoC0XX;
-            _writeRegion[RegionC1C7] = WriteRomRegionC1FF;
-            _writeRegion[RegionC3C3] = WriteRomRegionC1FF;
-            _writeRegion[RegionC8CF] = WriteRomRegionC1FF;
+            _writeRegion[RegionC0C0] = WriteIoRegionC0C0;
+            _writeRegion[RegionC1C7] = WriteIoRegionC1C7;
+            _writeRegion[RegionC3C3] = WriteIoRegionC3C3;
+            _writeRegion[RegionC8CF] = WriteIoRegionC8CF;
         }
 
         private void MapRegionD0FF()
@@ -1161,8 +1241,8 @@ namespace Jellyfish.Virtu
             {
                 _regionWrite[RegionD0DF] = null;
                 _regionWrite[RegionE0FF] = null;
-                _writeRegion[RegionD0DF] = WriteRomRegionC1FF;
-                _writeRegion[RegionE0FF] = WriteRomRegionC1FF;
+                _writeRegion[RegionD0DF] = WriteRomRegionD0FF;
+                _writeRegion[RegionE0FF] = WriteRomRegionD0FF;
             }
         }
 
@@ -1315,7 +1395,16 @@ namespace Jellyfish.Virtu
             }
         }
 
-        private void SetRomC3XX(bool value)
+        private void SetRomC1CF(bool value)
+        {
+            if (!TestState(StateIntCXRom, value))
+            {
+                SetState(StateIntCXRom, value);
+                MapRegionC0CF();
+            }
+        }
+
+        private void SetRomC3C3(bool value)
         {
             if (!TestState(StateSlotC3Rom, value))
             {
@@ -1324,11 +1413,11 @@ namespace Jellyfish.Virtu
             }
         }
 
-        private void SetRomCXXX(bool value)
+        private void SetRomC8CF(bool value)
         {
-            if (!TestState(StateIntCXRom, value))
+            if (!TestState(StateIntC8Rom, value))
             {
-                SetState(StateIntCXRom, value);
+                SetState(StateIntC8Rom, value);
                 MapRegionC0CF();
             }
         }
@@ -1427,8 +1516,9 @@ namespace Jellyfish.Virtu
         public bool IsRamWriteAux { get { return TestState(StateRamWrt); } }
         public bool IsRamWriteAuxRegion0407 { get { return Is80Store ? IsPage2 : IsRamWriteAux; } }
         public bool IsRamWriteAuxRegion203F { get { return TestState(State80Store | StateHires, State80Store | StateHires) ? IsPage2 : IsRamWriteAux; } }
-        public bool IsRomC3XXExternal { get { return TestState(StateSlotC3Rom); } }
-        public bool IsRomCXXXInternal { get { return TestState(StateIntCXRom); } }
+        public bool IsRomC1CFInternal { get { return TestState(StateIntCXRom); } }
+        public bool IsRomC3C3External { get { return TestState(StateSlotC3Rom); } }
+        public bool IsRomC8CFInternal { get { return TestState(StateIntC8Rom); } }
         public bool IsText { get { return TestState(StateText); } }
         public bool IsVideoPage2 { get { return TestState(State80Store | StatePage2, StatePage2); } } // 80Store inhibits video Page2 [5-7, 8-19]
         public bool IsZeroPageAux { get { return TestState(StateAltZP); } }
@@ -1436,14 +1526,15 @@ namespace Jellyfish.Virtu
         public MonitorType Monitor { get; private set; }
         public int VideoMode { get { return StateVideoMode[_state & StateVideo]; } }
 
-        private DiskII _diskII;
         private Keyboard _keyboard;
         private GamePort _gamePort;
         private Cassette _cassette;
         private Speaker _speaker;
         private Video _video;
+        private NoSlotClock _noSlotClock;
 
         private int _state;
+        private int _slotRegionC8CF;
 
         private byte[] _zeroPage;
         private byte[][] _regionRead = new byte[RegionCount][];

@@ -28,6 +28,9 @@
         }
 
         public bool IsAnyKeyDown { get; protected set; }
+        public bool IsControlKeyDown { get; protected set; }
+        public bool IsShiftKeyDown { get; protected set; }
+
         public bool IsOpenAppleKeyDown { get; protected set; }
         public bool IsCloseAppleKeyDown { get; protected set; }
 

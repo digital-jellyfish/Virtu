@@ -44,11 +44,12 @@ namespace Jellyfish.Virtu.Services
             }
 
             var modifiers = System.Windows.Input.Keyboard.Modifiers;
-            bool control = ((modifiers & ModifierKeys.Control) != 0);
+            IsControlKeyDown = ((modifiers & ModifierKeys.Control) != 0);
+            IsShiftKeyDown = ((modifiers & ModifierKeys.Shift) != 0);
 
             IsOpenAppleKeyDown = ((modifiers & ModifierKeys.Alt) != 0) || IsKeyDown(Key.NumPad0);
             IsCloseAppleKeyDown = ((modifiers & ModifierKeys.Windows) != 0) || IsKeyDown(Key.Decimal);
-            IsResetKeyDown = control && IsKeyDown(Key.Back);
+            IsResetKeyDown = IsControlKeyDown && IsKeyDown(Key.Back);
 
             base.Update();
         }

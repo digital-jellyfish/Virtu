@@ -67,11 +67,12 @@ namespace Jellyfish.Virtu.Services
                 }
             }
 
-            bool control = IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl);
+            IsControlKeyDown = IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl);
+            IsShiftKeyDown = IsKeyDown(Keys.LeftShift) || IsKeyDown(Keys.RightShift);
 
             IsOpenAppleKeyDown = IsKeyDown(Keys.LeftAlt) || IsKeyDown(Keys.NumPad0) || (gamePadState.Buttons.LeftShoulder == ButtonState.Pressed);
             IsCloseAppleKeyDown = IsKeyDown(Keys.RightAlt) || IsKeyDown(Keys.Decimal) || (gamePadState.Buttons.RightShoulder == ButtonState.Pressed);
-            IsResetKeyDown = (control && IsKeyDown(Keys.Back)) || (gamePadControl && (gamePadState.Buttons.Start == ButtonState.Pressed));
+            IsResetKeyDown = (IsControlKeyDown && IsKeyDown(Keys.Back)) || (gamePadControl && (gamePadState.Buttons.Start == ButtonState.Pressed));
 
             base.Update();
         }

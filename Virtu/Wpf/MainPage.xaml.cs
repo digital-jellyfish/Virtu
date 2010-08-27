@@ -75,15 +75,19 @@ namespace Jellyfish.Virtu
                 using (var stream = File.OpenRead(dialog.FileName))
                 {
                     _machine.Pause();
-                    _machine.DiskII.Drives[drive].InsertDisk(dialog.FileName, stream, false);
-                    var settings = _machine.Settings.DiskII;
-                    if (drive == 0)
+                    var diskII = _machine.FindDiskIIController();
+                    if (diskII != null)
                     {
-                        settings.Disk1.Name = dialog.FileName;
-                    }
-                    else
-                    {
-                        settings.Disk2.Name = dialog.FileName;
+                        diskII.Drives[drive].InsertDisk(dialog.FileName, stream, false);
+                        var settings = _machine.Settings.DiskII;
+                        if (drive == 0)
+                        {
+                            settings.Disk1.Name = dialog.FileName;
+                        }
+                        else
+                        {
+                            settings.Disk2.Name = dialog.FileName;
+                        }
                     }
                     _machine.Unpause();
                 }

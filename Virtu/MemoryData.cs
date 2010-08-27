@@ -83,11 +83,12 @@ namespace Jellyfish.Virtu
         private const int StateRamRd = 0x002000;
         private const int StateRamWrt = 0x004000;
         private const int StateSlotC3Rom = 0x008000;
-        private const int StateIntCXRom = 0x010000;
-        private const int StateAn0 = 0x020000;
-        private const int StateAn1 = 0x040000;
-        private const int StateAn2 = 0x080000;
-        private const int StateAn3 = 0x100000;
+        private const int StateIntC8Rom = 0x010000; // [5-28]
+        private const int StateIntCXRom = 0x020000;
+        private const int StateAn0 = 0x040000;
+        private const int StateAn1 = 0x080000;
+        private const int StateAn2 = 0x100000;
+        private const int StateAn3 = 0x200000;
         private const int StateVideo = State80Col | StateText | StateMixed | StateHires | StateDRes;
 
         private const int StateVideoModeCount = 32;

@@ -90,7 +90,7 @@ namespace Jellyfish.Virtu
             }
         }
 
-        public int ReadFloatingBus()
+        public int ReadFloatingBus() // [5-40]
         {
             // derive scanner counters from current cycles into frame; assumes hcount and vcount preset at start of frame [3-13, 3-15, 3-16]
             int cycles = _cyclesPerVSync - Machine.Events.FindEvent(_resetVSyncEvent);
