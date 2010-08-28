@@ -1,4 +1,4 @@
-namespace Jellyfish.Virtu
+﻿namespace Jellyfish.Virtu
 {
     public sealed class NoSlotClock
     {

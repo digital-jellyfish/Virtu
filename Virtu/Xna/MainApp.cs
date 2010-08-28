@@ -1,4 +1,4 @@
-namespace Jellyfish.Virtu
+﻿namespace Jellyfish.Virtu
 {
 #if WINDOWS || XBOX
     static class MainApp
