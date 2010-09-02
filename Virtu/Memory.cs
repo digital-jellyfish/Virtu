@@ -351,7 +351,7 @@ namespace Jellyfish.Virtu
 
         private int ReadIoRegionC3C3(int address)
         {
-            _slotRegionC8CF = (address >> 8) & 0x07;
+            _slotRegionC8CF = 3;
             if (!IsRomC3C3External)
             {
                 SetRomC8CF(true); // $C3XX sets IntC8Rom; inhibits I/O Strobe' [5-28, 7-21]
@@ -543,7 +543,7 @@ namespace Jellyfish.Virtu
 
         private void WriteIoRegionC3C3(int address, byte data)
         {
-            _slotRegionC8CF = (address >> 8) & 0x07;
+            _slotRegionC8CF = 3;
             if (!IsRomC3C3External)
             {
                 SetRomC8CF(true); // $C3XX sets IntC8Rom; inhibits I/O Strobe' [5-28, 7-21]
