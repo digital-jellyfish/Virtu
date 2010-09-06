@@ -356,7 +356,7 @@ namespace Jellyfish.Virtu
             {
                 SetRomC8CF(true); // $C3XX sets IntC8Rom; inhibits I/O Strobe' [5-28, 7-21]
             }
-            return _noSlotClock.Read(address, (IsRomC1CFInternal || !IsRomC3C3External) ? _romInternalRegionC1CF[address - 0xC100] : Machine.Slot3.ReadIoRegionC1C7(address));
+            return (IsRomC1CFInternal || !IsRomC3C3External) ? _noSlotClock.Read(address, _romInternalRegionC1CF[address - 0xC100]) : Machine.Slot3.ReadIoRegionC1C7(address);
         }
 
         private int ReadIoRegionC8CF(int address)
@@ -365,7 +365,7 @@ namespace Jellyfish.Virtu
             {
                 SetRomC8CF(false); // $CFFF resets IntC8Rom [5-28, 7-21]
             }
-            return (IsRomC1CFInternal || IsRomC8CFInternal) ? _romInternalRegionC1CF[address - 0xC100] : Machine.Slots[_slotRegionC8CF].ReadIoRegionC8CF(address);
+            return (IsRomC1CFInternal || IsRomC8CFInternal) ? _noSlotClock.Read(address, _romInternalRegionC1CF[address - 0xC100]) : Machine.Slots[_slotRegionC8CF].ReadIoRegionC8CF(address);
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", MessageId = "address-512")]
@@ -548,11 +548,14 @@ namespace Jellyfish.Virtu
             {
                 SetRomC8CF(true); // $C3XX sets IntC8Rom; inhibits I/O Strobe' [5-28, 7-21]
             }
-            else if (!IsRomC1CFInternal)
+            if (IsRomC1CFInternal || !IsRomC3C3External)
+            {
+                _noSlotClock.Write(address);
+            }
+            else
             {
                 Machine.Slot3.WriteIoRegionC1C7(address, data);
             }
-            _noSlotClock.Write(address);
         }
 
         private void WriteIoRegionC8CF(int address, byte data)
@@ -561,7 +564,11 @@ namespace Jellyfish.Virtu
             {
                 SetRomC8CF(false); // $CFFF resets IntC8Rom [5-28, 7-21]
             }
-            if (!IsRomC1CFInternal && !IsRomC8CFInternal)
+            if (IsRomC1CFInternal || IsRomC8CFInternal)
+            {
+                _noSlotClock.Write(address);
+            }
+            else
             {
                 Machine.Slots[_slotRegionC8CF].WriteIoRegionC8CF(address, data);
             }
