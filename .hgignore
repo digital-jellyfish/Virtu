@@ -1,0 +1,2 @@
+relre:/(bin|obj)/
+relre:\.(cachefile|suo|user|vs10x)$
