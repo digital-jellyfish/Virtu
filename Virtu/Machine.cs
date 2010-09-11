@@ -24,7 +24,7 @@ namespace Jellyfish.Virtu
             Cassette = new Cassette(this);
             Speaker = new Speaker(this);
             Video = new Video(this);
-            NoSlotClock = new NoSlotClock();
+            NoSlotClock = new NoSlotClock(this);
 
             var emptySlot = new PeripheralCard(this);
             Slot1 = emptySlot;

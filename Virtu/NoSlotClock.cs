@@ -3,19 +3,12 @@ using System.Collections;
 
 namespace Jellyfish.Virtu
 {
-    public sealed class NoSlotClock
+    public sealed class NoSlotClock : MachineComponent
     {
-        public NoSlotClock()
+        public NoSlotClock(Machine machine) :
+            base(machine)
         {
-            Reset();
-        }
-
-        public void Reset()
-        {
-            // SmartWatch reset - whether tied to system reset is component specific
-            _comparisonRegister.Reset();
-            _clockRegisterEnabled = false;
-            _writeEnabled = true;
+            ResetClock();
         }
 
         public int Read(int address, int data)
@@ -23,10 +16,10 @@ namespace Jellyfish.Virtu
             // this may read or write the clock
             if ((address & 0x4) != 0)
             {
-                return ClockRead(data);
+                return ReadClock(data);
             }
 
-            ClockWrite(address);
+            WriteClock(address);
             return data;
         }
 
@@ -35,15 +28,23 @@ namespace Jellyfish.Virtu
             // this may read or write the clock
             if ((address & 0x4) != 0)
             {
-                ClockRead(0);
+                ReadClock(0);
             }
             else
             {
-                ClockWrite(address);
+                WriteClock(address);
             }
         }
 
-        public int ClockRead(int data)
+        private void ResetClock()
+        {
+            // SmartWatch reset - whether tied to system reset is component specific
+            _comparisonRegister.Reset();
+            _clockRegisterEnabled = false;
+            _writeEnabled = true;
+        }
+
+        private int ReadClock(int data)
         {
             // for a ROM, A2 high = read, and data out (if any) is on D0
             if (!_clockRegisterEnabled)
@@ -53,7 +54,7 @@ namespace Jellyfish.Virtu
                 return data;
             }
 
-            data = _clockRegister.ReadBit(data);
+            data = _clockRegister.ReadBit(Machine.Video.ReadFloatingBus());
             if (_clockRegister.NextBit())
             {
                 _clockRegisterEnabled = false;
@@ -61,7 +62,7 @@ namespace Jellyfish.Virtu
             return data;
         }
 
-        public void ClockWrite(int address)
+        private void WriteClock(int address)
         {
             // for a ROM, A2 low = write, and data in is on A0
             if (!_writeEnabled)
