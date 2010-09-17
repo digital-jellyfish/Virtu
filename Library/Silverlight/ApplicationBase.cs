@@ -23,6 +23,14 @@ namespace Jellyfish.Library
 
             UnhandledException += OnApplicationUnhandledException;
             //AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
+
+            if (Debugger.IsAttached)
+            {
+                var settings = Application.Current.Host.Settings;
+                settings.EnableFrameRateCounter = true;
+                //settings.EnableRedrawRegions = true;
+                //settings.EnableCacheVisualization = true;
+            }
         }
 
 #if !WINDOWS_PHONE

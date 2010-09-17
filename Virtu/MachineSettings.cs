@@ -36,11 +36,7 @@ namespace Jellyfish.Virtu.Settings
                     Button0 = 0, Button1 = 0, Button2 = 0
                 }
             };
-#if WINDOWS_PHONE
-            Audio = new AudioSettings { Volume = 0.85 };
-#else
             Audio = new AudioSettings { Volume = 0.5 };
-#endif
             Video = new VideoSettings
             {
                 IsFullScreen = false, IsMonochrome = false, ScannerOptions = ScannerOptions.None, 

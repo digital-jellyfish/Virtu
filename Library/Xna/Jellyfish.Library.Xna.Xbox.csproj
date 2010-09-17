@@ -102,6 +102,9 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Xml.Serialization">
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyCommentAttribute.cs">
@@ -127,12 +130,6 @@
     </Compile>
     <Compile Include="..\StringBuilderExtensions.cs">
       <Link>StringBuilderExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\ThreadExtensions.cs">
-      <Link>ThreadExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\WaitHandleExtensions.cs">
-      <Link>WaitHandleExtensions.cs</Link>
     </Compile>
     <Compile Include="..\XmlSerializerHelpers.cs">
       <Link>XmlSerializerHelpers.cs</Link>

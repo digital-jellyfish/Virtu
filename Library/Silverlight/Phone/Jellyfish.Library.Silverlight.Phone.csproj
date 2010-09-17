@@ -87,12 +87,6 @@
     <Compile Include="..\..\StringBuilderExtensions.cs">
       <Link>StringBuilderExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\..\ThreadExtensions.cs">
-      <Link>ThreadExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\..\WaitHandleExtensions.cs">
-      <Link>WaitHandleExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\..\WaveFormat.cs">
       <Link>WaveFormat.cs</Link>
     </Compile>

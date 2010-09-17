@@ -78,7 +78,10 @@ namespace Jellyfish.Virtu
         {
             State = MachineState.Stopping;
             _unpauseEvent.Set();
-            Thread.IsAliveJoin();
+            if (Thread.IsAlive)
+            {
+                Thread.Join();
+            }
             State = MachineState.Stopped;
 
             if (_storageService != null)

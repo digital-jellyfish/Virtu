@@ -29,7 +29,7 @@ namespace Jellyfish.Virtu.Services
             {
                 using (var storageContainer = OpenContainer())
                 {
-                    using (var stream = storageContainer.OpenFile(path))
+                    using (var stream = storageContainer.OpenFile(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
                         reader(stream);
                     }
@@ -49,7 +49,7 @@ namespace Jellyfish.Virtu.Services
 
             using (var storageContainer = OpenContainer())
             {
-                using (var stream = storageContainer.OpenFile(path))
+                using (var stream = storageContainer.OpenFile(path, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     writer(stream);
                 }
