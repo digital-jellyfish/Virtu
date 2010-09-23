@@ -14,8 +14,16 @@ namespace Jellyfish.Virtu.Services
 
         public void Output(int data) // machine thread
         {
-            _buffer[_index + 0] = (byte)(data & 0xFF);
-            _buffer[_index + 1] = (byte)(data >> 8);
+            if (BitConverter.IsLittleEndian)
+            {
+                _buffer[_index + 0] = (byte)(data & 0xFF);
+                _buffer[_index + 1] = (byte)(data >> 8);
+            }
+            else
+            {
+                _buffer[_index + 0] = (byte)(data >> 8);
+                _buffer[_index + 1] = (byte)(data & 0xFF);
+            }
             _index = (_index + 2) % SampleSize;
             if (_index == 0)
             {

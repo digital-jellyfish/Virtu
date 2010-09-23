@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -20,8 +21,9 @@ namespace Jellyfish.Library
             Content.RootDirectory = "Content";
             GraphicsDeviceManager = new GraphicsDeviceManager(this);
 #if WINDOWS_PHONE
-            GraphicsDeviceManager.IsFullScreen = true;
             TargetElapsedTime = TimeSpan.FromTicks(333333); // 30 fps
+#elif XBOX
+            Components.Add(new GamerServicesComponent(this));
 #endif
             GraphicsDeviceService = (IGraphicsDeviceService)Services.GetService(typeof(IGraphicsDeviceService));
 
