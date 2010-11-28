@@ -74,7 +74,6 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +143,6 @@
     </Compile>
     <Compile Include="..\MachineEvents.cs">
       <Link>Core\MachineEvents.cs</Link>
-    </Compile>
-    <Compile Include="..\MachineSettings.cs">
-      <Link>Core\MachineSettings.cs</Link>
     </Compile>
     <Compile Include="..\Memory.cs">
       <Link>Core\Memory.cs</Link>

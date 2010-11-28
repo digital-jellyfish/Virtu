@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Jellyfish.Library;
 #if WINDOWS_PHONE
 using Microsoft.Phone.Controls;
 #endif
@@ -35,6 +36,24 @@ namespace Jellyfish.Virtu.Services
             _page.SizeChanged += (sender, e) => SetImageSize();
         }
 
+        public override void SetFullScreen(bool isFullScreen)
+        {
+#if !WINDOWS_PHONE
+            _page.Dispatcher.Send(() =>
+            {
+                var application = Application.Current;
+                if (application.IsRunningOutOfBrowser)
+                {
+                    var content = application.Host.Content;
+                    if (content.IsFullScreen != isFullScreen)
+                    {
+                        content.IsFullScreen = isFullScreen;
+                    }
+                }
+            });
+#endif
+        }
+
         [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow")]
         public override void SetPixel(int x, int y, uint color)
         {
@@ -44,13 +63,6 @@ namespace Jellyfish.Virtu.Services
 
         public override void Update() // main thread
         {
-#if !WINDOWS_PHONE
-            var content = Application.Current.Host.Content;
-            if (Application.Current.IsRunningOutOfBrowser && (content.IsFullScreen != IsFullScreen))
-            {
-                Application.Current.RootVisual.Dispatcher.BeginInvoke(() => content.IsFullScreen = IsFullScreen); // queue to dispatcher; avoids crash!
-            }
-#endif
             if (_pixelsDirty)
             {
                 _pixelsDirty = false;
@@ -68,17 +80,17 @@ namespace Jellyfish.Virtu.Services
                 Math.Min((int)_page.RenderSize.Width / BitmapWidth, (int)_page.RenderSize.Height / BitmapHeight));
             _image.Width = uniformScale * BitmapWidth;
             _image.Height = uniformScale * BitmapHeight;
-            Machine.Video.DirtyScreen();
         }
 
 #if !WINDOWS_PHONE
         private void SetWindowSizeToContent()
         {
-            if (Application.Current.IsRunningOutOfBrowser && !_sizedToContent)
+            var application = Application.Current;
+            if (application.IsRunningOutOfBrowser && !_sizedToContent)
             {
                 _sizedToContent = true;
-                var window = Application.Current.MainWindow;
-                var size = Application.Current.RootVisual.DesiredSize;
+                var window = application.MainWindow;
+                var size = application.RootVisual.DesiredSize;
                 window.Width = size.Width;
                 window.Height = size.Height;
             }

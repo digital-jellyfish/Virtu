@@ -105,16 +105,16 @@ namespace Jellyfish.Virtu.Services
             }
             else if ((control && (key == Keys.Divide)) || (gamePadControl && (key == Keys.D8)))
             {
-                Machine.Cpu.ToggleThrottle();
+                Machine.Cpu.IsThrottled ^= true;
             }
             else if ((control && (key == Keys.Multiply)) || (gamePadControl && (key == Keys.D9)))
             {
-                Machine.Video.ToggleMonochrome();
+                Machine.Video.IsMonochrome ^= true;
             }
 #if WINDOWS
             else if ((control && (key == Keys.Subtract)) || (gamePadControl && (key == Keys.D0)))
             {
-                Machine.Video.ToggleFullScreen();
+                Machine.Video.IsFullScreen ^= true;
             }
 #endif
         }

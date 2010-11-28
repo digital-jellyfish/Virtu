@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace Jellyfish.Virtu
 {
@@ -33,6 +34,34 @@ namespace Jellyfish.Virtu
             }
 
             return null;
+        }
+
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "version")]
+        public static Disk525 LoadState(BinaryReader reader, Version version)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
+            string name = reader.ReadString();
+            bool isWriteProtected = reader.ReadBoolean();
+            byte[] data = reader.ReadBytes(reader.ReadInt32());
+
+            return CreateDisk(name, data, isWriteProtected);
+        }
+
+        public void SaveState(BinaryWriter writer)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
+            writer.Write(Name);
+            writer.Write(IsWriteProtected);
+            writer.Write(Data.Length);
+            writer.Write(Data);
         }
 
         public abstract void ReadTrack(int number, int fraction, byte[] buffer);

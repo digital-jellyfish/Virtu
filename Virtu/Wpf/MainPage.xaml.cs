@@ -68,29 +68,16 @@ namespace Jellyfish.Virtu
         private void OnDiskButtonClick(int drive)
         {
             var dialog = new OpenFileDialog() { Filter = "Disk Files (*.dsk;*.nib)|*.dsk;*.nib|All Files (*.*)|*.*" };
-
             bool? result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
             {
-                using (var stream = File.OpenRead(dialog.FileName))
+                _machine.Pause();
+                var diskII = _machine.FindDiskIIController();
+                if (diskII != null)
                 {
-                    _machine.Pause();
-                    var diskII = _machine.FindDiskIIController();
-                    if (diskII != null)
-                    {
-                        diskII.Drives[drive].InsertDisk(dialog.FileName, stream, false);
-                        var settings = _machine.Settings.DiskII;
-                        if (drive == 0)
-                        {
-                            settings.Disk1.Name = dialog.FileName;
-                        }
-                        else
-                        {
-                            settings.Disk2.Name = dialog.FileName;
-                        }
-                    }
-                    _machine.Unpause();
+                    StorageService.LoadFile(dialog.FileName, stream => diskII.Drives[drive].InsertDisk(dialog.FileName, stream, false));
                 }
+                _machine.Unpause();
             }
         }
 

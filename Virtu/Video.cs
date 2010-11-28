@@ -1,9 +1,12 @@
 ﻿using System;
+using System.IO;
 using Jellyfish.Virtu.Services;
-using Jellyfish.Virtu.Settings;
 
 namespace Jellyfish.Virtu
 {
+    [Flags]
+    public enum ScannerOptions { None = 0x0, AppleII = 0x1, Pal = 0x2 } // defaults to AppleIIe, Ntsc
+
     public sealed partial class Video : MachineComponent
     {
         public Video(Machine machine) : 
@@ -26,7 +29,29 @@ namespace Jellyfish.Virtu
             _memory = Machine.Memory;
             _videoService = Machine.Services.GetService<VideoService>();
 
-            UpdateSettings();
+            _colorBlack = 0xFF000000; // BGRA
+            _colorDarkBlue = 0xFF000099;
+            _colorDarkGreen = 0xFF117722;
+            _colorMediumBlue = 0xFF0000FF;
+            _colorBrown = 0xFF885500;
+            _colorLightGrey = 0xFF99AAAA;
+            _colorGreen = 0xFF00EE11;
+            _colorAquamarine = 0xFF55FFAA;
+            _colorDeepRed = 0xFFFF1111;
+            _colorPurple = 0xFFDD00DD;
+            _colorDarkGrey = 0xFF445555;
+            _colorLightBlue = 0xFF33AAFF;
+            _colorOrange = 0xFFFF4411;
+            _colorPink = 0xFFFF9988;
+            _colorYellow = 0xFFFFFF11;
+            _colorWhite = 0xFFFFFFFF;
+            _colorMonochrome = 0xFF00AA00;
+            SetPalette();
+
+            IsFullScreen = false;
+            IsMonochrome = false;
+            ScannerOptions = ScannerOptions.None;
+
             IsVBlank = true;
 
             Machine.Events.AddEvent(_cyclesPerVBlankPreset, _leaveVBlankEvent); // align flush events with scanner; assumes vcount preset at start of frame [3-15, 3-16]
@@ -39,6 +64,71 @@ namespace Jellyfish.Virtu
             SetCharSet();
             DirtyScreen();
             FlushScreen();
+        }
+
+        public override void LoadState(BinaryReader reader, Version version)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
+            _colorBlack = reader.ReadUInt32();
+            _colorDarkBlue = reader.ReadUInt32();
+            _colorDarkGreen = reader.ReadUInt32();
+            _colorMediumBlue = reader.ReadUInt32();
+            _colorBrown = reader.ReadUInt32();
+            _colorLightGrey = reader.ReadUInt32();
+            _colorGreen = reader.ReadUInt32();
+            _colorAquamarine = reader.ReadUInt32();
+            _colorDeepRed = reader.ReadUInt32();
+            _colorPurple = reader.ReadUInt32();
+            _colorDarkGrey = reader.ReadUInt32();
+            _colorLightBlue = reader.ReadUInt32();
+            _colorOrange = reader.ReadUInt32();
+            _colorPink = reader.ReadUInt32();
+            _colorYellow = reader.ReadUInt32();
+            _colorWhite = reader.ReadUInt32();
+            _colorMonochrome = reader.ReadUInt32();
+            SetPalette();
+
+            IsFullScreen = reader.ReadBoolean();
+            IsMonochrome = reader.ReadBoolean();
+            ScannerOptions = (ScannerOptions)reader.ReadInt32();
+
+            SetCharSet();
+            DirtyScreen();
+            FlushScreen();
+        }
+
+        public override void SaveState(BinaryWriter writer)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
+            writer.Write(_colorBlack);
+            writer.Write(_colorDarkBlue);
+            writer.Write(_colorDarkGreen);
+            writer.Write(_colorMediumBlue);
+            writer.Write(_colorBrown);
+            writer.Write(_colorLightGrey);
+            writer.Write(_colorGreen);
+            writer.Write(_colorAquamarine);
+            writer.Write(_colorDeepRed);
+            writer.Write(_colorPurple);
+            writer.Write(_colorDarkGrey);
+            writer.Write(_colorLightBlue);
+            writer.Write(_colorOrange);
+            writer.Write(_colorPink);
+            writer.Write(_colorYellow);
+            writer.Write(_colorWhite);
+            writer.Write(_colorMonochrome);
+
+            writer.Write(IsFullScreen);
+            writer.Write(IsMonochrome);
+            writer.Write((int)ScannerOptions);
         }
 
         public void DirtyCell(int addressOffset)
@@ -123,25 +213,10 @@ namespace Jellyfish.Virtu
             DirtyScreenText();
         }
 
-        public void ToggleFullScreen()
-        {
-            Machine.Settings.Video.IsFullScreen ^= true;
-            _videoService.ToggleFullScreen();
-            DirtyScreen();
-            FlushScreen();
-        }
-
-        public void ToggleMonochrome()
-        {
-            Machine.Settings.Video.IsMonochrome ^= true;
-            DirtyScreen();
-            FlushScreen();
-        }
-
         #region Draw Methods
         private void DrawText40(int data, int x, int y)
         {
-            int color = Machine.Settings.Video.IsMonochrome ? ColorMono00 : ColorWhite00;
+            int color = IsMonochrome ? ColorMono00 : ColorWhite00;
             int index = _charSet[data] * CharBitmapBytes;
             int inverseMask = (_isTextInversed && !_memory.IsCharSetAlternate && (0x40 <= data) && (data <= 0x7F)) ? 0x7F : 0x00;
             for (int i = 0; i < TextHeight; i++, y++)
@@ -166,7 +241,7 @@ namespace Jellyfish.Virtu
 
         private void DrawText80(int data, int x, int y)
         {
-            int color = Machine.Settings.Video.IsMonochrome ? ColorMono00 : ColorWhite00;
+            int color = IsMonochrome ? ColorMono00 : ColorWhite00;
             int index = _charSet[data] * CharBitmapBytes;
             int mask = (_isTextInversed && !_memory.IsCharSetAlternate && (0x40 <= data) && (data <= 0x7F)) ? 0x7F : 0x00;
             for (int i = 0; i < TextHeight; i++, y++)
@@ -184,7 +259,7 @@ namespace Jellyfish.Virtu
 
         private void DrawLores(int data, int x, int y)
         {
-            if (Machine.Settings.Video.IsMonochrome)
+            if (IsMonochrome)
             {
                 if ((x & 0x02) == 0x02) // odd cell
                 {
@@ -268,7 +343,7 @@ namespace Jellyfish.Virtu
 
         private void Draw7MLores(int data, int x, int y)
         {
-            if (Machine.Settings.Video.IsMonochrome)
+            if (IsMonochrome)
             {
                 if ((x & 0x02) == 0x02) // odd cell
                 {
@@ -352,7 +427,7 @@ namespace Jellyfish.Virtu
 
         private void DrawDLores(int data, int x, int y)
         {
-            if (Machine.Settings.Video.IsMonochrome)
+            if (IsMonochrome)
             {
                 if ((x & 0x01) == 0x00) // even half cell
                 {
@@ -408,7 +483,7 @@ namespace Jellyfish.Virtu
 
         private void DrawHires(int address, int x, int y)
         {
-            if (Machine.Settings.Video.IsMonochrome)
+            if (IsMonochrome)
             {
                 int data = _memory.ReadRamMainRegion02BF(address);
                 SetPixel(x + 0, y, data & 0x01);
@@ -466,7 +541,7 @@ namespace Jellyfish.Virtu
 
         private void DrawNDHires(int address, int x, int y)
         {
-            if (Machine.Settings.Video.IsMonochrome)
+            if (IsMonochrome)
             {
                 int data = _memory.ReadRamMainRegion02BF(address);
                 SetPixel(x + 0, y, data & 0x01);
@@ -524,7 +599,7 @@ namespace Jellyfish.Virtu
 
         private void DrawDHiresA(int address, int x, int y)
         {
-            if (Machine.Settings.Video.IsMonochrome)
+            if (IsMonochrome)
             {
                 if ((x & 0x2) == 0x00) // even cell
                 {
@@ -592,7 +667,7 @@ namespace Jellyfish.Virtu
 
         private void DrawDHiresM(int address, int x, int y)
         {
-            if (Machine.Settings.Video.IsMonochrome)
+            if (IsMonochrome)
             {
                 if ((x & 0x2) == 0x02) // odd cell
                 {
@@ -919,15 +994,49 @@ namespace Jellyfish.Virtu
 
         private void ResetVSyncEvent()
         {
-            UpdateSettings();
-
-            var handler = VSync;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
-
             Machine.Events.AddEvent(_cyclesPerVSync, _resetVSyncEvent);
+        }
+
+        private void SetPalette()
+        {
+            _colorPalette[ColorMono00] = _colorBlack;
+            _colorPalette[ColorMono01] = _colorMonochrome;
+            _colorPalette[ColorMono02] = _colorMonochrome;
+            _colorPalette[ColorMono04] = _colorMonochrome;
+            _colorPalette[ColorMono08] = _colorMonochrome;
+            _colorPalette[ColorMono10] = _colorMonochrome;
+            _colorPalette[ColorMono20] = _colorMonochrome;
+            _colorPalette[ColorMono40] = _colorMonochrome;
+            _colorPalette[ColorMono80] = _colorMonochrome;
+
+            _colorPalette[ColorWhite00] = _colorBlack;
+            _colorPalette[ColorWhite01] = _colorWhite;
+            _colorPalette[ColorWhite02] = _colorWhite;
+            _colorPalette[ColorWhite04] = _colorWhite;
+            _colorPalette[ColorWhite08] = _colorWhite;
+            _colorPalette[ColorWhite10] = _colorWhite;
+            _colorPalette[ColorWhite20] = _colorWhite;
+            _colorPalette[ColorWhite40] = _colorWhite;
+            _colorPalette[ColorWhite80] = _colorWhite;
+
+            _colorPalette[ColorDHires0] = _colorBlack;
+            _colorPalette[ColorDHires1] = _colorDarkBlue;
+            _colorPalette[ColorDHires2] = _colorDarkGreen;
+            _colorPalette[ColorDHires3] = _colorMediumBlue;
+            _colorPalette[ColorDHires4] = _colorBrown;
+            _colorPalette[ColorDHires5] = _colorLightGrey;
+            _colorPalette[ColorDHires6] = _colorGreen;
+            _colorPalette[ColorDHires7] = _colorAquamarine;
+            _colorPalette[ColorDHires8] = _colorDeepRed;
+            _colorPalette[ColorDHires9] = _colorPurple;
+            _colorPalette[ColorDHiresA] = _colorDarkGrey;
+            _colorPalette[ColorDHiresB] = _colorLightBlue;
+            _colorPalette[ColorDHiresC] = _colorOrange;
+            _colorPalette[ColorDHiresD] = _colorPink;
+            _colorPalette[ColorDHiresE] = _colorYellow;
+            _colorPalette[ColorDHiresF] = _colorWhite;
+
+            DirtyScreen();
         }
 
         private void SetPixel(int x, int y, int color)
@@ -935,48 +1044,8 @@ namespace Jellyfish.Virtu
             _videoService.SetPixel(x, 2 * y, _colorPalette[color]);
         }
 
-        private void UpdateSettings()
+        private void SetScanner()
         {
-            var settings = Machine.Settings.Video;
-
-            _colorPalette[ColorMono00] = settings.Color.Black;
-            _colorPalette[ColorMono01] = settings.Color.Monochrome;
-            _colorPalette[ColorMono02] = settings.Color.Monochrome;
-            _colorPalette[ColorMono04] = settings.Color.Monochrome;
-            _colorPalette[ColorMono08] = settings.Color.Monochrome;
-            _colorPalette[ColorMono10] = settings.Color.Monochrome;
-            _colorPalette[ColorMono20] = settings.Color.Monochrome;
-            _colorPalette[ColorMono40] = settings.Color.Monochrome;
-            _colorPalette[ColorMono80] = settings.Color.Monochrome;
-
-            _colorPalette[ColorWhite00] = settings.Color.Black;
-            _colorPalette[ColorWhite01] = settings.Color.White;
-            _colorPalette[ColorWhite02] = settings.Color.White;
-            _colorPalette[ColorWhite04] = settings.Color.White;
-            _colorPalette[ColorWhite08] = settings.Color.White;
-            _colorPalette[ColorWhite10] = settings.Color.White;
-            _colorPalette[ColorWhite20] = settings.Color.White;
-            _colorPalette[ColorWhite40] = settings.Color.White;
-            _colorPalette[ColorWhite80] = settings.Color.White;
-
-            _colorPalette[ColorDHires0] = settings.Color.Black;
-            _colorPalette[ColorDHires1] = settings.Color.DarkBlue;
-            _colorPalette[ColorDHires2] = settings.Color.DarkGreen;
-            _colorPalette[ColorDHires3] = settings.Color.MediumBlue;
-            _colorPalette[ColorDHires4] = settings.Color.Brown;
-            _colorPalette[ColorDHires5] = settings.Color.LightGrey;
-            _colorPalette[ColorDHires6] = settings.Color.Green;
-            _colorPalette[ColorDHires7] = settings.Color.Aquamarine;
-            _colorPalette[ColorDHires8] = settings.Color.DeepRed;
-            _colorPalette[ColorDHires9] = settings.Color.Purple;
-            _colorPalette[ColorDHiresA] = settings.Color.DarkGrey;
-            _colorPalette[ColorDHiresB] = settings.Color.LightBlue;
-            _colorPalette[ColorDHiresC] = settings.Color.Orange;
-            _colorPalette[ColorDHiresD] = settings.Color.Pink;
-            _colorPalette[ColorDHiresE] = settings.Color.Yellow;
-            _colorPalette[ColorDHiresF] = settings.Color.White;
-
-            _scannerOptions = settings.ScannerOptions;
             if ((_scannerOptions & ScannerOptions.Pal) != 0)
             {
                 _vCountPreset = VCountPresetPal;
@@ -992,17 +1061,31 @@ namespace Jellyfish.Virtu
             _cyclesPerVBlankPreset = (_vLineLeaveVBlank - VLineTriggerPreset) * CyclesPerHSync; // cycles during vblank after vcount preset [3-15, 3-16]
             _cyclesPerVSync = _vLineLeaveVBlank * CyclesPerHSync;
             _cyclesPerFlash = VSyncsPerFlash * _cyclesPerVSync;
-
-            if (_videoService.IsFullScreen != settings.IsFullScreen)
-            {
-                _videoService.ToggleFullScreen();
-            }
         }
 
-        public bool IsVBlank { get; private set; }
-        public long TicksPerVSync { get { return TimeSpan.FromSeconds((double)_cyclesPerVSync / CyclesPerSecond).Ticks; } }
+        public uint ColorBlack { get { return _colorBlack; } set { _colorBlack = value; SetPalette(); } }
+        public uint ColorDarkBlue { get { return _colorDarkBlue; } set { _colorDarkBlue = value; SetPalette(); } }
+        public uint ColorDarkGreen { get { return _colorDarkGreen; } set { _colorDarkGreen = value; SetPalette(); } }
+        public uint ColorMediumBlue { get { return _colorMediumBlue; } set { _colorMediumBlue = value; SetPalette(); } }
+        public uint ColorBrown { get { return _colorBrown; } set { _colorBrown = value; SetPalette(); } }
+        public uint ColorLightGrey { get { return _colorLightGrey; } set { _colorLightGrey = value; SetPalette(); } }
+        public uint ColorGreen { get { return _colorGreen; } set { _colorGreen = value; SetPalette(); } }
+        public uint ColorAquamarine { get { return _colorAquamarine; } set { _colorAquamarine = value; SetPalette(); } }
+        public uint ColorDeepRed { get { return _colorDeepRed; } set { _colorDeepRed = value; SetPalette(); } }
+        public uint ColorPurple { get { return _colorPurple; } set { _colorPurple = value; SetPalette(); } }
+        public uint ColorDarkGrey { get { return _colorDarkGrey; } set { _colorDarkGrey = value; SetPalette(); } }
+        public uint ColorLightBlue { get { return _colorLightBlue; } set { _colorLightBlue = value; SetPalette(); } }
+        public uint ColorOrange { get { return _colorOrange; } set { _colorOrange = value; SetPalette(); } }
+        public uint ColorPink { get { return _colorPink; } set { _colorPink = value; SetPalette(); } }
+        public uint ColorYellow { get { return _colorYellow; } set { _colorYellow = value; SetPalette(); } }
+        public uint ColorWhite { get { return _colorWhite; } set { _colorWhite = value; SetPalette(); } }
+        public uint ColorMonochrome { get { return _colorMonochrome; } set { _colorMonochrome = value; SetPalette(); } }
 
-        public event EventHandler VSync;
+        public bool IsFullScreen { get { return _isFullScreen; } set { _isFullScreen = value; _videoService.SetFullScreen(_isFullScreen); } }
+        public bool IsMonochrome { get { return _isMonochrome; } set { _isMonochrome = value; DirtyScreen(); } }
+        public ScannerOptions ScannerOptions { get { return _scannerOptions; } set { _scannerOptions = value; SetScanner(); } }
+
+        public bool IsVBlank { get; private set; }
 
         private Action _flushRowEvent;
         private Action _inverseTextEvent;
@@ -1012,16 +1095,36 @@ namespace Jellyfish.Virtu
         private Memory _memory;
         private VideoService _videoService;
 
-        private ushort[] _charSet;
-        private uint[] _colorPalette = new uint[ColorPaletteCount];
-        private bool[] _isCellDirty = new bool[Height * CellColumns + 1]; // includes sentinel
+        private uint _colorBlack;
+        private uint _colorDarkBlue;
+        private uint _colorDarkGreen;
+        private uint _colorMediumBlue;
+        private uint _colorBrown;
+        private uint _colorLightGrey;
+        private uint _colorGreen;
+        private uint _colorAquamarine;
+        private uint _colorDeepRed;
+        private uint _colorPurple;
+        private uint _colorDarkGrey;
+        private uint _colorLightBlue;
+        private uint _colorOrange;
+        private uint _colorPink;
+        private uint _colorYellow;
+        private uint _colorWhite;
+        private uint _colorMonochrome;
+        private bool _isFullScreen;
+        private bool _isMonochrome;
         private bool _isTextInversed;
+        private ScannerOptions _scannerOptions;
         private int _cyclesPerVBlank;
         private int _cyclesPerVBlankPreset;
         private int _cyclesPerVSync;
         private int _cyclesPerFlash;
         private int _vCountPreset;
         private int _vLineLeaveVBlank;
-        private ScannerOptions _scannerOptions;
+
+        private ushort[] _charSet;
+        private uint[] _colorPalette = new uint[ColorPaletteCount];
+        private bool[] _isCellDirty = new bool[Height * CellColumns + 1]; // includes sentinel
     }
 }

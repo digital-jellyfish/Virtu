@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 
 namespace Jellyfish.Virtu
 {
@@ -144,16 +145,17 @@ namespace Jellyfish.Virtu
                 Execute65X02SedF8, Execute65C02SbcF9, Execute65C02PlxFA, Execute65C02NopFB, 
                 Execute65C02NopFC, Execute65C02SbcFD, Execute65C02IncFE, Execute65C02NopFF
             };
-
-            RS = 0xFF;
         }
 
         public override void Initialize()
         {
             _memory = Machine.Memory;
 
-            UpdateSettings();
-            Machine.Video.VSync += (sender, e) => UpdateSettings();
+            Is65C02 = true;
+            IsThrottled = true;
+            Multiplier = 1;
+
+            RS = 0xFF;
         }
 
         public override void Reset()
@@ -161,15 +163,53 @@ namespace Jellyfish.Virtu
             RS = (RS - 3) & 0xFF; // [4-14]
             RPC = _memory.ReadRomRegionE0FF(0xFFFC) | (_memory.ReadRomRegionE0FF(0xFFFD) << 8);
             RP |= (PB | PI);
-            if (Machine.Settings.Cpu.Is65C02) // [C-10]
+            if (Is65C02) // [C-10]
             {
                 RP &= ~PD;
             }
         }
 
+        public override void LoadState(BinaryReader reader, Version version)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
+            Is65C02 = reader.ReadBoolean();
+            IsThrottled = reader.ReadBoolean();
+            Multiplier = reader.ReadInt32();
+
+            RA = reader.ReadInt32();
+            RX = reader.ReadInt32();
+            RY = reader.ReadInt32();
+            RS = reader.ReadInt32();
+            RP = reader.ReadInt32();
+            RPC = reader.ReadInt32();
+        }
+
+        public override void SaveState(BinaryWriter writer)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
+            writer.Write(Is65C02);
+            writer.Write(IsThrottled);
+            writer.Write(Multiplier);
+
+            writer.Write(RA);
+            writer.Write(RX);
+            writer.Write(RY);
+            writer.Write(RS);
+            writer.Write(RP);
+            writer.Write(RPC);
+        }
+
         public override string ToString()
         {
-            return string.Format(CultureInfo.CurrentCulture, "A = 0x{0:X2} X = 0x{1:X2} Y = 0x{2:X2} P = 0x{3:X2} S = 0x01{4:X2} PC = 0x{5:X4} EA = 0x{6:X4} CC = {7}", 
+            return string.Format(CultureInfo.InvariantCulture, "A = 0x{0:X2} X = 0x{1:X2} Y = 0x{2:X2} P = 0x{3:X2} S = 0x01{4:X2} PC = 0x{5:X4} EA = 0x{6:X4} CC = {7}", 
                 RA, RX, RY, RP, RS, RPC, EA, CC);
         }
 
@@ -182,11 +222,6 @@ namespace Jellyfish.Virtu
             Cycles += CC;
 
             return CC;
-        }
-
-        public void ToggleThrottle()
-        {
-            Machine.Settings.Cpu.IsThrottled ^= true;
         }
 
         #region Core Operand Actions
@@ -740,7 +775,7 @@ namespace Jellyfish.Virtu
             Push(RPC & 0xFF);
             Push(RP & ~PB);
             RP |= PI;
-            if (Machine.Settings.Cpu.Is65C02) // [C-10]
+            if (Is65C02) // [C-10]
             {
                 RP &= ~PD;
             }
@@ -830,7 +865,7 @@ namespace Jellyfish.Virtu
             Push(RPC & 0xFF);
             Push(RP & ~PB);
             RP |= PI;
-            if (Machine.Settings.Cpu.Is65C02) // [C-10]
+            if (Is65C02) // [C-10]
             {
                 RP &= ~PD;
             }
@@ -3203,10 +3238,9 @@ namespace Jellyfish.Virtu
         }
         #endregion
 
-        private void UpdateSettings()
-        {
-            _executeOpCode = Machine.Settings.Cpu.Is65C02 ? ExecuteOpCode65C02 : ExecuteOpCode65N02;
-        }
+        public bool Is65C02 { get { return _is65C02; } set { _is65C02 = value; _executeOpCode = _is65C02 ? ExecuteOpCode65C02 : ExecuteOpCode65N02; } }
+        public bool IsThrottled { get; set; }
+        public int Multiplier { get; set; }
 
         public int RA { get; private set; }
         public int RX { get; private set; }
@@ -3221,6 +3255,7 @@ namespace Jellyfish.Virtu
 
         private Memory _memory;
 
+        private bool _is65C02;
         private Action[] _executeOpCode;
     }
 }

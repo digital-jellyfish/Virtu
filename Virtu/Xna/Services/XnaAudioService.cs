@@ -23,7 +23,7 @@ namespace Jellyfish.Virtu.Services
             _dynamicSoundEffect.Play();
         }
 
-        public override void SetVolume(double volume) // machine thread
+        public override void SetVolume(double volume)
         {
             _dynamicSoundEffect.Volume = (float)volume;
         }
@@ -45,7 +45,8 @@ namespace Jellyfish.Virtu.Services
             //    DebugService.WriteLine("OnDynamicSoundEffectBufferNeeded");
             //}
 
-            Update(SampleSize, (source, count) => _dynamicSoundEffect.SubmitBuffer(source, 0, count));
+            _dynamicSoundEffect.SubmitBuffer(Source, 0, SampleSize);
+            Update();
         }
 
         private GameBase _game;

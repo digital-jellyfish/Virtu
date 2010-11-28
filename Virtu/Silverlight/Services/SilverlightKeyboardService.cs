@@ -93,17 +93,18 @@ namespace Jellyfish.Virtu.Services
             }
             else if (control && (e.Key == Key.Divide))
             {
-                Machine.Cpu.ToggleThrottle();
+                Machine.Cpu.IsThrottled ^= true;
             }
             else if (control && (e.Key == Key.Multiply))
             {
-                Machine.Video.ToggleMonochrome();
+                Machine.Video.IsMonochrome ^= true;
             }
+#if !WINDOWS_PHONE
             else if (control && (e.Key == Key.Subtract))
             {
-                Machine.Video.ToggleFullScreen();
+                Machine.Video.IsFullScreen ^= true;
             }
-
+#endif
             Update();
         }
 

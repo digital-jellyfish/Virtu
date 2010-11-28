@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading;
 using Jellyfish.Library;
 using Jellyfish.Virtu.Services;
-using Jellyfish.Virtu.Settings;
 
 namespace Jellyfish.Virtu
 {
@@ -15,7 +17,6 @@ namespace Jellyfish.Virtu
         {
             Events = new MachineEvents();
             Services = new MachineServices();
-            Settings = new MachineSettings();
 
             Cpu = new Cpu(this);
             Memory = new Memory(this);
@@ -36,7 +37,7 @@ namespace Jellyfish.Virtu
             Slot7 = emptySlot;
 
             Slots = new Collection<PeripheralCard> { null, Slot1, Slot2, Slot3, Slot4, Slot5, Slot6, Slot7 };
-            Components = new Collection<MachineComponent> { Cpu, Memory, Keyboard, GamePort, Cassette, Speaker, Video, Slot1, Slot2, Slot3, Slot4, Slot5, Slot6, Slot7 };
+            Components = new Collection<MachineComponent> { Cpu, Memory, Keyboard, GamePort, Cassette, Speaker, Video, NoSlotClock, Slot1, Slot2, Slot3, Slot4, Slot5, Slot6, Slot7 };
 
             Thread = new Thread(Run) { Name = "Machine" };
         }
@@ -49,14 +50,11 @@ namespace Jellyfish.Virtu
 
         public void Reset()
         {
-            Components.ForEach(component => component.Reset()); // while machine starting or paused
+            Components.ForEach(component => component.Reset());
         }
 
         public void Start()
         {
-            _storageService = Services.GetService<StorageService>();
-            _storageService.Load(MachineSettings.FileName, stream => Settings.Deserialize(stream));
-
             State = MachineState.Starting;
             Thread.Start();
         }
@@ -83,11 +81,6 @@ namespace Jellyfish.Virtu
                 Thread.Join();
             }
             State = MachineState.Stopped;
-
-            if (_storageService != null)
-            {
-                _storageService.Save(MachineSettings.FileName, stream => Settings.Serialize(stream));
-            }
         }
 
         public DiskIIController FindDiskIIController()
@@ -104,10 +97,59 @@ namespace Jellyfish.Virtu
             return null;
         }
 
-        private void Run() // machine thread
+        private void Initialize()
         {
             Components.ForEach(component => component.Initialize());
+        }
+
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        private void LoadState()
+        {
+            var storageService = Services.GetService<StorageService>();
+            storageService.Load(Machine.LastStateFileName, stream => 
+            {
+                try
+                {
+                    var version = new Version(Version);
+                    using (var reader = new BinaryReader(stream))
+                    {
+                        version = new Version(reader.ReadString());
+                        Components.ForEach(component => component.LoadState(reader, version));
+                    }
+                }
+                catch (Exception)
+                {
+                    if (Debugger.IsAttached)
+                    {
+                        Debugger.Break();
+                    }
+                }
+            });
+        }
+
+        private void Uninitialize()
+        {
+            Components.ForEach(component => component.Uninitialize());
+        }
+
+        private void SaveState()
+        {
+            var storageService = Services.GetService<StorageService>();
+            storageService.Save(Machine.LastStateFileName, stream => 
+            {
+                using (var writer = new BinaryWriter(stream))
+                {
+                    writer.Write(Version);
+                    Components.ForEach(component => component.SaveState(writer));
+                }
+            });
+        }
+
+        private void Run() // machine thread
+        {
+            Initialize();
             Reset();
+            LoadState();
 
             State = MachineState.Running;
             do
@@ -126,12 +168,14 @@ namespace Jellyfish.Virtu
             }
             while (State != MachineState.Stopping);
 
-            Components.ForEach(component => component.Uninitialize());
+            SaveState();
+            Uninitialize();
         }
+
+        public const string Version = "0.9.0.0";
 
         public MachineEvents Events { get; private set; }
         public MachineServices Services { get; private set; }
-        public MachineSettings Settings { get; private set; }
         public MachineState State { get; private set; }
 
         public Cpu Cpu { get; private set; }
@@ -156,9 +200,9 @@ namespace Jellyfish.Virtu
 
         public Thread Thread { get; private set; }
 
+        private const string LastStateFileName = "LastState.bin";
+
         private AutoResetEvent _pauseEvent = new AutoResetEvent(false);
         private AutoResetEvent _unpauseEvent = new AutoResetEvent(false);
-
-        private StorageService _storageService;
     }
 }

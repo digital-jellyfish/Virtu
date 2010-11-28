@@ -1,7 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Jellyfish.Library;
 using Jellyfish.Virtu.Services;
-using Jellyfish.Virtu.Settings;
 
 namespace Jellyfish.Virtu
 {
@@ -14,21 +15,8 @@ namespace Jellyfish.Virtu
 
         public override void Initialize()
         {
-            var romStream = StorageService.GetResourceStream("Roms/DiskII.rom", 0x0100);
-            romStream.ReadBlock(_romRegionC1C7, 0x0000, 0x0100);
-
-            _drives[0].InsertDisk("Default.dsk", StorageService.GetResourceStream("Disks/Default.dsk", 0x23000), false);
-#if WINDOWS
-            var settings = Machine.Settings.DiskII;
-            if (settings.Disk1.Name.Length > 0)
-            {
-                _drives[0].InsertDisk(settings.Disk1.Name, settings.Disk1.IsWriteProtected);
-            }
-            if (settings.Disk2.Name.Length > 0)
-            {
-                _drives[1].InsertDisk(settings.Disk2.Name, settings.Disk2.IsWriteProtected);
-            }
-#endif
+            StorageService.LoadResource("Roms/DiskII.rom", 0x0100, stream => stream.ReadBlock(_romRegionC1C7, 0, 0x0100));
+            StorageService.LoadResource("Disks/Default.dsk", 0x23000, stream => _drives[0].InsertDisk("Default.dsk", stream, false));
         }
 
         public override void Reset()
@@ -40,9 +28,38 @@ namespace Jellyfish.Virtu
             _writeMode = false;
         }
 
-        public override void Uninitialize()
+        public override void LoadState(BinaryReader reader, Version version)
         {
-            Flush();
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
+            _latch = reader.ReadInt32();
+            _phaseStates = reader.ReadInt32();
+            _motorOn = reader.ReadBoolean();
+            _driveNumber = reader.ReadInt32();
+            _loadMode = reader.ReadBoolean();
+            _writeMode = reader.ReadBoolean();
+            _driveSpin = reader.ReadBoolean();
+            _drives.ForEach(drive => drive.LoadState(reader, version));
+        }
+
+        public override void SaveState(BinaryWriter writer)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
+            writer.Write(_latch);
+            writer.Write(_phaseStates);
+            writer.Write(_motorOn);
+            writer.Write(_driveNumber);
+            writer.Write(_loadMode);
+            writer.Write(_writeMode);
+            writer.Write(_driveSpin);
+            _drives.ForEach(drive => drive.SaveState(writer));
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]

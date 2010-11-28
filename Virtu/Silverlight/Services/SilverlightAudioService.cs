@@ -28,9 +28,9 @@ namespace Jellyfish.Virtu.Services
 #endif
         }
 
-        public override void SetVolume(double volume) // machine thread
+        public override void SetVolume(double volume)
         {
-            _media.Dispatcher.BeginInvoke(() => _media.Volume = volume);
+            _media.Dispatcher.Send(() => _media.Volume = volume);
         }
 
         protected override void Dispose(bool disposing)
@@ -50,7 +50,8 @@ namespace Jellyfish.Virtu.Services
             //    DebugService.WriteLine("OnMediaSourceUpdate");
             //}
 
-            Update(bufferSize, (source, count) => Buffer.BlockCopy(source, 0, buffer, 0, count));
+            Buffer.BlockCopy(Source, 0, buffer, 0, bufferSize);
+            Update();
         }
 
         private MediaElement _media;

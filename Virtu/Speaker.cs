@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Jellyfish.Virtu.Services;
 
 namespace Jellyfish.Virtu
@@ -15,10 +16,12 @@ namespace Jellyfish.Virtu
         {
             _audioService = Machine.Services.GetService<AudioService>();
 
-            UpdateSettings();
-            Machine.Video.VSync += (sender, e) => UpdateSettings();
-
-            Machine.Events.AddEvent(CyclesPerFlush * Machine.Settings.Cpu.Multiplier, _flushOutputEvent);
+#if WINDOWS_PHONE
+            Volume = 0.85;
+#else
+            Volume = 0.5;
+#endif
+            Machine.Events.AddEvent(CyclesPerFlush * Machine.Cpu.Multiplier, _flushOutputEvent);
         }
 
         public override void Reset()
@@ -26,6 +29,26 @@ namespace Jellyfish.Virtu
             _audioService.Reset();
             _isHigh = false;
             _highCycles = _totalCycles = 0;
+        }
+
+        public override void LoadState(BinaryReader reader, Version version)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
+            Volume = reader.ReadDouble();
+        }
+
+        public override void SaveState(BinaryWriter writer)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
+            writer.Write(Volume);
         }
 
         public void ToggleOutput()
@@ -40,7 +63,7 @@ namespace Jellyfish.Virtu
             _audioService.Output(_highCycles * short.MaxValue / _totalCycles); // quick and dirty decimation
             _highCycles = _totalCycles = 0;
 
-            Machine.Events.AddEvent(CyclesPerFlush * Machine.Settings.Cpu.Multiplier, _flushOutputEvent);
+            Machine.Events.AddEvent(CyclesPerFlush * Machine.Cpu.Multiplier, _flushOutputEvent);
         }
 
         private void UpdateCycles()
@@ -54,20 +77,18 @@ namespace Jellyfish.Virtu
             _lastCycles = Machine.Cpu.Cycles;
         }
 
-        private void UpdateSettings()
-        {
-            _audioService.SetVolume(Machine.Settings.Audio.Volume);
-        }
+        public double Volume { get { return _volume; } set { _volume = value; _audioService.SetVolume(_volume); } }
 
         private const int CyclesPerFlush = 23;
 
         private Action _flushOutputEvent;
 
+        private AudioService _audioService;
+
         private bool _isHigh;
         private int _highCycles;
         private int _totalCycles;
         private long _lastCycles;
-
-        private AudioService _audioService;
+        private double _volume;
     }
 }

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Jellyfish.Library;
 
 namespace Jellyfish.Virtu.Services
 {
@@ -29,6 +30,30 @@ namespace Jellyfish.Virtu.Services
             _page.SizeChanged += (sender, e) => SetImageSize();
         }
 
+        public override void SetFullScreen(bool isFullScreen)
+        {
+            if (_isFullScreen != isFullScreen)
+            {
+                _isFullScreen = isFullScreen;
+                _page.Dispatcher.Send(() =>
+                {
+                    var window = Window.GetWindow(_page);
+                    if (_isFullScreen)
+                    {
+                        window.ResizeMode = ResizeMode.NoResize;
+                        window.WindowStyle = WindowStyle.None;
+                        window.WindowState = WindowState.Maximized;
+                    }
+                    else
+                    {
+                        window.WindowState = WindowState.Normal;
+                        window.WindowStyle = WindowStyle.SingleBorderWindow;
+                        window.ResizeMode = ResizeMode.CanResize;
+                    }
+                });
+            }
+        }
+
         [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow")]
         public override void SetPixel(int x, int y, uint color)
         {
@@ -38,24 +63,6 @@ namespace Jellyfish.Virtu.Services
 
         public override void Update() // main thread
         {
-            if (_isFullScreen != IsFullScreen)
-            {
-                var window = Window.GetWindow(_page);
-                if (IsFullScreen)
-                {
-                    window.ResizeMode = ResizeMode.NoResize;
-                    window.WindowStyle = WindowStyle.None;
-                    window.WindowState = WindowState.Maximized;
-                }
-                else
-                {
-                    window.WindowState = WindowState.Normal;
-                    window.WindowStyle = WindowStyle.SingleBorderWindow;
-                    window.ResizeMode = ResizeMode.CanResize;
-                }
-                _isFullScreen = IsFullScreen;
-            }
-
             if (_pixelsDirty)
             {
                 _pixelsDirty = false;
@@ -68,7 +75,6 @@ namespace Jellyfish.Virtu.Services
             int uniformScale = Math.Max(1, Math.Min((int)_page.RenderSize.Width / BitmapWidth, (int)_page.RenderSize.Height / BitmapHeight));
             _image.Width = uniformScale * BitmapWidth;
             _image.Height = uniformScale * BitmapHeight;
-            Machine.Video.DirtyScreen();
         }
 
         private void SetWindowSizeToContent()

@@ -5,7 +5,7 @@ namespace Jellyfish.Library
 {
     public static class DispatcherExtensions
     {
-        public static void CheckBeginInvoke(this Dispatcher dispatcher, Action action)
+        public static void Post(this Dispatcher dispatcher, Action action)
         {
             if (dispatcher == null)
             {
@@ -16,18 +16,10 @@ namespace Jellyfish.Library
                 throw new ArgumentNullException("action");
             }
 
-            if (dispatcher.CheckAccess())
-            {
-                action();
-            }
-            else
-            {
-                dispatcher.BeginInvoke(action);
-            }
+            new DispatcherSynchronizationContext(dispatcher).Post(state => action(), null);
         }
 
-#if WINDOWS
-        public static void CheckInvoke(this Dispatcher dispatcher, Action action)
+        public static void Send(this Dispatcher dispatcher, Action action)
         {
             if (dispatcher == null)
             {
@@ -38,15 +30,7 @@ namespace Jellyfish.Library
                 throw new ArgumentNullException("action");
             }
 
-            if (dispatcher.CheckAccess())
-            {
-                action();
-            }
-            else
-            {
-                dispatcher.Invoke(action);
-            }
+            new DispatcherSynchronizationContext(dispatcher).Send(state => action(), null);
         }
-#endif
     }
 }

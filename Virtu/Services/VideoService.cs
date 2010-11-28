@@ -7,14 +7,8 @@
         {
         }
 
+        public abstract void SetFullScreen(bool isFullScreen);
         public abstract void SetPixel(int x, int y, uint color);
         public abstract void Update(); // main thread
-
-        public void ToggleFullScreen()
-        {
-            IsFullScreen ^= true;
-        }
-
-        public bool IsFullScreen { get; private set; }
     }
 }

@@ -60,7 +60,6 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\AssemblyCommentAttribute.cs">
@@ -74,6 +73,9 @@
     </Compile>
     <Compile Include="..\..\IEnumerableExtensions.cs">
       <Link>IEnumerableExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Lazy.cs">
+      <Link>Lazy.cs</Link>
     </Compile>
     <Compile Include="..\..\MathHelpers.cs">
       <Link>MathHelpers.cs</Link>
@@ -89,9 +91,6 @@
     </Compile>
     <Compile Include="..\..\WaveFormat.cs">
       <Link>WaveFormat.cs</Link>
-    </Compile>
-    <Compile Include="..\..\XmlSerializerHelpers.cs">
-      <Link>XmlSerializerHelpers.cs</Link>
     </Compile>
     <Compile Include="..\ApplicationBase.cs">
       <Link>ApplicationBase.cs</Link>

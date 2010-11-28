@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Security;
 using Jellyfish.Library;
+using Jellyfish.Virtu.Services;
 
 namespace Jellyfish.Virtu
 {
@@ -15,13 +15,49 @@ namespace Jellyfish.Virtu
             DriveArmStepDelta[3] = new int[] { 0,  1,  0,  1, -1,  0, -1,  0,  0,  1,  0,  1, -1,  0, -1,  0 }; // phase 3
         }
 
-        [SecurityCritical]
+        public void LoadState(BinaryReader reader, Version version)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
+            _trackLoaded = reader.ReadBoolean();
+            _trackChanged = reader.ReadBoolean();
+            _trackNumber = reader.ReadInt32();
+            _trackOffset = reader.ReadInt32();
+            if (_trackLoaded)
+            {
+                reader.Read(_trackData, 0, _trackData.Length);
+            }
+            _disk = reader.ReadBoolean() ? Disk525.LoadState(reader, version) : null;
+        }
+
+        public void SaveState(BinaryWriter writer)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
+            writer.Write(_trackLoaded);
+            writer.Write(_trackChanged);
+            writer.Write(_trackNumber);
+            writer.Write(_trackOffset);
+            if (_trackLoaded)
+            {
+                writer.Write(_trackData);
+            }
+            writer.Write(_disk != null);
+            if (_disk != null)
+            {
+                _disk.SaveState(writer);
+            }
+        }
+
         public void InsertDisk(string fileName, bool isWriteProtected)
         {
-            using (var stream = File.OpenRead(fileName))
-            {
-                InsertDisk(fileName, stream, isWriteProtected);
-            }
+            StorageService.LoadFile(fileName, stream => InsertDisk(fileName, stream, isWriteProtected));
         }
 
         public void InsertDisk(string name, Stream stream, bool isWriteProtected)

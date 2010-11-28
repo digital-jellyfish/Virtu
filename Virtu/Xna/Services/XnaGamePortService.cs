@@ -20,14 +20,22 @@ namespace Jellyfish.Virtu.Services
                 var left = _state.ThumbSticks.Left;
                 var right = _state.ThumbSticks.Right;
                 var dpad = _state.DPad;
+                float joystickDeadZone = (float)Machine.GamePort.JoystickDeadZone;
 
                 Paddle0 = (int)((1 + left.X) * PaddleScale);
                 Paddle1 = (int)((1 - left.Y) * PaddleScale); // invert y
                 Paddle2 = (int)((1 + right.X) * PaddleScale);
                 Paddle3 = (int)((1 - right.Y) * PaddleScale); // invert y
 
-                Joystick0 = GetJoystick(ref left, ref dpad);
-                Joystick1 = GetJoystick(ref right);
+                IsJoystick0Up = ((left.Y > joystickDeadZone) || (dpad.Up == ButtonState.Pressed));
+                IsJoystick0Left = ((left.X < -joystickDeadZone) || (dpad.Left == ButtonState.Pressed));
+                IsJoystick0Right = ((left.X > joystickDeadZone) || (dpad.Right == ButtonState.Pressed));
+                IsJoystick0Down = ((left.Y < -joystickDeadZone) || (dpad.Down == ButtonState.Pressed));
+
+                IsJoystick1Up = (right.Y > joystickDeadZone);
+                IsJoystick1Left = (right.X < -joystickDeadZone);
+                IsJoystick1Right = (right.X > joystickDeadZone);
+                IsJoystick1Down = (right.Y < -joystickDeadZone);
 
                 IsButton0Down = ((_state.Buttons.A == ButtonState.Pressed) || (_state.Buttons.LeftShoulder == ButtonState.Pressed));
                 IsButton1Down = ((_state.Buttons.B == ButtonState.Pressed) || (_state.Buttons.RightShoulder == ButtonState.Pressed));
@@ -35,28 +43,7 @@ namespace Jellyfish.Virtu.Services
             }
         }
 
-        private static Joystick GetJoystick(ref Vector2 thumbstick)
-        {
-            bool isUp = (thumbstick.Y > JoystickDeadZone);
-            bool isLeft = (thumbstick.X < -JoystickDeadZone);
-            bool isRight = (thumbstick.X > JoystickDeadZone);
-            bool isDown = (thumbstick.Y < -JoystickDeadZone);
-
-            return new Joystick(isUp, isLeft, isRight, isDown);
-        }
-
-        private static Joystick GetJoystick(ref Vector2 thumbstick, ref GamePadDPad dpad)
-        {
-            bool isUp = ((thumbstick.Y > JoystickDeadZone) || (dpad.Up == ButtonState.Pressed));
-            bool isLeft = ((thumbstick.X < -JoystickDeadZone) || (dpad.Left == ButtonState.Pressed));
-            bool isRight = ((thumbstick.X > JoystickDeadZone) || (dpad.Right == ButtonState.Pressed));
-            bool isDown = ((thumbstick.Y < -JoystickDeadZone) || (dpad.Down == ButtonState.Pressed));
-
-            return new Joystick(isUp, isLeft, isRight, isDown);
-        }
-
         private const int PaddleScale = 128;
-        private const float JoystickDeadZone = 0.5f;
 
         private GamePadState _state;
         private GamePadState _lastState;

@@ -14,7 +14,7 @@ namespace Jellyfish.Virtu
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.CurrentCulture, "Delta = {0} Action = {{{1}.{2}}}", Delta, Action.Method.DeclaringType.Name, Action.Method.Name);
+            return string.Format(CultureInfo.InvariantCulture, "Delta = {0} Action = {{{1}.{2}}}", Delta, Action.Method.DeclaringType.Name, Action.Method.Name);
         }
 
         public int Delta { get; set; }

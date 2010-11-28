@@ -28,7 +28,7 @@ namespace Jellyfish.Virtu.Services
             };
         }
 
-        public override void SetVolume(double volume) // machine thread
+        public override void SetVolume(double volume)
         {
             _directSound.SetVolume(volume);
         }
@@ -50,7 +50,8 @@ namespace Jellyfish.Virtu.Services
             //    DebugService.WriteLine("OnDirectSoundUpdate");
             //}
 
-            Update(bufferSize, (source, count) => Marshal.Copy(source, 0, buffer, count));
+            Marshal.Copy(Source, 0, buffer, bufferSize);
+            Update();
         }
 
         private DirectSound _directSound;

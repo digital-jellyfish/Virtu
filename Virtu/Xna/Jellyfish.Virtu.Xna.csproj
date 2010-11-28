@@ -112,9 +112,6 @@
     <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Xml.Linq">
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Cassette.cs">
@@ -158,9 +155,6 @@
     </Compile>
     <Compile Include="..\MachineEvents.cs">
       <Link>Core\MachineEvents.cs</Link>
-    </Compile>
-    <Compile Include="..\MachineSettings.cs">
-      <Link>Core\MachineSettings.cs</Link>
     </Compile>
     <Compile Include="..\Memory.cs">
       <Link>Core\Memory.cs</Link>

@@ -18,7 +18,7 @@ namespace Jellyfish.Virtu.Services
 
         protected override void OnWriteLine(string message)
         {
-            _page.Dispatcher.CheckInvoke(() => _page.WriteLine(message + Environment.NewLine));
+            _page.Dispatcher.Post(() => _page.WriteLine(message + Environment.NewLine));
         }
 
         private MainPage _page;

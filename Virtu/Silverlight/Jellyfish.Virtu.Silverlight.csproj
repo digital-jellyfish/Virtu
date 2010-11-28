@@ -92,9 +92,6 @@
     <Reference Include="System.Windows.Browser" />
     <Reference Include="System.Windows.Controls" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq">
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="MainApp.xaml">
@@ -154,9 +151,6 @@
     </Compile>
     <Compile Include="..\MachineEvents.cs">
       <Link>Core\MachineEvents.cs</Link>
-    </Compile>
-    <Compile Include="..\MachineSettings.cs">
-      <Link>Core\MachineSettings.cs</Link>
     </Compile>
     <Compile Include="..\Memory.cs">
       <Link>Core\Memory.cs</Link>

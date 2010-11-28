@@ -16,7 +16,7 @@ namespace Jellyfish.Virtu.Services
             }
             if (_serviceProviders.ContainsKey(serviceType))
             {
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.ServiceAlreadyPresent, serviceType.FullName), "serviceType");
+                throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, Strings.ServiceAlreadyPresent, serviceType.FullName), "serviceType");
             }
             if (serviceProvider == null)
             {
@@ -24,7 +24,7 @@ namespace Jellyfish.Virtu.Services
             }
             if (!serviceType.IsAssignableFrom(serviceProvider.GetType()))
             {
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.ServiceMustBeAssignable, serviceType.FullName, serviceProvider.GetType().FullName));
+                throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, Strings.ServiceMustBeAssignable, serviceType.FullName, serviceProvider.GetType().FullName));
             }
 
             _serviceProviders.Add(serviceType, serviceProvider);

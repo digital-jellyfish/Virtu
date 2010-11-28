@@ -12,7 +12,7 @@ namespace Jellyfish.Virtu.Services
         {
         }
 
-        public override void Load(string path, Action<Stream> reader)
+        public override void Load(string fileName, Action<Stream> reader)
         {
             if (reader == null)
             {
@@ -23,7 +23,7 @@ namespace Jellyfish.Virtu.Services
             {
                 using (var store = GetStore())
                 {
-                    using (var stream = new IsolatedStorageFileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, store))
+                    using (var stream = store.OpenFile(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
                         reader(stream);
                     }
@@ -37,7 +37,7 @@ namespace Jellyfish.Virtu.Services
             }
         }
 
-        public override void Save(string path, Action<Stream> writer)
+        public override void Save(string fileName, Action<Stream> writer)
         {
             if (writer == null)
             {
@@ -48,7 +48,7 @@ namespace Jellyfish.Virtu.Services
             {
                 using (var store = GetStore())
                 {
-                    using (var stream = new IsolatedStorageFileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, store))
+                    using (var stream = store.OpenFile(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
                         writer(stream);
                     }

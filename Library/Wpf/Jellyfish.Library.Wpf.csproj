@@ -51,7 +51,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -106,9 +105,6 @@
     </Compile>
     <Compile Include="..\WaveFormat.cs">
       <Link>WaveFormat.cs</Link>
-    </Compile>
-    <Compile Include="..\XmlSerializerHelpers.cs">
-      <Link>XmlSerializerHelpers.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ApplicationBase.cs" />

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.IO;
 
 namespace Jellyfish.Virtu
 {
@@ -8,7 +8,42 @@ namespace Jellyfish.Virtu
         public NoSlotClock(Machine machine) :
             base(machine)
         {
-            ResetClock();
+        }
+
+        public override void Initialize()
+        {
+            _clockEnabled = false;
+            _writeEnabled = true;
+            _clockRegister = new RingRegister(0x0, 0x1);
+            _comparisonRegister = new RingRegister(ClockInitSequence, 0x1);
+        }
+
+        public override void LoadState(BinaryReader reader, Version version)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
+            _clockEnabled = reader.ReadBoolean();
+            _writeEnabled = reader.ReadBoolean();
+            _clockRegister = new RingRegister(reader.ReadUInt64(), reader.ReadUInt64());
+            _comparisonRegister = new RingRegister(reader.ReadUInt64(), reader.ReadUInt64());
+        }
+
+        public override void SaveState(BinaryWriter writer)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
+            writer.Write(_clockEnabled);
+            writer.Write(_writeEnabled);
+            writer.Write(_clockRegister.Data);
+            writer.Write(_clockRegister.Mask);
+            writer.Write(_comparisonRegister.Data);
+            writer.Write(_comparisonRegister.Mask);
         }
 
         public int Read(int address, int data)
@@ -36,18 +71,10 @@ namespace Jellyfish.Virtu
             }
         }
 
-        private void ResetClock()
-        {
-            // SmartWatch reset - whether tied to system reset is component specific
-            _comparisonRegister.Reset();
-            _clockRegisterEnabled = false;
-            _writeEnabled = true;
-        }
-
         private int ReadClock(int data)
         {
             // for a ROM, A2 high = read, and data out (if any) is on D0
-            if (!_clockRegisterEnabled)
+            if (!_clockEnabled)
             {
                 _comparisonRegister.Reset();
                 _writeEnabled = true;
@@ -57,7 +84,7 @@ namespace Jellyfish.Virtu
             data = _clockRegister.ReadBit(Machine.Video.ReadFloatingBus());
             if (_clockRegister.NextBit())
             {
-                _clockRegisterEnabled = false;
+                _clockEnabled = false;
             }
             return data;
         }
@@ -70,13 +97,13 @@ namespace Jellyfish.Virtu
                 return;
             }
 
-            if (!_clockRegisterEnabled)
+            if (!_clockEnabled)
             {
                 if ((_comparisonRegister.CompareBit(address)))
                 {
                     if (_comparisonRegister.NextBit())
                     {
-                        _clockRegisterEnabled = true;
+                        _clockEnabled = true;
                         PopulateClockRegister();
                     }
                 }
@@ -89,7 +116,7 @@ namespace Jellyfish.Virtu
             else if (_clockRegister.NextBit())
             {
                 // simulate writes, but our clock register is read-only
-                _clockRegisterEnabled = false;
+                _clockEnabled = false;
             }
         }
 
@@ -133,18 +160,17 @@ namespace Jellyfish.Virtu
 
         private const ulong ClockInitSequence = 0x5CA33AC55CA33AC5;
 
-        private bool _clockRegisterEnabled;
+        private bool _clockEnabled;
         private bool _writeEnabled;
-        private RingRegister _clockRegister = new RingRegister();
-        private RingRegister _comparisonRegister = new RingRegister(ClockInitSequence);
+        private RingRegister _clockRegister;
+        private RingRegister _comparisonRegister;
 
-        private sealed class RingRegister
+        private struct RingRegister
         {
-            public RingRegister(ulong data = 0)
+            public RingRegister(ulong data, ulong mask)
             {
-                _register = data;
-
-                Reset();
+                _data = data;
+                _mask = mask;
             }
 
             public void Reset()
@@ -169,17 +195,17 @@ namespace Jellyfish.Virtu
 
             public void WriteBit(int data)
             {
-                _register = ((data & 0x1) != 0) ? (_register | _mask) : (_register & ~_mask);
+                _data = ((data & 0x1) != 0) ? (_data | _mask) : (_data & ~_mask);
             }
 
             public int ReadBit(int data)
             {
-                return ((_register & _mask) != 0) ? (data | 0x1) : (data & ~0x1);
+                return ((_data & _mask) != 0) ? (data | 0x1) : (data & ~0x1);
             }
 
             public bool CompareBit(int data)
             {
-                return (((_register & _mask) != 0) == ((data & 0x1) != 0));
+                return (((_data & _mask) != 0) == ((data & 0x1) != 0));
             }
 
             public bool NextBit()
@@ -192,8 +218,11 @@ namespace Jellyfish.Virtu
                 return false;
             }
 
+            public ulong Data { get { return _data; } } // no auto props
+            public ulong Mask { get { return _mask; } }
+
+            private ulong _data;
             private ulong _mask;
-            private ulong _register;
         }
     }
 }

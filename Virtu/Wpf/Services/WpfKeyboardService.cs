@@ -88,15 +88,15 @@ namespace Jellyfish.Virtu.Services
 
             if (control && (e.Key == Key.Divide))
             {
-                Machine.Cpu.ToggleThrottle();
+                Machine.Cpu.IsThrottled ^= true;
             }
             else if (control && (e.Key == Key.Multiply))
             {
-                Machine.Video.ToggleMonochrome();
+                Machine.Video.IsMonochrome ^= true;
             }
             else if (control && (e.Key == Key.Subtract))
             {
-                Machine.Video.ToggleFullScreen();
+                Machine.Video.IsFullScreen ^= true;
             }
 
             Update();

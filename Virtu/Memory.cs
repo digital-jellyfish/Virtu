@@ -77,6 +77,12 @@ namespace Jellyfish.Virtu
             WriteRamModeBankRegion[Video.ModeF][BankAux][Region080B] = WriteRamModeFAuxRegion080B;
             WriteRamModeBankRegion[Video.ModeF][BankAux][Region203F] = WriteRamModeFAuxRegion203F;
             WriteRamModeBankRegion[Video.ModeF][BankAux][Region405F] = WriteRamModeFAuxRegion405F;
+
+            _writeIoRegionC0C0 = WriteIoRegionC0C0; // cache delegates; avoids garbage
+            _writeIoRegionC1C7 = WriteIoRegionC1C7;
+            _writeIoRegionC3C3 = WriteIoRegionC3C3;
+            _writeIoRegionC8CF = WriteIoRegionC8CF;
+            _writeRomRegionD0FF = WriteRomRegionD0FF;
         }
 
         public override void Initialize()
@@ -88,11 +94,13 @@ namespace Jellyfish.Virtu
             _video = Machine.Video;
             _noSlotClock = Machine.NoSlotClock;
 
-            var romStream = StorageService.GetResourceStream("Roms/AppleIIe.rom", 0x4000);
-            romStream.Seek(0x0100, SeekOrigin.Current);
-            romStream.ReadBlock(_romInternalRegionC1CF, 0x0000, 0x0F00);
-            romStream.ReadBlock(_romRegionD0DF, 0x0000, 0x1000);
-            romStream.ReadBlock(_romRegionE0FF, 0x0000, 0x2000);
+            StorageService.LoadResource("Roms/AppleIIe.rom", 0x4000, stream =>
+            {
+                stream.Seek(0x0100, SeekOrigin.Current);
+                stream.ReadBlock(_romInternalRegionC1CF, 0, _romInternalRegionC1CF.Length);
+                stream.ReadBlock(_romRegionD0DF, 0, _romRegionD0DF.Length);
+                stream.ReadBlock(_romRegionE0FF, 0, _romRegionE0FF.Length);
+            });
 
             if ((ReadRomRegionE0FF(0xFBB3) == 0x06) && (ReadRomRegionE0FF(0xFBBF) == 0xC1))
             {
@@ -114,6 +122,55 @@ namespace Jellyfish.Virtu
             MapRegion02BF();
             MapRegionC0CF();
             MapRegionD0FF();
+        }
+
+        public override void LoadState(BinaryReader reader, Version version)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException("reader");
+            }
+
+            _state = reader.ReadInt32();
+            _slotRegionC8CF = reader.ReadInt32();
+
+            reader.Read(_ramMainRegion0001, 0, _ramMainRegion0001.Length);
+            reader.Read(_ramMainRegion02BF, 0, _ramMainRegion02BF.Length);
+            reader.Read(_ramMainBank1RegionD0DF, 0, _ramMainBank1RegionD0DF.Length);
+            reader.Read(_ramMainBank2RegionD0DF, 0, _ramMainBank2RegionD0DF.Length);
+            reader.Read(_ramMainRegionE0FF, 0, _ramMainRegionE0FF.Length);
+            reader.Read(_ramAuxRegion0001, 0, _ramAuxRegion0001.Length);
+            reader.Read(_ramAuxRegion02BF, 0, _ramAuxRegion02BF.Length);
+            reader.Read(_ramAuxBank1RegionD0DF, 0, _ramAuxBank1RegionD0DF.Length);
+            reader.Read(_ramAuxBank2RegionD0DF, 0, _ramAuxBank2RegionD0DF.Length);
+            reader.Read(_ramAuxRegionE0FF, 0, _ramAuxRegionE0FF.Length);
+
+            MapRegion0001();
+            MapRegion02BF();
+            MapRegionC0CF();
+            MapRegionD0FF();
+        }
+
+        public override void SaveState(BinaryWriter writer)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
+            writer.Write(_state);
+            writer.Write(_slotRegionC8CF);
+
+            writer.Write(_ramMainRegion0001);
+            writer.Write(_ramMainRegion02BF);
+            writer.Write(_ramMainBank1RegionD0DF);
+            writer.Write(_ramMainBank2RegionD0DF);
+            writer.Write(_ramMainRegionE0FF);
+            writer.Write(_ramAuxRegion0001);
+            writer.Write(_ramAuxRegion02BF);
+            writer.Write(_ramAuxBank1RegionD0DF);
+            writer.Write(_ramAuxBank2RegionD0DF);
+            writer.Write(_ramAuxRegionE0FF);
         }
 
         #region Core Read & Write
@@ -1203,10 +1260,10 @@ namespace Jellyfish.Virtu
             _regionWrite[RegionC1C7] = null;
             _regionWrite[RegionC3C3] = null;
             _regionWrite[RegionC8CF] = null;
-            _writeRegion[RegionC0C0] = WriteIoRegionC0C0;
-            _writeRegion[RegionC1C7] = WriteIoRegionC1C7;
-            _writeRegion[RegionC3C3] = WriteIoRegionC3C3;
-            _writeRegion[RegionC8CF] = WriteIoRegionC8CF;
+            _writeRegion[RegionC0C0] = _writeIoRegionC0C0;
+            _writeRegion[RegionC1C7] = _writeIoRegionC1C7;
+            _writeRegion[RegionC3C3] = _writeIoRegionC3C3;
+            _writeRegion[RegionC8CF] = _writeIoRegionC8CF;
         }
 
         private void MapRegionD0FF()
@@ -1248,8 +1305,8 @@ namespace Jellyfish.Virtu
             {
                 _regionWrite[RegionD0DF] = null;
                 _regionWrite[RegionE0FF] = null;
-                _writeRegion[RegionD0DF] = WriteRomRegionD0FF;
-                _writeRegion[RegionE0FF] = WriteRomRegionD0FF;
+                _writeRegion[RegionD0DF] = _writeRomRegionD0FF;
+                _writeRegion[RegionE0FF] = _writeRomRegionD0FF;
             }
         }
 
@@ -1532,6 +1589,12 @@ namespace Jellyfish.Virtu
 
         public MonitorType Monitor { get; private set; }
         public int VideoMode { get { return StateVideoMode[_state & StateVideo]; } }
+
+        private Action<int, byte> _writeIoRegionC0C0;
+        private Action<int, byte> _writeIoRegionC1C7;
+        private Action<int, byte> _writeIoRegionC3C3;
+        private Action<int, byte> _writeIoRegionC8CF;
+        private Action<int, byte> _writeRomRegionD0FF;
 
         private Keyboard _keyboard;
         private GamePort _gamePort;

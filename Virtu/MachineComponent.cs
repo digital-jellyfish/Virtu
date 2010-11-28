@@ -1,4 +1,7 @@
-﻿namespace Jellyfish.Virtu
+﻿using System;
+using System.IO;
+
+namespace Jellyfish.Virtu
 {
     public abstract class MachineComponent
     {
@@ -15,7 +18,15 @@
         {
         }
 
+        public virtual void LoadState(BinaryReader reader, Version version)
+        {
+        }
+
         public virtual void Uninitialize()
+        {
+        }
+
+        public virtual void SaveState(BinaryWriter writer)
         {
         }
 

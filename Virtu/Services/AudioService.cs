@@ -27,8 +27,7 @@ namespace Jellyfish.Virtu.Services
             _index = (_index + 2) % SampleSize;
             if (_index == 0)
             {
-                _readEvent.Set();
-                if (Machine.Settings.Cpu.IsThrottled)
+                if (Machine.Cpu.IsThrottled)
                 {
                     _writeEvent.WaitOne(SampleLatency * 2); // allow timeout; avoids deadlock
                 }
@@ -40,18 +39,10 @@ namespace Jellyfish.Virtu.Services
             Buffer.BlockCopy(SampleZero, 0, _buffer, 0, SampleSize);
         }
 
-        public abstract void SetVolume(double volume); // machine thread
+        public abstract void SetVolume(double volume);
 
-        protected void Update(int bufferSize, Action<byte[], int> updateBuffer) // audio thread
+        protected void Update() // audio thread
         {
-            if (Machine.State == MachineState.Running)
-            {
-                _readEvent.WaitOne(SampleLatency * 2); // allow timeout; avoids deadlock
-            }
-            if (updateBuffer != null)
-            {
-                updateBuffer(_buffer, bufferSize);
-            }
             _writeEvent.Set();
         }
 
@@ -64,10 +55,12 @@ namespace Jellyfish.Virtu.Services
         [SuppressMessage("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
         protected static readonly byte[] SampleZero = new byte[SampleSize];
 
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        protected byte[] Source { get { return _buffer; } }
+
         private byte[] _buffer = new byte[SampleSize];
         private int _index;
 
-        private AutoResetEvent _readEvent = new AutoResetEvent(false);
         private AutoResetEvent _writeEvent = new AutoResetEvent(false);
     }
 }
