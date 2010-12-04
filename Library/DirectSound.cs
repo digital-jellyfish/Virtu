@@ -26,7 +26,7 @@ namespace Jellyfish.Library
             _stopEvent.Close();
         }
 
-        public void SetVolume(double volume)
+        public void SetVolume(float volume)
         {
             int attenuation = (volume < 0.01) ? (int)BufferVolume.Min : (int)Math.Floor(100 * 20 * Math.Log10(volume)); // 100 db
             lock (_bufferLock)

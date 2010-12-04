@@ -28,7 +28,7 @@ namespace Jellyfish.Virtu.Services
             };
         }
 
-        public override void SetVolume(double volume)
+        public override void SetVolume(float volume)
         {
             _directSound.SetVolume(volume);
         }

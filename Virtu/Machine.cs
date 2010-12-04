@@ -110,11 +110,14 @@ namespace Jellyfish.Virtu
             {
                 try
                 {
-                    var version = new Version(Version);
                     using (var reader = new BinaryReader(stream))
                     {
-                        version = new Version(reader.ReadString());
-                        Components.ForEach(component => component.LoadState(reader, version));
+                        string stateSignature = reader.ReadString();
+                        var stateVersion = new Version(reader.ReadString());
+                        if ((stateSignature == StateSignature) && (stateVersion == new Version(Machine.Version))) // avoid state version mismatch (for now)
+                        {
+                            Components.ForEach(component => component.LoadState(reader, stateVersion));
+                        }
                     }
                 }
                 catch (Exception)
@@ -139,7 +142,8 @@ namespace Jellyfish.Virtu
             {
                 using (var writer = new BinaryWriter(stream))
                 {
-                    writer.Write(Version);
+                    writer.Write(StateSignature);
+                    writer.Write(Machine.Version);
                     Components.ForEach(component => component.SaveState(writer));
                 }
             });
@@ -172,7 +176,7 @@ namespace Jellyfish.Virtu
             Uninitialize();
         }
 
-        public const string Version = "0.9.0.0";
+        public const string Version = "0.9.1.0";
 
         public MachineEvents Events { get; private set; }
         public MachineServices Services { get; private set; }
@@ -201,6 +205,7 @@ namespace Jellyfish.Virtu
         public Thread Thread { get; private set; }
 
         private const string LastStateFileName = "LastState.bin";
+        private const string StateSignature = "Virtu";
 
         private AutoResetEvent _pauseEvent = new AutoResetEvent(false);
         private AutoResetEvent _unpauseEvent = new AutoResetEvent(false);

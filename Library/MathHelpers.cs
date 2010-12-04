@@ -7,11 +7,6 @@
             return (value < min) ? min : (value > max) ? max : value;
         }
 
-        public static double Clamp(double value, double min, double max)
-        {
-            return (value < min) ? min : (value > max) ? max : value;
-        }
-
         public static int ClampByte(int value)
         {
             return Clamp(value, byte.MinValue, byte.MaxValue);

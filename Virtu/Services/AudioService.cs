@@ -39,7 +39,7 @@ namespace Jellyfish.Virtu.Services
             Buffer.BlockCopy(SampleZero, 0, _buffer, 0, SampleSize);
         }
 
-        public abstract void SetVolume(double volume);
+        public abstract void SetVolume(float volume);
 
         protected void Update() // audio thread
         {

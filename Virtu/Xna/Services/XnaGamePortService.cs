@@ -20,22 +20,22 @@ namespace Jellyfish.Virtu.Services
                 var left = _state.ThumbSticks.Left;
                 var right = _state.ThumbSticks.Right;
                 var dpad = _state.DPad;
-                float joystickDeadZone = (float)Machine.GamePort.JoystickDeadZone;
+                var gamePort = Machine.GamePort;
 
                 Paddle0 = (int)((1 + left.X) * PaddleScale);
                 Paddle1 = (int)((1 - left.Y) * PaddleScale); // invert y
                 Paddle2 = (int)((1 + right.X) * PaddleScale);
                 Paddle3 = (int)((1 - right.Y) * PaddleScale); // invert y
 
-                IsJoystick0Up = ((left.Y > joystickDeadZone) || (dpad.Up == ButtonState.Pressed));
-                IsJoystick0Left = ((left.X < -joystickDeadZone) || (dpad.Left == ButtonState.Pressed));
-                IsJoystick0Right = ((left.X > joystickDeadZone) || (dpad.Right == ButtonState.Pressed));
-                IsJoystick0Down = ((left.Y < -joystickDeadZone) || (dpad.Down == ButtonState.Pressed));
+                IsJoystick0Up = ((left.Y > gamePort.JoystickDeadZone) || (dpad.Up == ButtonState.Pressed));
+                IsJoystick0Left = ((left.X < -gamePort.JoystickDeadZone) || (dpad.Left == ButtonState.Pressed));
+                IsJoystick0Right = ((left.X > gamePort.JoystickDeadZone) || (dpad.Right == ButtonState.Pressed));
+                IsJoystick0Down = ((left.Y < -gamePort.JoystickDeadZone) || (dpad.Down == ButtonState.Pressed));
 
-                IsJoystick1Up = (right.Y > joystickDeadZone);
-                IsJoystick1Left = (right.X < -joystickDeadZone);
-                IsJoystick1Right = (right.X > joystickDeadZone);
-                IsJoystick1Down = (right.Y < -joystickDeadZone);
+                IsJoystick1Up = (right.Y > gamePort.JoystickDeadZone);
+                IsJoystick1Left = (right.X < -gamePort.JoystickDeadZone);
+                IsJoystick1Right = (right.X > gamePort.JoystickDeadZone);
+                IsJoystick1Down = (right.Y < -gamePort.JoystickDeadZone);
 
                 IsButton0Down = ((_state.Buttons.A == ButtonState.Pressed) || (_state.Buttons.LeftShoulder == ButtonState.Pressed));
                 IsButton1Down = ((_state.Buttons.B == ButtonState.Pressed) || (_state.Buttons.RightShoulder == ButtonState.Pressed));

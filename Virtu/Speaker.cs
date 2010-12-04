@@ -17,9 +17,9 @@ namespace Jellyfish.Virtu
             _audioService = Machine.Services.GetService<AudioService>();
 
 #if WINDOWS_PHONE
-            Volume = 0.85;
+            Volume = 0.85f;
 #else
-            Volume = 0.5;
+            Volume = 0.5f;
 #endif
             Machine.Events.AddEvent(CyclesPerFlush * Machine.Cpu.Multiplier, _flushOutputEvent);
         }
@@ -38,7 +38,7 @@ namespace Jellyfish.Virtu
                 throw new ArgumentNullException("reader");
             }
 
-            Volume = reader.ReadDouble();
+            Volume = reader.ReadSingle();
         }
 
         public override void SaveState(BinaryWriter writer)
@@ -77,7 +77,7 @@ namespace Jellyfish.Virtu
             _lastCycles = Machine.Cpu.Cycles;
         }
 
-        public double Volume { get { return _volume; } set { _volume = value; _audioService.SetVolume(_volume); } }
+        public float Volume { get { return _volume; } set { _volume = value; _audioService.SetVolume(_volume); } }
 
         private const int CyclesPerFlush = 23;
 
@@ -89,6 +89,6 @@ namespace Jellyfish.Virtu
         private int _highCycles;
         private int _totalCycles;
         private long _lastCycles;
-        private double _volume;
+        private float _volume;
     }
 }

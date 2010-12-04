@@ -28,7 +28,7 @@ namespace Jellyfish.Virtu.Services
 #endif
         }
 
-        public override void SetVolume(double volume)
+        public override void SetVolume(float volume)
         {
             _media.Dispatcher.Send(() => _media.Volume = volume);
         }

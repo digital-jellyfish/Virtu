@@ -22,7 +22,7 @@ namespace Jellyfish.Virtu
             _keyboardService = Machine.Services.GetService<KeyboardService>();
             _gamePortService = Machine.Services.GetService<GamePortService>();
 
-            JoystickDeadZone = 0.4;
+            JoystickDeadZone = 0.4f;
         }
 
         public override void LoadState(BinaryReader reader, Version version)
@@ -32,7 +32,8 @@ namespace Jellyfish.Virtu
                 throw new ArgumentNullException("reader");
             }
 
-            JoystickDeadZone = reader.ReadDouble();
+            JoystickDeadZone = reader.ReadSingle();
+            UseShiftKeyMod = reader.ReadBoolean();
 
             UseKeyboard = reader.ReadBoolean();
             Joystick0UpLeftKey = reader.ReadInt32();
@@ -64,6 +65,7 @@ namespace Jellyfish.Virtu
             }
 
             writer.Write(JoystickDeadZone);
+            writer.Write(UseShiftKeyMod);
 
             writer.Write(UseKeyboard);
             writer.Write(Joystick0UpLeftKey);
@@ -101,7 +103,7 @@ namespace Jellyfish.Virtu
 
         public bool ReadButton2()
         {
-            return (_gamePortService.IsButton2Down || !_keyboardService.IsShiftKeyDown || // Shift' [TN9]
+            return (_gamePortService.IsButton2Down || (UseShiftKeyMod && !_keyboardService.IsShiftKeyDown) || // Shift' [TN9]
                 (UseKeyboard && (Button2Key > 0) && _keyboardService.IsKeyDown(Button2Key)));
         }
 
@@ -196,7 +198,8 @@ namespace Jellyfish.Virtu
             Paddle3Strobe = false;
         }
 
-        public double JoystickDeadZone { get; set; }
+        public float JoystickDeadZone { get; set; }
+        public bool UseShiftKeyMod { get; set; }
 
         public bool UseKeyboard { get; set; }
         public int Joystick0UpLeftKey { get; set; }
