@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.GamerServices;
@@ -35,18 +34,6 @@ namespace Jellyfish.Library
             {
                 Window.Title = Name;
             }
-        }
-
-        [SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase")]
-        protected override void Update(GameTime gameTime)
-        {
-            var gamePadState = GamePad.GetState(PlayerIndex.One);
-            if (gamePadState.Buttons.Back == ButtonState.Pressed)
-            {
-                Exit();
-            }
-
-            base.Update(gameTime);
         }
 
         public string Name { get; private set; }

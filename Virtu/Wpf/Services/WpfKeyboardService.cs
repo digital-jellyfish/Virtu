@@ -33,8 +33,9 @@ namespace Jellyfish.Virtu.Services
             {
                 _updateAnyKeyDown = false;
                 IsAnyKeyDown = false;
-                foreach (Key key in KeyValues)
+                for (int i = 0; i < KeyValues.Length; i++)
                 {
+                    var key = KeyValues[i];
                     bool isKeyDown = keyboard.IsKeyDown(key);
                     _states[(int)key] = isKeyDown;
                     if (isKeyDown)

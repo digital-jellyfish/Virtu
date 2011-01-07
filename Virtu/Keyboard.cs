@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Jellyfish.Virtu.Services;
 
@@ -15,7 +14,9 @@ namespace Jellyfish.Virtu
         public override void Initialize()
         {
             _keyboardService = Machine.Services.GetService<KeyboardService>();
-            _gamePortService = Machine.Services.GetService<GamePortService>();
+
+            UseGamePort = true; // Raster Blaster
+            Button2Key = ' ';
         }
 
         public override void LoadState(BinaryReader reader, Version version)
@@ -76,99 +77,6 @@ namespace Jellyfish.Virtu
             writer.Write(Button2Key);
         }
 
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        public int ReadLatch()
-        {
-            if (Strobe)
-            {
-                return Latch;
-            }
-
-            if (UseGamePort)
-            {
-                if ((Joystick0UpLeftKey > 0) && _gamePortService.IsJoystick0Up && _gamePortService.IsJoystick0Left)
-                {
-                    Latch = Joystick0UpLeftKey;
-                }
-                else if ((Joystick0UpRightKey > 0) && _gamePortService.IsJoystick0Up && _gamePortService.IsJoystick0Right)
-                {
-                    Latch = Joystick0UpRightKey;
-                }
-                else if ((Joystick0DownLeftKey > 0) && _gamePortService.IsJoystick0Down && _gamePortService.IsJoystick0Left)
-                {
-                    Latch = Joystick0DownLeftKey;
-                }
-                else if ((Joystick0DownRightKey > 0) && _gamePortService.IsJoystick0Down && _gamePortService.IsJoystick0Right)
-                {
-                    Latch = Joystick0DownRightKey;
-                }
-                else if ((Joystick0UpKey > 0) && _gamePortService.IsJoystick0Up)
-                {
-                    Latch = Joystick0UpKey;
-                }
-                else if ((Joystick0LeftKey > 0) && _gamePortService.IsJoystick0Left)
-                {
-                    Latch = Joystick0LeftKey;
-                }
-                else if ((Joystick0RightKey > 0) && _gamePortService.IsJoystick0Right)
-                {
-                    Latch = Joystick0RightKey;
-                }
-                else if ((Joystick0DownKey > 0) && _gamePortService.IsJoystick0Down)
-                {
-                    Latch = Joystick0DownKey;
-                }
-
-                if ((Joystick1UpLeftKey > 0) && _gamePortService.IsJoystick1Up && _gamePortService.IsJoystick1Left) // override
-                {
-                    Latch = Joystick1UpLeftKey;
-                }
-                else if ((Joystick1UpRightKey > 0) && _gamePortService.IsJoystick1Up && _gamePortService.IsJoystick1Right)
-                {
-                    Latch = Joystick1UpRightKey;
-                }
-                else if ((Joystick1DownLeftKey > 0) && _gamePortService.IsJoystick1Down && _gamePortService.IsJoystick1Left)
-                {
-                    Latch = Joystick1DownLeftKey;
-                }
-                else if ((Joystick1DownRightKey > 0) && _gamePortService.IsJoystick1Down && _gamePortService.IsJoystick1Right)
-                {
-                    Latch = Joystick1DownRightKey;
-                }
-                else if ((Joystick1UpKey > 0) && _gamePortService.IsJoystick1Up)
-                {
-                    Latch = Joystick1UpKey;
-                }
-                else if ((Joystick1LeftKey > 0) && _gamePortService.IsJoystick1Left)
-                {
-                    Latch = Joystick1LeftKey;
-                }
-                else if ((Joystick1RightKey > 0) && _gamePortService.IsJoystick1Right)
-                {
-                    Latch = Joystick1RightKey;
-                }
-                else if ((Joystick1DownKey > 0) && _gamePortService.IsJoystick1Down)
-                {
-                    Latch = Joystick1DownKey;
-                }
-
-                if ((Button0Key > 0) && _gamePortService.IsButton0Down) // override
-                {
-                    Latch = Button0Key;
-                }
-                else if ((Button1Key > 0) && _gamePortService.IsButton1Down)
-                {
-                    Latch = Button1Key;
-                }
-                else if ((Button2Key > 0) && _gamePortService.IsButton2Down)
-                {
-                    Latch = Button2Key;
-                }
-            }
-
-            return Latch;
-        }
-
         public void ResetStrobe()
         {
             Strobe = false;
@@ -200,7 +108,6 @@ namespace Jellyfish.Virtu
         public bool Strobe { get; private set; }
 
         private KeyboardService _keyboardService;
-        private GamePortService _gamePortService;
 
         private int _latch;
     }

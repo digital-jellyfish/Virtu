@@ -18,6 +18,7 @@
         </Recognized>
         <Unrecognized>
             <Word>DownRight</Word>
+            <Word>GamePad</Word>
             <Word>UpRight</Word>
         </Unrecognized>
     </Words>

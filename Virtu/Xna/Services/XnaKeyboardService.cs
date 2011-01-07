@@ -18,19 +18,21 @@ namespace Jellyfish.Virtu.Services
             return IsKeyDown((Keys)key);
         }
 
-        public override void Update() // main thread
+        [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
+        public void Update(ref KeyboardState keyboardState, ref GamePadState gamePadState) // main thread
         {
             _lastState = _state;
-            _state = Microsoft.Xna.Framework.Input.Keyboard.GetState();
+            _state = keyboardState;
 
-            var gamePadState = GamePad.GetState(PlayerIndex.One);
-            bool gamePadControl = (gamePadState.Buttons.LeftStick == ButtonState.Pressed);
+            var gamePadButtons = gamePadState.Buttons;
+            bool gamePadControl = (gamePadButtons.LeftStick == ButtonState.Pressed);
 
             if (_state != _lastState)
             {
                 IsAnyKeyDown = false;
-                foreach (Keys key in KeyValues) // xna doesn't support buffered input; loses input order and could lose keys between updates
+                for (int i = 0; i < KeyValues.Length; i++) // xna doesn't support buffered input; loses input order and could lose keys between updates
                 {
+                    var key = KeyValues[i];
                     if (_state.IsKeyDown(key))
                     {
                         IsAnyKeyDown = true;
@@ -70,9 +72,9 @@ namespace Jellyfish.Virtu.Services
             IsControlKeyDown = IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl);
             IsShiftKeyDown = IsKeyDown(Keys.LeftShift) || IsKeyDown(Keys.RightShift);
 
-            IsOpenAppleKeyDown = IsKeyDown(Keys.LeftAlt) || IsKeyDown(Keys.NumPad0) || (gamePadState.Buttons.LeftShoulder == ButtonState.Pressed);
-            IsCloseAppleKeyDown = IsKeyDown(Keys.RightAlt) || IsKeyDown(Keys.Decimal) || (gamePadState.Buttons.RightShoulder == ButtonState.Pressed);
-            IsResetKeyDown = (IsControlKeyDown && IsKeyDown(Keys.Back)) || (gamePadControl && (gamePadState.Buttons.Start == ButtonState.Pressed));
+            IsOpenAppleKeyDown = IsKeyDown(Keys.LeftAlt) || IsKeyDown(Keys.NumPad0) || (gamePadButtons.LeftShoulder == ButtonState.Pressed);
+            IsCloseAppleKeyDown = IsKeyDown(Keys.RightAlt) || IsKeyDown(Keys.Decimal) || (gamePadButtons.RightShoulder == ButtonState.Pressed);
+            IsResetKeyDown = (IsControlKeyDown && IsKeyDown(Keys.Back)) || (gamePadControl && (gamePadButtons.Start == ButtonState.Pressed));
 
             base.Update();
         }

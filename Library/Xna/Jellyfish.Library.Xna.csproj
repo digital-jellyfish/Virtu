@@ -142,6 +142,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FrameRateCounter.cs" />
     <Compile Include="GameBase.cs" />
+    <Compile Include="TouchButton.cs" />
+    <Compile Include="TouchJoystick.cs" />
+    <Compile Include="TouchRegion.cs" />
+    <Compile Include="TouchRegionCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">

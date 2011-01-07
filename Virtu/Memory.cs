@@ -233,56 +233,56 @@ namespace Jellyfish.Virtu
             {
             case 0xC000: case 0xC001: case 0xC002: case 0xC003: case 0xC004: case 0xC005: case 0xC006: case 0xC007: // [7-15]
             case 0xC008: case 0xC009: case 0xC00A: case 0xC00B: case 0xC00C: case 0xC00D: case 0xC00E: case 0xC00F:
-                return SetBit7(_keyboard.ReadLatch(), _keyboard.Strobe);
+                return SetBit7(_keyboard.Latch, _keyboard.Strobe);
 
             case 0xC010:
                 _keyboard.ResetStrobe();
-                return SetBit7(_keyboard.ReadLatch(), _keyboard.IsAnyKeyDown);
+                return SetBit7(_keyboard.Latch, _keyboard.IsAnyKeyDown);
 
             case 0xC011:
-                return SetBit7(_keyboard.ReadLatch(), !IsHighRamBank1); // Bank1' [5-22]
+                return SetBit7(_keyboard.Latch, !IsHighRamBank1); // Bank1' [5-22]
 
             case 0xC012:
-                return SetBit7(_keyboard.ReadLatch(), IsHighRamRead);
+                return SetBit7(_keyboard.Latch, IsHighRamRead);
 
             case 0xC013:
-                return SetBit7(_keyboard.ReadLatch(), IsRamReadAux);
+                return SetBit7(_keyboard.Latch, IsRamReadAux);
 
             case 0xC014:
-                return SetBit7(_keyboard.ReadLatch(), IsRamWriteAux);
+                return SetBit7(_keyboard.Latch, IsRamWriteAux);
 
             case 0xC015:
-                return SetBit7(_keyboard.ReadLatch(), IsRomC1CFInternal);
+                return SetBit7(_keyboard.Latch, IsRomC1CFInternal);
 
             case 0xC016:
-                return SetBit7(_keyboard.ReadLatch(), IsZeroPageAux);
+                return SetBit7(_keyboard.Latch, IsZeroPageAux);
 
             case 0xC017:
-                return SetBit7(_keyboard.ReadLatch(), IsRomC3C3External);
+                return SetBit7(_keyboard.Latch, IsRomC3C3External);
 
             case 0xC018:
-                return SetBit7(_keyboard.ReadLatch(), Is80Store);
+                return SetBit7(_keyboard.Latch, Is80Store);
 
             case 0xC019:
-                return SetBit7(_keyboard.ReadLatch(), !_video.IsVBlank); // Vbl' [7-5]
+                return SetBit7(_keyboard.Latch, !_video.IsVBlank); // Vbl' [7-5]
 
             case 0xC01A:
-                return SetBit7(_keyboard.ReadLatch(), IsText);
+                return SetBit7(_keyboard.Latch, IsText);
 
             case 0xC01B:
-                return SetBit7(_keyboard.ReadLatch(), IsMixed);
+                return SetBit7(_keyboard.Latch, IsMixed);
 
             case 0xC01C:
-                return SetBit7(_keyboard.ReadLatch(), IsPage2);
+                return SetBit7(_keyboard.Latch, IsPage2);
 
             case 0xC01D:
-                return SetBit7(_keyboard.ReadLatch(), IsHires);
+                return SetBit7(_keyboard.Latch, IsHires);
 
             case 0xC01E:
-                return SetBit7(_keyboard.ReadLatch(), IsCharSetAlternate);
+                return SetBit7(_keyboard.Latch, IsCharSetAlternate);
 
             case 0xC01F:
-                return SetBit7(_keyboard.ReadLatch(), Is80Columns);
+                return SetBit7(_keyboard.Latch, Is80Columns);
 
             case 0xC020: case 0xC021: case 0xC022: case 0xC023: case 0xC024: case 0xC025: case 0xC026: case 0xC027: // [7-8]
             case 0xC028: case 0xC029: case 0xC02A: case 0xC02B: case 0xC02C: case 0xC02D: case 0xC02E: case 0xC02F:

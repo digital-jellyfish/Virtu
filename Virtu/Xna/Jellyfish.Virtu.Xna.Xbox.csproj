@@ -81,6 +81,9 @@
     <Reference Include="Microsoft.Xna.Framework.GamerServices">
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Input.Touch">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework.Xact">
       <Private>False</Private>
     </Reference>

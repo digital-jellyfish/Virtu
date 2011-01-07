@@ -33,9 +33,9 @@ namespace Jellyfish.Virtu.Services
             {
                 _updateAnyKeyDown = false;
                 IsAnyKeyDown = false;
-                foreach (Key key in KeyValues)
+                for (int i = 0; i < KeyValues.Length; i++)
                 {
-                    if (IsKeyDown(key))
+                    if (IsKeyDown(KeyValues[i]))
                     {
                         IsAnyKeyDown = true;
                         break;
@@ -111,9 +111,9 @@ namespace Jellyfish.Virtu.Services
         private void OnPageLostFocus(object sender, RoutedEventArgs e) // reset keyboard state on lost focus; can't access keyboard state on got focus
         {
             IsAnyKeyDown = false;
-            foreach (Key key in KeyValues)
+            for (int i = 0; i < KeyValues.Length; i++)
             {
-                _states[(int)key] = false;
+                _states[(int)KeyValues[i]] = false;
             }
         }
 

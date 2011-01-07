@@ -2,6 +2,8 @@
 using Jellyfish.Virtu.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 
 namespace Jellyfish.Virtu
 {
@@ -60,8 +62,17 @@ namespace Jellyfish.Virtu
 
         protected override void Update(GameTime gameTime)
         {
-            _keyboardService.Update();
-            _gamePortService.Update();
+            var keyboardState = Microsoft.Xna.Framework.Input.Keyboard.GetState();
+            var gamePadState = GamePad.GetState(PlayerIndex.One);
+            var touches = TouchPanel.GetState();
+
+            if (gamePadState.Buttons.Back == ButtonState.Pressed)
+            {
+                Exit();
+            }
+
+            _keyboardService.Update(ref keyboardState, ref gamePadState);
+            _gamePortService.Update(ref gamePadState, ref touches);
 
             base.Update(gameTime);
         }
@@ -83,8 +94,8 @@ namespace Jellyfish.Virtu
 
         private DebugService _debugService;
         private StorageService _storageService;
-        private KeyboardService _keyboardService;
-        private GamePortService _gamePortService;
+        private XnaKeyboardService _keyboardService;
+        private XnaGamePortService _gamePortService;
         private AudioService _audioService;
         private VideoService _videoService;
     }
