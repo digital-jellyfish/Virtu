@@ -66,7 +66,7 @@ namespace Jellyfish.Virtu
 
             // TODO handle null param/empty string for eject, or add Eject()
 
-            _disk = Disk525.CreateDisk(name, stream.ReadAllBytes(), isWriteProtected);
+            _disk = Disk525.CreateDisk(name, stream, isWriteProtected);
             _trackLoaded = false;
         }
 

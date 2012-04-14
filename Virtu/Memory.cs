@@ -94,12 +94,12 @@ namespace Jellyfish.Virtu
             _video = Machine.Video;
             _noSlotClock = Machine.NoSlotClock;
 
-            StorageService.LoadResource("Roms/AppleIIe.rom", 0x4000, stream =>
+            StorageService.LoadResource("Roms/AppleIIe.rom", stream =>
             {
-                stream.Seek(0x0100, SeekOrigin.Current);
-                stream.ReadBlock(_romInternalRegionC1CF, 0, _romInternalRegionC1CF.Length);
-                stream.ReadBlock(_romRegionD0DF, 0, _romRegionD0DF.Length);
-                stream.ReadBlock(_romRegionE0FF, 0, _romRegionE0FF.Length);
+                stream.SkipBlock(0x0100);
+                stream.ReadBlock(_romInternalRegionC1CF);
+                stream.ReadBlock(_romRegionD0DF);
+                stream.ReadBlock(_romRegionE0FF);
             });
 
             if ((ReadRomRegionE0FF(0xFBB3) == 0x06) && (ReadRomRegionE0FF(0xFBBF) == 0xC1))

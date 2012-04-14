@@ -50,7 +50,12 @@ namespace Jellyfish.Virtu
 
         public void Reset()
         {
-            Components.ForEach(component => component.Reset());
+            foreach (var component in Components)
+            {
+                //_debugService.WriteLine("Resetting component '{0}'", component.GetType().Name);
+                component.Reset();
+                //_debugService.WriteLine("Reset component '{0}'", component.GetType().Name);
+            }
         }
 
         public void Start()
@@ -99,14 +104,18 @@ namespace Jellyfish.Virtu
 
         private void Initialize()
         {
-            Components.ForEach(component => component.Initialize());
+            foreach (var component in Components)
+            {
+                //_debugService.WriteLine("Initializing component '{0}'", component.GetType().Name);
+                component.Initialize();
+                //_debugService.WriteLine("Initialized component '{0}'", component.GetType().Name);
+            }
         }
 
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         private void LoadState()
         {
-            var storageService = Services.GetService<StorageService>();
-            storageService.Load(Machine.LastStateFileName, stream => 
+            _storageService.Load(Machine.LastStateFileName, stream =>
             {
                 try
                 {
@@ -116,7 +125,12 @@ namespace Jellyfish.Virtu
                         var stateVersion = new Version(reader.ReadString());
                         if ((stateSignature == StateSignature) && (stateVersion == new Version(Machine.Version))) // avoid state version mismatch (for now)
                         {
-                            Components.ForEach(component => component.LoadState(reader, stateVersion));
+                            foreach (var component in Components)
+                            {
+                                //_debugService.WriteLine("Loading component '{0}' state", component.GetType().Name);
+                                component.LoadState(reader, stateVersion);
+                                //_debugService.WriteLine("Loaded component '{0}' state", component.GetType().Name);
+                            }
                         }
                     }
                 }
@@ -132,25 +146,37 @@ namespace Jellyfish.Virtu
 
         private void Uninitialize()
         {
-            Components.ForEach(component => component.Uninitialize());
+            foreach (var component in Components)
+            {
+                //_debugService.WriteLine("Uninitializing component '{0}'", component.GetType().Name);
+                component.Uninitialize();
+                //_debugService.WriteLine("Uninitialized component '{0}'", component.GetType().Name);
+            }
         }
 
         private void SaveState()
         {
-            var storageService = Services.GetService<StorageService>();
-            storageService.Save(Machine.LastStateFileName, stream => 
+            _storageService.Save(Machine.LastStateFileName, stream =>
             {
                 using (var writer = new BinaryWriter(stream))
                 {
                     writer.Write(StateSignature);
                     writer.Write(Machine.Version);
-                    Components.ForEach(component => component.SaveState(writer));
+                    foreach (var component in Components)
+                    {
+                        //_debugService.WriteLine("Saving component '{0}' state", component.GetType().Name);
+                        component.SaveState(writer);
+                        //_debugService.WriteLine("Saved component '{0}' state", component.GetType().Name);
+                    }
                 }
             });
         }
 
         private void Run() // machine thread
         {
+            _debugService = Services.GetService<DebugService>();
+            _storageService = Services.GetService<StorageService>();
+
             Initialize();
             Reset();
             LoadState();
@@ -206,6 +232,9 @@ namespace Jellyfish.Virtu
 
         private const string LastStateFileName = "LastState.bin";
         private const string StateSignature = "Virtu";
+
+        private DebugService _debugService;
+        private StorageService _storageService;
 
         private AutoResetEvent _pauseEvent = new AutoResetEvent(false);
         private AutoResetEvent _unpauseEvent = new AutoResetEvent(false);

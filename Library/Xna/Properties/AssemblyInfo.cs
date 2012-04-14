@@ -14,7 +14,7 @@ using Jellyfish.Library;
 [assembly: AssemblyProduct("Jellyfish.Library.Xna")]
 #endif
 [assembly: AssemblyCompany("Digital Jellyfish Design Ltd")]
-[assembly: AssemblyCopyright("Copyright © 2009-2010 Digital Jellyfish Design Ltd")]
+[assembly: AssemblyCopyright("Copyright © 2009-2012 Digital Jellyfish Design Ltd")]
 [assembly: AssemblyComment("Developed by Sean Fausett")]
 
 [assembly: AssemblyVersion("0.2.0.0")]

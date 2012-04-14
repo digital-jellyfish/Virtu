@@ -5,21 +5,22 @@ namespace Jellyfish.Library
 {
     public static class StreamExtensions
     {
-        public static byte[] ReadAllBytes(this Stream stream)
+        public static byte[] ReadBlock(this Stream stream, int count)
         {
-            if (stream == null)
-            {
-                throw new ArgumentNullException("stream");
-            }
-
-            int count = (int)stream.Length;
-            byte[] buffer = new byte[count];
-            ReadBlock(stream, buffer, 0, count);
-
-            return buffer;
+            return ReadBlock(stream, new byte[count], 0, count);
         }
 
-        public static int ReadBlock(this Stream stream, byte[] buffer, int offset, int count)
+        public static byte[] ReadBlock(this Stream stream, byte[] buffer)
+        {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException("buffer");
+            }
+
+            return ReadBlock(stream, buffer, 0, buffer.Length);
+        }
+
+        public static byte[] ReadBlock(this Stream stream, byte[] buffer, int offset, int count)
         {
             if (stream == null)
             {
@@ -34,7 +35,38 @@ namespace Jellyfish.Library
             }
             while ((read > 0) && (total < count));
 
-            return total;
+            if (total < count)
+            {
+                throw new EndOfStreamException();
+            }
+
+            return buffer;
+        }
+
+        public static void SkipBlock(this Stream stream, int count)
+        {
+            if (stream == null)
+            {
+                throw new ArgumentNullException("stream");
+            }
+
+            if (stream.CanSeek)
+            {
+                stream.Seek(count, SeekOrigin.Current);
+            }
+            else
+            {
+                const int BufferSize = 1024;
+                byte[] buffer = new byte[BufferSize];
+
+                int total = 0;
+                int read;
+                do
+                {
+                    total += read = stream.Read(buffer, 0, Math.Min(count - total, BufferSize));
+                }
+                while ((read > 0) && (total < count));
+            }
         }
     }
 }

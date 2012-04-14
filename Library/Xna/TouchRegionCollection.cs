@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework.Input.Touch;
 
 namespace Jellyfish.Library
@@ -9,6 +10,7 @@ namespace Jellyfish.Library
         {
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
         public void Update(ref TouchCollection touches)
         {
             for (int i = 0; i < base.Count; i++)

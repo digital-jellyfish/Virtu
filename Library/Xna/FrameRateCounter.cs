@@ -20,7 +20,7 @@ namespace Jellyfish.Library
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _spriteFont = Game.Content.Load<SpriteFont>(FontName);
 
-            var titleSafeArea = Game.GraphicsDevice.DisplayMode.TitleSafeArea;
+            var titleSafeArea = Game.GraphicsDevice.Viewport.TitleSafeArea;
             Position = new Vector2(titleSafeArea.X, titleSafeArea.Y);
         }
 

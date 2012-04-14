@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Jellyfish.Library;
 
 namespace Jellyfish.Virtu
 {
@@ -13,24 +14,26 @@ namespace Jellyfish.Virtu
             IsWriteProtected = isWriteProtected;
         }
 
-        public static Disk525 CreateDisk(string name, byte[] data, bool isWriteProtected)
+        public static Disk525 CreateDisk(string name, Stream stream, bool isWriteProtected)
         {
             if (name == null)
             {
                 throw new ArgumentNullException("name");
             }
-            if (data == null)
+            if (stream == null)
             {
-                throw new ArgumentNullException("data");
+                throw new ArgumentNullException("stream");
             }
 
-            if (name.EndsWith(".nib", StringComparison.OrdinalIgnoreCase) && (data.Length == TrackCount * TrackSize))
+            if (name.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase))
             {
-                return new DiskNib(name, data, isWriteProtected);
-            }
-            else if (name.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase) && (data.Length == TrackCount * SectorCount * SectorSize))
-            {
+                byte[] data = stream.ReadBlock(TrackCount * SectorCount * SectorSize);
                 return new DiskDsk(name, data, isWriteProtected);
+            }
+            else if (name.EndsWith(".nib", StringComparison.OrdinalIgnoreCase))
+            {
+                byte[] data = stream.ReadBlock(TrackCount * TrackSize);
+                return new DiskNib(name, data, isWriteProtected);
             }
 
             return null;
@@ -48,7 +51,16 @@ namespace Jellyfish.Virtu
             bool isWriteProtected = reader.ReadBoolean();
             byte[] data = reader.ReadBytes(reader.ReadInt32());
 
-            return CreateDisk(name, data, isWriteProtected);
+            if (name.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase))
+            {
+                return new DiskDsk(name, data, isWriteProtected);
+            }
+            else if (name.EndsWith(".nib", StringComparison.OrdinalIgnoreCase))
+            {
+                return new DiskNib(name, data, isWriteProtected);
+            }
+
+            return null;
         }
 
         public void SaveState(BinaryWriter writer)

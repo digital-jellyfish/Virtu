@@ -86,7 +86,7 @@ namespace Jellyfish.Virtu.Services
 
         private void OnKeyDown(Keys key, bool gamePadControl)
         {
-            //DebugService.WriteLine(string.Concat("OnKeyDn: Key=", key));
+            //DebugService.WriteLine("OnKeyDn: Key='{0}'", key);
 
             int asciiKey = GetAsciiKey(key, gamePadControl);
             if (asciiKey >= 0)
@@ -97,7 +97,7 @@ namespace Jellyfish.Virtu.Services
 
         private void OnKeyUp(Keys key, bool gamePadControl)
         {
-            //DebugService.WriteLine(string.Concat("OnKeyUp: Key=", key));
+            //DebugService.WriteLine("OnKeyUp: Key='{0}'", key);
 
             bool control = IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl);
 

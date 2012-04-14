@@ -65,7 +65,7 @@ namespace Jellyfish.Virtu.Services
             }
         }
 
-        public static void LoadResource(string resourceName, int resourceSize, Action<Stream> reader)
+        public static void LoadResource(string resourceName, Action<Stream> reader)
         {
             if (reader == null)
             {
@@ -74,7 +74,7 @@ namespace Jellyfish.Virtu.Services
 
             try
             {
-                using (var stream = GetResourceStream(resourceName, resourceSize))
+                using (var stream = GetResourceStream(resourceName))
                 {
                     reader(stream);
                 }
@@ -122,21 +122,16 @@ namespace Jellyfish.Virtu.Services
             }
         }
 
-        private static Stream GetResourceStream(string resourceName, int resourceSize)
+        private static Stream GetResourceStream(string resourceName)
         {
-            var resourceStream = _resourceManager.Value.GetStream(resourceName, CultureInfo.CurrentUICulture);
+            resourceName = "Jellyfish.Virtu." + resourceName.Replace('/', '.');
+            var resourceStream = typeof(StorageService).Assembly.GetManifestResourceStream(resourceName);
             if (resourceStream == null)
             {
                 throw new FileNotFoundException(string.Format(CultureInfo.CurrentUICulture, Strings.ResourceNotFound, resourceName));
             }
-            if ((resourceSize > 0) && (resourceStream.Length != resourceSize))
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentUICulture, Strings.ResourceInvalid, resourceName));
-            }
 
             return resourceStream;
         }
-
-        private static Lazy<ResourceManager> _resourceManager = new Lazy<ResourceManager>(() => new ResourceManager("Jellyfish.Virtu.g", typeof(StorageService).Assembly) { IgnoreCase = true });
     }
 }

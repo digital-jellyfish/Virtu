@@ -20,10 +20,10 @@ namespace Jellyfish.Virtu.Services
             }
 
             _game = game;
-
+#if WINDOWS || XBOX
             _game.GraphicsDeviceManager.PreparingDeviceSettings += OnGraphicsDeviceManagerPreparingDeviceSettings;
+#endif
             _game.GraphicsDeviceService.DeviceCreated += OnGraphicsDeviceServiceDeviceCreated;
-            _game.GraphicsDeviceService.DeviceReset += (sender, e) => SetTexturePosition();
         }
 
         public override void SetFullScreen(bool isFullScreen)
@@ -53,8 +53,12 @@ namespace Jellyfish.Virtu.Services
                 _texture.SetData(_pixels);
             }
 
+            var viewport = _graphicsDevice.Viewport;
+            int scale = Math.Max(1, Math.Min(viewport.Width / TextureWidth, viewport.Height / TextureHeight));
+            var position = new Vector2((viewport.Width - scale * TextureWidth) / 2, (viewport.Height - scale * TextureHeight) / 2);
+
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, null, null);
-            _spriteBatch.Draw(_texture, _texturePosition, null, Color.White, 0, Vector2.Zero, _textureScale, SpriteEffects.None, 0);
+            _spriteBatch.Draw(_texture, position, null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
             _spriteBatch.End();
         }
 
@@ -69,58 +73,32 @@ namespace Jellyfish.Virtu.Services
             base.Dispose(disposing);
         }
 
+#if WINDOWS || XBOX
         private void OnGraphicsDeviceManagerPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
-            var displayMode = e.GraphicsDeviceInformation.Adapter.CurrentDisplayMode;
             var presentationParameters = e.GraphicsDeviceInformation.PresentationParameters;
-
-#if WINDOWS_PHONE
-            bool portraitOrientation = (presentationParameters.DisplayOrientation & DisplayOrientation.Portrait) != 0;
-            if (portraitOrientation)
+#if WINDOWS
+            if (!presentationParameters.IsFullScreen)
             {
-                _textureScale = Math.Max(1, Math.Min(displayMode.TitleSafeArea.Width / TextureWidth, displayMode.TitleSafeArea.Height / TextureHeight));
-                presentationParameters.BackBufferWidth = displayMode.Width; // always use portrait display mode
-                presentationParameters.BackBufferHeight = displayMode.Height;
+                var maxScale = Math.Max(1, Math.Min((int)SystemParameters.FullPrimaryScreenWidth / TextureWidth, (int)SystemParameters.FullPrimaryScreenHeight / TextureHeight));
+                presentationParameters.BackBufferWidth = maxScale * TextureWidth;
+                presentationParameters.BackBufferHeight = maxScale * TextureHeight;
             }
             else
-            {
-                _textureScale = Math.Max(1, Math.Min(displayMode.TitleSafeArea.Height / TextureWidth, displayMode.TitleSafeArea.Width / TextureHeight));
-                presentationParameters.BackBufferWidth = displayMode.Height; // always use landscape display mode
-                presentationParameters.BackBufferHeight = displayMode.Width;
-            }
-#elif XBOX
-            _textureScale = Math.Max(1, Math.Min(displayMode.TitleSafeArea.Width / TextureWidth, displayMode.TitleSafeArea.Height / TextureHeight));
-            presentationParameters.BackBufferWidth = displayMode.Width; // always use display mode
-            presentationParameters.BackBufferHeight = displayMode.Height;
-#else
-            if (presentationParameters.IsFullScreen)
-            {
-                _textureScale = Math.Max(1, Math.Min((int)SystemParameters.PrimaryScreenWidth / TextureWidth, (int)SystemParameters.PrimaryScreenHeight / TextureHeight));
-                presentationParameters.BackBufferWidth = displayMode.Width; // avoids changing display mode
-                presentationParameters.BackBufferHeight = displayMode.Height;
-            }
-            else
-            {
-                _textureScale = Math.Max(1, Math.Min((int)SystemParameters.FullPrimaryScreenWidth / TextureWidth, (int)SystemParameters.FullPrimaryScreenHeight / TextureHeight));
-                presentationParameters.BackBufferWidth = _textureScale * TextureWidth;
-                presentationParameters.BackBufferHeight = _textureScale * TextureHeight;
-            }
 #endif
+            {
+                var displayMode = e.GraphicsDeviceInformation.Adapter.CurrentDisplayMode; // use display mode
+                presentationParameters.BackBufferWidth = displayMode.Width;
+                presentationParameters.BackBufferHeight = displayMode.Height;
+            }
         }
+#endif
 
         private void OnGraphicsDeviceServiceDeviceCreated(object sender, EventArgs e)
         {
             _graphicsDevice = _game.GraphicsDevice;
             _spriteBatch = new SpriteBatch(_graphicsDevice);
             _texture = new Texture2D(_graphicsDevice, TextureWidth, TextureHeight, false, SurfaceFormat.Color);
-            _pixels = new uint[TextureWidth * TextureHeight];
-            SetTexturePosition();
-        }
-
-        private void SetTexturePosition()
-        {
-            _texturePosition.X = (_graphicsDevice.PresentationParameters.BackBufferWidth - TextureWidth * _textureScale) / 2; // centered
-            _texturePosition.Y = (_graphicsDevice.PresentationParameters.BackBufferHeight - TextureHeight * _textureScale) / 2;
         }
 
         private const int TextureWidth = 560;
@@ -130,9 +108,8 @@ namespace Jellyfish.Virtu.Services
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
         private Texture2D _texture;
-        private Vector2 _texturePosition;
-        private int _textureScale;
-        private uint[] _pixels;
+
+        private uint[] _pixels = new uint[TextureWidth * TextureHeight];
         private bool _pixelsDirty;
     }
 }

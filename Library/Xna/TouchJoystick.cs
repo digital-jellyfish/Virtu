@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input.Touch;
 
@@ -6,6 +7,7 @@ namespace Jellyfish.Library
 {
     public sealed class TouchJoystick : TouchRegion
     {
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
         public Vector2 GetJoystick()
         {
             TouchLocation touch;

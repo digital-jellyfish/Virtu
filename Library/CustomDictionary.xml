@@ -3,6 +3,8 @@
     <Words>
         <Recognized>
             <Word>Alloc</Word>
+            <Word>x</Word>
+            <Word>y</Word>
         </Recognized>
     </Words>
 </Dictionary>

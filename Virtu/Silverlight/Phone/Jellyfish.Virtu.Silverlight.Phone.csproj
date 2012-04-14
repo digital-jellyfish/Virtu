@@ -228,15 +228,15 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="..\..\Disks\Default.dsk">
+    <EmbeddedResource Include="..\..\Disks\Default.dsk">
       <Link>Disks\Default.dsk</Link>
-    </Resource>
-    <Resource Include="..\..\Roms\AppleIIe.rom">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Roms\AppleIIe.rom">
       <Link>Roms\AppleIIe.rom</Link>
-    </Resource>
-    <Resource Include="..\..\Roms\DiskII.rom">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\Roms\DiskII.rom">
       <Link>Roms\DiskII.rom</Link>
-    </Resource>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\..\CustomDictionary.xml">
