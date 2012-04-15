@@ -82,10 +82,10 @@ namespace Jellyfish.Library
                 {
                     MessageBox.Show("An application update is available, but it requires the latest version of Silverlight.");
                 }
-                else if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
+                //else if (Debugger.IsAttached)
+                //{
+                //    Debugger.Break();
+                //}
             }
             else if (e.UpdateAvailable)
             {
