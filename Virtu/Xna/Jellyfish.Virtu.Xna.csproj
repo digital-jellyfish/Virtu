@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;XNA;WINDOWS;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -39,7 +39,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\x86\</OutputPath>
-    <DefineConstants>TRACE;WINDOWS;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;XNA;WINDOWS;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>

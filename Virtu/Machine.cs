@@ -206,7 +206,7 @@ namespace Jellyfish.Virtu
 
         public MachineEvents Events { get; private set; }
         public MachineServices Services { get; private set; }
-        public MachineState State { get; private set; }
+        public MachineState State { get { return _state; } private set { _state = value; } }
 
         public Cpu Cpu { get; private set; }
         public Memory Memory { get; private set; }
@@ -235,6 +235,7 @@ namespace Jellyfish.Virtu
 
         private DebugService _debugService;
         private StorageService _storageService;
+        private volatile MachineState _state;
 
         private AutoResetEvent _pauseEvent = new AutoResetEvent(false);
         private AutoResetEvent _unpauseEvent = new AutoResetEvent(false);

@@ -30,7 +30,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Windows Phone\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS_PHONE;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;XNA;WINDOWS_PHONE;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -45,7 +45,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Windows Phone\</OutputPath>
-    <DefineConstants>TRACE;WINDOWS_PHONE;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;XNA;WINDOWS_PHONE;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>

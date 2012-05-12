@@ -26,22 +26,22 @@ namespace Jellyfish.Virtu.Services
             _game.GraphicsDeviceService.DeviceCreated += OnGraphicsDeviceServiceDeviceCreated;
         }
 
+#if WINDOWS
         public override void SetFullScreen(bool isFullScreen)
         {
-#if WINDOWS
             var graphicsDeviceManager = _game.GraphicsDeviceManager;
             if (graphicsDeviceManager.IsFullScreen != isFullScreen)
             {
                 graphicsDeviceManager.IsFullScreen = isFullScreen;
                 _game.SynchronizationContext.Send(state => graphicsDeviceManager.ApplyChanges(), null);
             }
-#endif
         }
+#endif
 
         [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow")]
         public override void SetPixel(int x, int y, uint color)
         {
-            _pixels[y * TextureWidth + x] = (color & 0xFF00FF00) | ((color << 16) & 0x00FF0000) | ((color >> 16) & 0x000000FF); // RGBA
+            _pixels[y * TextureWidth + x] = color;
             _pixelsDirty = true;
         }
 

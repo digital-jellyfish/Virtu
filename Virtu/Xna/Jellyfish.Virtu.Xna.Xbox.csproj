@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Xbox 360\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;XBOX;XBOX360;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;XNA;XBOX;XBOX360;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -39,7 +39,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Xbox 360\</OutputPath>
-    <DefineConstants>TRACE;XBOX;XBOX360;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;XNA;XBOX;XBOX360;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
