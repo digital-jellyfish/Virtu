@@ -26,6 +26,8 @@ namespace Jellyfish.Virtu
                 throw new ArgumentNullException("reader");
             }
 
+            DisableResetKey = reader.ReadBoolean();
+
             UseGamePort = reader.ReadBoolean();
             Joystick0UpLeftKey = reader.ReadInt32();
             Joystick0UpKey = reader.ReadInt32();
@@ -55,6 +57,8 @@ namespace Jellyfish.Virtu
                 throw new ArgumentNullException("writer");
             }
 
+            writer.Write(DisableResetKey);
+
             writer.Write(UseGamePort);
             writer.Write(Joystick0UpLeftKey);
             writer.Write(Joystick0UpKey);
@@ -81,6 +85,8 @@ namespace Jellyfish.Virtu
         {
             Strobe = false;
         }
+
+        public bool DisableResetKey { get; set; }
 
         public bool UseGamePort { get; set; }
         public int Joystick0UpLeftKey { get; set; }

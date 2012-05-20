@@ -58,11 +58,17 @@ namespace Jellyfish.Virtu
         public void InsertDisk(string name, Stream stream, bool isWriteProtected)
         {
             FlushTrack();
-
-            // TODO handle null param/empty string for eject, or add Eject()
-
             _disk = Disk525.CreateDisk(name, stream, isWriteProtected);
             _trackLoaded = false;
+        }
+
+        public void RemoveDisk()
+        {
+            _trackLoaded = false;
+            _trackChanged = false;
+            _trackNumber = 0;
+            _trackOffset = 0;
+            _disk = null;
         }
 
         public void ApplyPhaseChange(int phaseState)
@@ -139,12 +145,12 @@ namespace Jellyfish.Virtu
 
         private readonly int[][] DriveArmStepDelta = new int[PhaseCount][];
 
-        private Disk525 _disk;
         private bool _trackLoaded;
         private bool _trackChanged;
         private int _trackNumber;
         private int _trackOffset;
         private byte[] _trackData = new byte[Disk525.TrackSize];
+        private Disk525 _disk;
 
         private Random _random = new Random();
     }

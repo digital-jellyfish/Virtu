@@ -158,16 +158,6 @@ namespace Jellyfish.Virtu
             }
         }
 
-        private void Uninitialize()
-        {
-            foreach (var component in Components)
-            {
-                //_debugService.WriteLine("Uninitializing component '{0}'", component.GetType().Name);
-                component.Uninitialize();
-                //_debugService.WriteLine("Uninitialized component '{0}'", component.GetType().Name);
-            }
-        }
-
         private void SaveState()
         {
             _storageService.Save(Machine.StateFileName, stream => SaveState(stream));
@@ -185,6 +175,16 @@ namespace Jellyfish.Virtu
                     component.SaveState(writer);
                     //_debugService.WriteLine("Saved component '{0}' state", component.GetType().Name);
                 }
+            }
+        }
+
+        private void Uninitialize()
+        {
+            foreach (var component in Components)
+            {
+                //_debugService.WriteLine("Uninitializing component '{0}'", component.GetType().Name);
+                component.Uninitialize();
+                //_debugService.WriteLine("Uninitialized component '{0}'", component.GetType().Name);
             }
         }
 
@@ -219,7 +219,7 @@ namespace Jellyfish.Virtu
             Uninitialize();
         }
 
-        public const string Version = "0.9.1.0";
+        public const string Version = "0.9.2.0";
 
         public MachineEvents Events { get; private set; }
         public MachineServices Services { get; private set; }

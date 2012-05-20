@@ -11,7 +11,9 @@
 
         public virtual void Update() // main thread
         {
-            if (IsResetKeyDown)
+            var keyboard = Machine.Keyboard;
+
+            if (IsResetKeyDown && !keyboard.DisableResetKey)
             {
                 if (!_resetKeyDown)
                 {
