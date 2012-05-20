@@ -112,7 +112,7 @@ namespace Jellyfish.Virtu
                 string name = args[1];
                 Func<string, Action<Stream>, bool> loader = StorageService.LoadFile;
 
-                if (name.StartsWith("res://"))
+                if (name.StartsWith("res://", StringComparison.OrdinalIgnoreCase))
                 {
                     name = name.Substring(6);
                     loader = StorageService.LoadResource;
