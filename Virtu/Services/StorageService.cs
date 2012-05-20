@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Resources;
 using System.Security;
-using Jellyfish.Library;
 using Jellyfish.Virtu.Properties;
 
 namespace Jellyfish.Virtu.Services
@@ -15,12 +15,27 @@ namespace Jellyfish.Virtu.Services
         {
         }
 
-        public abstract void Load(string fileName, Action<Stream> reader);
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public bool Load(string fileName, Action<Stream> reader)
+        {
+            try
+            {
+                OnLoad(fileName, reader);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+                return false;
+            }
+
+            return true;
+        }
 
 #if !WINDOWS
         [SecuritySafeCritical]
 #endif
-        public static void LoadFile(string fileName, Action<Stream> reader)
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public static bool LoadFile(string fileName, Action<Stream> reader)
         {
             if (reader == null)
             {
@@ -34,15 +49,20 @@ namespace Jellyfish.Virtu.Services
                     reader(stream);
                 }
             }
-            catch (FileNotFoundException)
+            catch (Exception e)
             {
+                Debug.WriteLine(e.ToString());
+                return false;
             }
+
+            return true;
         }
 
 #if !WINDOWS
         [SecuritySafeCritical]
 #endif
-        public static void LoadFile(FileInfo fileInfo, Action<Stream> reader)
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public static bool LoadFile(FileInfo fileInfo, Action<Stream> reader)
         {
             if (fileInfo == null)
             {
@@ -60,12 +80,17 @@ namespace Jellyfish.Virtu.Services
                     reader(stream);
                 }
             }
-            catch (SecurityException)
+            catch (Exception e)
             {
+                Debug.WriteLine(e.ToString());
+                return false;
             }
+
+            return true;
         }
 
-        public static void LoadResource(string resourceName, Action<Stream> reader)
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public static bool LoadResource(string resourceName, Action<Stream> reader)
         {
             if (reader == null)
             {
@@ -79,33 +104,63 @@ namespace Jellyfish.Virtu.Services
                     reader(stream);
                 }
             }
-            catch (FileNotFoundException)
+            catch (Exception e)
             {
+                Debug.WriteLine(e.ToString());
+                return false;
             }
+
+            return true;
         }
 
-        public abstract void Save(string fileName, Action<Stream> writer);
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public bool Save(string fileName, Action<Stream> writer)
+        {
+            try
+            {
+                OnSave(fileName, writer);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+                return false;
+            }
+
+            return true;
+        }
 
 #if !WINDOWS
         [SecuritySafeCritical]
 #endif
-        public static void SaveFile(string fileName, Action<Stream> writer)
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public static bool SaveFile(string fileName, Action<Stream> writer)
         {
             if (writer == null)
             {
                 throw new ArgumentNullException("writer");
             }
 
-            using (var stream = File.Open(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
+            try
             {
-                writer(stream);
+                using (var stream = File.Open(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    writer(stream);
+                }
             }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+                return false;
+            }
+
+            return true;
         }
 
 #if !WINDOWS
         [SecuritySafeCritical]
 #endif
-        public static void SaveFile(FileInfo fileInfo, Action<Stream> writer)
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public static bool SaveFile(FileInfo fileInfo, Action<Stream> writer)
         {
             if (fileInfo == null)
             {
@@ -116,11 +171,25 @@ namespace Jellyfish.Virtu.Services
                 throw new ArgumentNullException("writer");
             }
 
-            using (var stream = fileInfo.Open(FileMode.Create, FileAccess.Write, FileShare.None))
+            try
             {
-                writer(stream);
+                using (var stream = fileInfo.Open(FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    writer(stream);
+                }
             }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+                return false;
+            }
+
+            return true;
         }
+
+        protected abstract void OnLoad(string fileName, Action<Stream> reader);
+
+        protected abstract void OnSave(string fileName, Action<Stream> writer);
 
         private static Stream GetResourceStream(string resourceName)
         {

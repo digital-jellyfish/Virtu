@@ -27,12 +27,14 @@ namespace Jellyfish.Virtu
 
             if (name.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase))
             {
-                byte[] data = stream.ReadBlock(TrackCount * SectorCount * SectorSize);
+                var data = new byte[TrackCount * SectorCount * SectorSize];
+                stream.ReadBlock(data);
                 return new DiskDsk(name, data, isWriteProtected);
             }
             else if (name.EndsWith(".nib", StringComparison.OrdinalIgnoreCase))
             {
-                byte[] data = stream.ReadBlock(TrackCount * TrackSize);
+                var data = new byte[TrackCount * TrackSize];
+                stream.ReadBlock(data);
                 return new DiskNib(name, data, isWriteProtected);
             }
 
@@ -49,7 +51,7 @@ namespace Jellyfish.Virtu
 
             string name = reader.ReadString();
             bool isWriteProtected = reader.ReadBoolean();
-            byte[] data = reader.ReadBytes(reader.ReadInt32());
+            var data = reader.ReadBytes(reader.ReadInt32());
 
             if (name.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase))
             {

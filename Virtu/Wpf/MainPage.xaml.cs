@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -72,11 +71,7 @@ namespace Jellyfish.Virtu
             if (result.HasValue && result.Value)
             {
                 _machine.Pause();
-                var diskII = _machine.FindDiskIIController();
-                if (diskII != null)
-                {
-                    StorageService.LoadFile(dialog.FileName, stream => diskII.Drives[drive].InsertDisk(dialog.FileName, stream, false));
-                }
+                StorageService.LoadFile(dialog.FileName, stream => _machine.BootDiskII.Drives[drive].InsertDisk(dialog.FileName, stream, false));
                 _machine.Unpause();
             }
         }

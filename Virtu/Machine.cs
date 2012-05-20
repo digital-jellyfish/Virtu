@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
-using Jellyfish.Library;
 using Jellyfish.Virtu.Services;
 
 namespace Jellyfish.Virtu
@@ -48,6 +48,11 @@ namespace Jellyfish.Virtu
             _unpauseEvent.Close();
         }
 
+        public IEnumerable<T> GetCards<T>() where T : PeripheralCard
+        {
+            return Slots.Where(card => card is T).Cast<T>();
+        }
+
         public void Reset()
         {
             foreach (var component in Components)
@@ -88,20 +93,6 @@ namespace Jellyfish.Virtu
             State = MachineState.Stopped;
         }
 
-        public DiskIIController FindDiskIIController()
-        {
-            for (int i = 7; i >= 1; i--)
-            {
-                var diskII = Slots[i] as DiskIIController;
-                if (diskII != null)
-                {
-                    return diskII;
-                }
-            }
-
-            return null;
-        }
-
         private void Initialize()
         {
             foreach (var component in Components)
@@ -112,36 +103,59 @@ namespace Jellyfish.Virtu
             }
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         private void LoadState()
         {
-            _storageService.Load(Machine.LastStateFileName, stream =>
+#if WINDOWS
+            var args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
             {
-                try
+                string name = args[1];
+                Func<string, Action<Stream>, bool> loader = StorageService.LoadFile;
+
+                if (name.StartsWith("res://"))
                 {
-                    using (var reader = new BinaryReader(stream))
-                    {
-                        string stateSignature = reader.ReadString();
-                        var stateVersion = new Version(reader.ReadString());
-                        if ((stateSignature == StateSignature) && (stateVersion == new Version(Machine.Version))) // avoid state version mismatch (for now)
-                        {
-                            foreach (var component in Components)
-                            {
-                                //_debugService.WriteLine("Loading component '{0}' state", component.GetType().Name);
-                                component.LoadState(reader, stateVersion);
-                                //_debugService.WriteLine("Loaded component '{0}' state", component.GetType().Name);
-                            }
-                        }
-                    }
+                    name = name.Substring(6);
+                    loader = StorageService.LoadResource;
                 }
-                catch (Exception)
+
+                if (name.EndsWith(".bin", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (Debugger.IsAttached)
-                    {
-                        Debugger.Break();
-                    }
+                    loader(name, stream => LoadState(stream));
                 }
-            });
+                else if (name.EndsWith(".prg", StringComparison.OrdinalIgnoreCase))
+                {
+                    loader(name, stream => Memory.LoadProgram(stream));
+                }
+                else if (Regex.IsMatch(name, @"\.(dsk|nib)$", RegexOptions.IgnoreCase))
+                {
+                    loader(name, stream => BootDiskII.Drives[0].InsertDisk(name, stream, false));
+                }
+            }
+            else
+#endif
+            if (!_storageService.Load(Machine.StateFileName, stream => LoadState(stream)))
+            {
+                StorageService.LoadResource("Disks/Default.dsk", stream => BootDiskII.Drives[0].InsertDisk("Default.dsk", stream, false));
+            }
+        }
+
+        private void LoadState(Stream stream)
+        {
+            using (var reader = new BinaryReader(stream))
+            {
+                string stateSignature = reader.ReadString();
+                var stateVersion = new Version(reader.ReadString());
+                if ((stateSignature != StateSignature) || (stateVersion != new Version(Machine.Version))) // avoid state version mismatch (for now)
+                {
+                    throw new InvalidOperationException();
+                }
+                foreach (var component in Components)
+                {
+                    //_debugService.WriteLine("Loading component '{0}' state", component.GetType().Name);
+                    component.LoadState(reader, stateVersion);
+                    //_debugService.WriteLine("Loaded component '{0}' state", component.GetType().Name);
+                }
+            }
         }
 
         private void Uninitialize()
@@ -156,26 +170,29 @@ namespace Jellyfish.Virtu
 
         private void SaveState()
         {
-            _storageService.Save(Machine.LastStateFileName, stream =>
+            _storageService.Save(Machine.StateFileName, stream => SaveState(stream));
+        }
+
+        private void SaveState(Stream stream)
+        {
+            using (var writer = new BinaryWriter(stream))
             {
-                using (var writer = new BinaryWriter(stream))
+                writer.Write(StateSignature);
+                writer.Write(Machine.Version);
+                foreach (var component in Components)
                 {
-                    writer.Write(StateSignature);
-                    writer.Write(Machine.Version);
-                    foreach (var component in Components)
-                    {
-                        //_debugService.WriteLine("Saving component '{0}' state", component.GetType().Name);
-                        component.SaveState(writer);
-                        //_debugService.WriteLine("Saved component '{0}' state", component.GetType().Name);
-                    }
+                    //_debugService.WriteLine("Saving component '{0}' state", component.GetType().Name);
+                    component.SaveState(writer);
+                    //_debugService.WriteLine("Saved component '{0}' state", component.GetType().Name);
                 }
-            });
+            }
         }
 
         private void Run() // machine thread
         {
-            _debugService = Services.GetService<DebugService>();
+            //_debugService = Services.GetService<DebugService>();
             _storageService = Services.GetService<StorageService>();
+            _bootDiskII = GetCards<DiskIIController>().Last();
 
             Initialize();
             Reset();
@@ -225,17 +242,20 @@ namespace Jellyfish.Virtu
         public PeripheralCard Slot6 { get; private set; }
         public PeripheralCard Slot7 { get; private set; }
 
+        public DiskIIController BootDiskII { get { return _bootDiskII; } }
+
         public Collection<PeripheralCard> Slots { get; private set; }
         public Collection<MachineComponent> Components { get; private set; }
 
         public Thread Thread { get; private set; }
 
-        private const string LastStateFileName = "LastState.bin";
+        private const string StateFileName = "State.bin";
         private const string StateSignature = "Virtu";
 
-        private DebugService _debugService;
+        //private DebugService _debugService;
         private StorageService _storageService;
         private volatile MachineState _state;
+        private DiskIIController _bootDiskII;
 
         private AutoResetEvent _pauseEvent = new AutoResetEvent(false);
         private AutoResetEvent _unpauseEvent = new AutoResetEvent(false);

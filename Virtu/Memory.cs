@@ -124,6 +124,45 @@ namespace Jellyfish.Virtu
             MapRegionD0FF();
         }
 
+        public void LoadProgram(Stream stream)
+        {
+            if (stream == null)
+            {
+                throw new ArgumentNullException("stream");
+            }
+
+            int address = stream.ReadByte();
+            address |= stream.ReadByte() << 8;
+            if (address < 0)
+            {
+                throw new EndOfStreamException();
+            }
+            int entry = address;
+
+            if (address < 0x0200)
+            {
+                address += stream.ReadBlock(_ramMainRegion0001, address, 0);
+            }
+            if ((0x0200 <= address) && (address < 0xC000))
+            {
+                address += stream.ReadBlock(_ramMainRegion02BF, address - 0x0200, 0);
+            }
+            if ((0xC000 <= address) && (address < 0xD000))
+            {
+                address += stream.ReadBlock(_ramMainBank1RegionD0DF, address - 0xC000, 0);
+            }
+            if ((0xD000 <= address) && (address < 0xE000))
+            {
+                address += stream.ReadBlock(_ramMainBank2RegionD0DF, address - 0xD000, 0);
+            }
+            if (0xE000 <= address)
+            {
+                address += stream.ReadBlock(_ramMainRegionE0FF, address - 0xE000, 0);
+            }
+
+            SetWarmEntry(entry); // assumes autostart monitor
+        }
+
         public override void LoadState(BinaryReader reader, Version version)
         {
             if (reader == null)
@@ -1506,6 +1545,13 @@ namespace Jellyfish.Virtu
             }
         }
         #endregion
+
+        private void SetWarmEntry(int address)
+        {
+            _ramMainRegion02BF[0x03F2 - 0x0200] = (byte)(address & 0xFF);
+            _ramMainRegion02BF[0x03F3 - 0x0200] = (byte)(address >> 8);
+            _ramMainRegion02BF[0x03F4 - 0x0200] = (byte)((address >> 8) ^ 0xA5);
+        }
 
         private static int SetBit7(int data, bool value)
         {

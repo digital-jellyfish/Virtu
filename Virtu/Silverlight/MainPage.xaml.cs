@@ -70,11 +70,7 @@ namespace Jellyfish.Virtu
             if (result.HasValue && result.Value)
             {
                 _machine.Pause();
-                var diskII = _machine.FindDiskIIController();
-                if (diskII != null)
-                {
-                    StorageService.LoadFile(dialog.File, stream => diskII.Drives[drive].InsertDisk(dialog.File.Name, stream, false));
-                }
+                StorageService.LoadFile(dialog.File, stream => _machine.BootDiskII.Drives[drive].InsertDisk(dialog.File.Name, stream, false));
                 _machine.Unpause();
             }
         }

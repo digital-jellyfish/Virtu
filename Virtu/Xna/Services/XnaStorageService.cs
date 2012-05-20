@@ -18,29 +18,23 @@ namespace Jellyfish.Virtu.Services
             _game = game;
         }
 
-        public override void Load(string fileName, Action<Stream> reader)
+        protected override void OnLoad(string fileName, Action<Stream> reader)
         {
             if (reader == null)
             {
                 throw new ArgumentNullException("reader");
             }
 
-            try
+            using (var storageContainer = OpenContainer())
             {
-                using (var storageContainer = OpenContainer())
+                using (var stream = storageContainer.OpenFile(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    using (var stream = storageContainer.OpenFile(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    {
-                        reader(stream);
-                    }
+                    reader(stream);
                 }
-            }
-            catch (FileNotFoundException)
-            {
             }
         }
 
-        public override void Save(string fileName, Action<Stream> writer)
+        protected override void OnSave(string fileName, Action<Stream> writer)
         {
             if (writer == null)
             {

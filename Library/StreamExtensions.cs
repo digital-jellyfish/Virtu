@@ -1,31 +1,30 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Jellyfish.Library
 {
     public static class StreamExtensions
     {
-        public static byte[] ReadBlock(this Stream stream, int count)
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
+        public static int ReadBlock(this Stream stream, byte[] buffer, int offset = 0, int minCount = int.MaxValue)
         {
-            return ReadBlock(stream, new byte[count], 0, count);
+            return ReadBlock(stream, buffer, offset, int.MaxValue, minCount);
         }
 
-        public static byte[] ReadBlock(this Stream stream, byte[] buffer)
-        {
-            if (buffer == null)
-            {
-                throw new ArgumentNullException("buffer");
-            }
-
-            return ReadBlock(stream, buffer, 0, buffer.Length);
-        }
-
-        public static byte[] ReadBlock(this Stream stream, byte[] buffer, int offset, int count)
+        public static int ReadBlock(this Stream stream, byte[] buffer, int offset, int count, int minCount)
         {
             if (stream == null)
             {
                 throw new ArgumentNullException("stream");
             }
+            if (buffer == null)
+            {
+                throw new ArgumentNullException("buffer");
+            }
+
+            count = Math.Min(count, buffer.Length - offset);
+            minCount = Math.Min(minCount, buffer.Length - offset);
 
             int total = 0;
             int read;
@@ -35,12 +34,12 @@ namespace Jellyfish.Library
             }
             while ((read > 0) && (total < count));
 
-            if (total < count)
+            if (total < minCount)
             {
                 throw new EndOfStreamException();
             }
 
-            return buffer;
+            return total;
         }
 
         public static void SkipBlock(this Stream stream, int count)
@@ -57,8 +56,7 @@ namespace Jellyfish.Library
             else
             {
                 const int BufferSize = 1024;
-                byte[] buffer = new byte[BufferSize];
-
+                var buffer = new byte[BufferSize];
                 int total = 0;
                 int read;
                 do

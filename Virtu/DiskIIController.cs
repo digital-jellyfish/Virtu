@@ -16,7 +16,6 @@ namespace Jellyfish.Virtu
         public override void Initialize()
         {
             StorageService.LoadResource("Roms/DiskII.rom", stream => stream.ReadBlock(_romRegionC1C7));
-            StorageService.LoadResource("Disks/Default.dsk", stream => _drives[0].InsertDisk("Default.dsk", stream, false));
         }
 
         public override void Reset()

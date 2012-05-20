@@ -55,11 +55,6 @@ namespace Jellyfish.Virtu
             }
         }
 
-        public void InsertDisk(string fileName, bool isWriteProtected)
-        {
-            StorageService.LoadFile(fileName, stream => InsertDisk(fileName, stream, isWriteProtected));
-        }
-
         public void InsertDisk(string name, Stream stream, bool isWriteProtected)
         {
             FlushTrack();
