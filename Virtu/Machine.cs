@@ -48,11 +48,6 @@ namespace Jellyfish.Virtu
             _unpauseEvent.Close();
         }
 
-        public IEnumerable<T> GetCards<T>() where T : PeripheralCard
-        {
-            return Slots.Where(card => card is T).Cast<T>();
-        }
-
         public void Reset()
         {
             foreach (var component in Components)
@@ -192,7 +187,7 @@ namespace Jellyfish.Virtu
         {
             //_debugService = Services.GetService<DebugService>();
             _storageService = Services.GetService<StorageService>();
-            _bootDiskII = GetCards<DiskIIController>().Last();
+            _bootDiskII = Slots.OfType<DiskIIController>().Last();
 
             Initialize();
             Reset();

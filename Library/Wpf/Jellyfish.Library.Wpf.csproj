@@ -66,6 +66,9 @@
     <Compile Include="..\DispatcherExtensions.cs">
       <Link>DispatcherExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\DisposableBase.cs">
+      <Link>DisposableBase.cs</Link>
+    </Compile>
     <Compile Include="..\FrameRateCounter.xaml.cs">
       <Link>FrameRateCounter.xaml.cs</Link>
       <DependentUpon>FrameRateCounter.xaml</DependentUpon>

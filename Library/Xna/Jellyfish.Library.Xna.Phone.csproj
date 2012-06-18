@@ -88,6 +88,9 @@
     <Compile Include="..\AssemblyCommentAttribute.cs">
       <Link>AssemblyCommentAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\DisposableBase.cs">
+      <Link>DisposableBase.cs</Link>
+    </Compile>
     <Compile Include="..\GlobalSuppressions.cs">
       <Link>GlobalSuppressions.cs</Link>
     </Compile>

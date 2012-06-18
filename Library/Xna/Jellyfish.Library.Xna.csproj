@@ -106,6 +106,9 @@
     <Compile Include="..\AssemblyCommentAttribute.cs">
       <Link>AssemblyCommentAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\DisposableBase.cs">
+      <Link>DisposableBase.cs</Link>
+    </Compile>
     <Compile Include="..\GCHandleHelpers.cs">
       <Link>GCHandleHelpers.cs</Link>
     </Compile>

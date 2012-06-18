@@ -7,16 +7,16 @@ using System.Windows.Threading;
 
 namespace Jellyfish.Library
 {
-    public class ApplicationBase : Application
+    public abstract class ApplicationBase : Application
     {
         [SecurityCritical]
-        public ApplicationBase() : 
+        protected ApplicationBase() : 
             this(null)
         {
         }
 
         [SecurityCritical]
-        public ApplicationBase(string name)
+        protected ApplicationBase(string name)
         {
             Name = name;
 

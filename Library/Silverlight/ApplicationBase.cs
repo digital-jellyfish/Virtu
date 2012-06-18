@@ -10,14 +10,14 @@ using Microsoft.Phone.Shell;
 
 namespace Jellyfish.Library
 {
-    public class ApplicationBase : Application
+    public abstract class ApplicationBase : Application
     {
-        public ApplicationBase() : 
+        protected ApplicationBase() : 
             this(null)
         {
         }
 
-        public ApplicationBase(string name)
+        protected ApplicationBase(string name)
         {
             Name = name;
 

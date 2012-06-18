@@ -9,9 +9,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Jellyfish.Library
 {
-    public class GameBase : Game
+    public abstract class GameBase : Game
     {
-        public GameBase(string name)
+        protected GameBase(string name)
         {
             Name = name;
 
