@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using Jellyfish.Library;
+using Jellyfish.Virtu.Properties;
 using Jellyfish.Virtu.Services;
 
 namespace Jellyfish.Virtu
@@ -124,45 +126,6 @@ namespace Jellyfish.Virtu
             MapRegionD0FF();
         }
 
-        public void LoadProgram(Stream stream)
-        {
-            if (stream == null)
-            {
-                throw new ArgumentNullException("stream");
-            }
-
-            int address = stream.ReadByte();
-            address |= stream.ReadByte() << 8;
-            if (address < 0)
-            {
-                throw new EndOfStreamException();
-            }
-            int entry = address;
-
-            if (address < 0x0200)
-            {
-                address += stream.ReadBlock(_ramMainRegion0001, address, 0);
-            }
-            if ((0x0200 <= address) && (address < 0xC000))
-            {
-                address += stream.ReadBlock(_ramMainRegion02BF, address - 0x0200, 0);
-            }
-            if ((0xC000 <= address) && (address < 0xD000))
-            {
-                address += stream.ReadBlock(_ramMainBank1RegionD0DF, address - 0xC000, 0);
-            }
-            if ((0xD000 <= address) && (address < 0xE000))
-            {
-                address += stream.ReadBlock(_ramMainBank2RegionD0DF, address - 0xD000, 0);
-            }
-            if (0xE000 <= address)
-            {
-                address += stream.ReadBlock(_ramMainRegionE0FF, address - 0xE000, 0);
-            }
-
-            SetWarmEntry(entry); // assumes autostart monitor
-        }
-
         public override void LoadState(BinaryReader reader, Version version)
         {
             if (reader == null)
@@ -210,6 +173,49 @@ namespace Jellyfish.Virtu
             writer.Write(_ramAuxBank1RegionD0DF);
             writer.Write(_ramAuxBank2RegionD0DF);
             writer.Write(_ramAuxRegionE0FF);
+        }
+
+        public void LoadPrg(Stream stream)
+        {
+            if (stream == null)
+            {
+                throw new ArgumentNullException("stream");
+            }
+
+            int startAddress = stream.ReadWord();
+            SetWarmEntry(startAddress); // assumes autostart monitor
+            Load(stream, startAddress);
+        }
+
+        public void LoadXex(Stream stream)
+        {
+            if (stream == null)
+            {
+                throw new ArgumentNullException("stream");
+            }
+
+            const int Marker = 0xFFFF;
+            int marker = stream.ReadWord(); // mandatory marker
+            if (marker != Marker)
+            {
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentUICulture, Strings.MarkerNotFound, Marker));
+            }
+            int startAddress = stream.ReadWord();
+            int endAddress = stream.ReadWord();
+            SetWarmEntry(startAddress); // assumes autostart monitor
+
+            do
+            {
+                if (startAddress > endAddress)
+                {
+                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentUICulture, Strings.InvalidAddressRange, startAddress, endAddress));
+                }
+                Load(stream, startAddress, endAddress - startAddress + 1);
+                marker = stream.ReadWord(optional: true); // optional marker
+                startAddress = (marker != Marker) ? marker : stream.ReadWord(optional: true);
+                endAddress = stream.ReadWord(optional: true);
+            }
+            while ((startAddress >= 0) && (endAddress >= 0));
         }
 
         #region Core Read & Write
@@ -1545,6 +1551,62 @@ namespace Jellyfish.Virtu
             }
         }
         #endregion
+
+        private void Load(Stream stream, int startAddress)
+        {
+            DebugService.WriteMessage("Loading memory ${0:X04}", startAddress);
+            int address = startAddress;
+            if (address < 0x0200)
+            {
+                address += stream.ReadBlock(_ramMainRegion0001, address, minCount: 0);
+            }
+            if ((0x0200 <= address) && (address < 0xC000))
+            {
+                address += stream.ReadBlock(_ramMainRegion02BF, address - 0x0200, minCount: 0);
+            }
+            if ((0xC000 <= address) && (address < 0xD000))
+            {
+                address += stream.ReadBlock(_ramMainBank1RegionD0DF, address - 0xC000, minCount: 0);
+            }
+            if ((0xD000 <= address) && (address < 0xE000))
+            {
+                address += stream.ReadBlock(_ramMainBank2RegionD0DF, address - 0xD000, minCount: 0);
+            }
+            if (0xE000 <= address)
+            {
+                address += stream.ReadBlock(_ramMainRegionE0FF, address - 0xE000, minCount: 0);
+            }
+            if (address > startAddress)
+            {
+                DebugService.WriteMessage("Loaded memory ${0:X04}-${1:X04} (${2:X04})", startAddress, address - 1, address - startAddress);
+            }
+        }
+
+        private void Load(Stream stream, int startAddress, int length)
+        {
+            DebugService.WriteMessage("Loading memory ${0:X04}-${1:X04} (${2:X04})", startAddress, startAddress + length - 1, length);
+            int address = startAddress;
+            if (address < 0x0200)
+            {
+                address += stream.ReadBlock(_ramMainRegion0001, address, ref length);
+            }
+            if ((0x0200 <= address) && (address < 0xC000))
+            {
+                address += stream.ReadBlock(_ramMainRegion02BF, address - 0x0200, ref length);
+            }
+            if ((0xC000 <= address) && (address < 0xD000))
+            {
+                address += stream.ReadBlock(_ramMainBank1RegionD0DF, address - 0xC000, ref length);
+            }
+            if ((0xD000 <= address) && (address < 0xE000))
+            {
+                address += stream.ReadBlock(_ramMainBank2RegionD0DF, address - 0xD000, ref length);
+            }
+            if (0xE000 <= address)
+            {
+                address += stream.ReadBlock(_ramMainRegionE0FF, address - 0xE000, ref length);
+            }
+        }
 
         private void SetWarmEntry(int address)
         {

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text;
+using System.Threading;
+using Jellyfish.Library;
 
 namespace Jellyfish.Virtu.Services
 {
@@ -11,19 +14,54 @@ namespace Jellyfish.Virtu.Services
         {
         }
 
-        public void WriteLine(string message)
+        public void WriteMessage(string message)
         {
-            OnWriteLine(string.Concat(DateTime.Now.TimeOfDay, ' ', message));
+            OnWriteMessage(FormatMessage(message));
         }
 
-        public void WriteLine(string format, params object[] args)
+        public void WriteMessage(string format, params object[] args)
         {
-            WriteLine(string.Format(CultureInfo.InvariantCulture, format, args));
+            OnWriteMessage(FormatMessage(format, args));
         }
 
-        protected virtual void OnWriteLine(string message)
+        protected virtual void OnWriteMessage(string message)
         {
+#if SILVERLIGHT || WINDOWS_PHONE || XBOX
             Debug.WriteLine(message);
+#else
+            Trace.WriteLine(message);
+#endif
         }
+
+        private string FormatMessage(string format, params object[] args)
+        {
+            var message = new StringBuilder(256);
+            message.AppendFormat(CultureInfo.InvariantCulture, "[{0} T{1:X3} Virtu] ", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), Thread.CurrentThread.ManagedThreadId);
+            if (args.Length > 0)
+            {
+                try
+                {
+                    message.AppendFormat(CultureInfo.InvariantCulture, format, args);
+                }
+                catch (FormatException ex)
+                {
+#if WINDOWS_PHONE || XBOX
+                    WriteMessage("[DebugService.FormatMessage] format: {0}; exception: {1}", format, ex.Message);
+#else
+                    WriteMessage("[DebugService.FormatMessage] format: {0}; args: {1}; exception: {2}", format, string.Join(", ", args), ex.Message);
+#endif
+                }
+            }
+            else
+            {
+                message.Append(format);
+            }
+
+            return message.ToString();
+        }
+
+        public static DebugService Default { get { return _default.Value; } }
+
+        private static readonly Lazy<DebugService> _default = new Lazy<DebugService>(() => new DebugService(null));
     }
 }

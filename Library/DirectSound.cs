@@ -163,7 +163,7 @@ namespace Jellyfish.Library
         private IntPtr _window;
         private IDirectSound _device;
         private IDirectSoundBuffer _buffer;
-        private object _bufferLock = new object();
+        private readonly object _bufferLock = new object();
         private Action<IntPtr, int> _updater;
 
         private AutoResetEvent _position1Event = new AutoResetEvent(false);

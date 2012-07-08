@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using Jellyfish.Library;
+using Jellyfish.Virtu.Services;
 
 namespace Jellyfish.Virtu
 {
@@ -8,6 +10,8 @@ namespace Jellyfish.Virtu
         protected MachineComponent(Machine machine)
         {
             Machine = machine;
+
+            _debugService = new Lazy<DebugService>(() => Machine.Services.GetService<DebugService>());
         }
 
         public virtual void Initialize()
@@ -31,5 +35,8 @@ namespace Jellyfish.Virtu
         }
 
         protected Machine Machine { get; private set; }
+        protected DebugService DebugService { get { return _debugService.Value; } }
+
+        private Lazy<DebugService> _debugService;
     }
 }

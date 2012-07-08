@@ -16,9 +16,9 @@ namespace Jellyfish.Virtu.Services
             _page = page;
         }
 
-        protected override void OnWriteLine(string message)
+        protected override void OnWriteMessage(string message)
         {
-            _page.Dispatcher.Post(() => _page.WriteLine(message + Environment.NewLine));
+            _page.Dispatcher.Post(() => _page.WriteMessage(message));
         }
 
         private MainPage _page;

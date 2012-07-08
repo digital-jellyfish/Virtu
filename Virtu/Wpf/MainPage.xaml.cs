@@ -16,7 +16,7 @@ namespace Jellyfish.Virtu
 
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                _debugService = new WpfDebugService(_machine, this);
+                _debugService = DebugService.Default;
                 _storageService = new WpfStorageService(_machine);
                 _keyboardService = new WpfKeyboardService(_machine, this);
                 _gamePortService = new GamePortService(_machine); // not connected
@@ -50,9 +50,9 @@ namespace Jellyfish.Virtu
             _videoService.Dispose();
         }
 
-        public void WriteLine(string message)
+        public void WriteMessage(string message)
         {
-            _debugText.Text += message;
+            _debugText.Text += message + Environment.NewLine;
             _debugScrollViewer.UpdateLayout();
             _debugScrollViewer.ScrollToVerticalOffset(double.MaxValue);
         }

@@ -20,11 +20,12 @@ namespace Jellyfish.Virtu.Services
         {
             try
             {
+                DebugService.WriteMessage("Loading file '{0}'", fileName);
                 OnLoad(fileName, reader);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.WriteLine(e.ToString());
+                DebugService.WriteMessage(ex.ToString());
                 return false;
             }
 
@@ -44,14 +45,15 @@ namespace Jellyfish.Virtu.Services
 
             try
             {
+                DebugService.Default.WriteMessage("Loading file '{0}'", fileName);
                 using (var stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     reader(stream);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.WriteLine(e.ToString());
+                DebugService.Default.WriteMessage(ex.ToString());
                 return false;
             }
 
@@ -75,14 +77,15 @@ namespace Jellyfish.Virtu.Services
 
             try
             {
+                DebugService.Default.WriteMessage("Loading file '{0}'", fileInfo.Name);
                 using (var stream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     reader(stream);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.WriteLine(e.ToString());
+                DebugService.Default.WriteMessage(ex.ToString());
                 return false;
             }
 
@@ -99,14 +102,15 @@ namespace Jellyfish.Virtu.Services
 
             try
             {
+                DebugService.Default.WriteMessage("Loading resource '{0}'", resourceName);
                 using (var stream = GetResourceStream(resourceName))
                 {
                     reader(stream);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.WriteLine(e.ToString());
+                DebugService.Default.WriteMessage(ex.ToString());
                 return false;
             }
 
@@ -118,11 +122,12 @@ namespace Jellyfish.Virtu.Services
         {
             try
             {
+                DebugService.WriteMessage("Saving file '{0}'", fileName);
                 OnSave(fileName, writer);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.WriteLine(e.ToString());
+                DebugService.WriteMessage(ex.ToString());
                 return false;
             }
 
@@ -142,14 +147,15 @@ namespace Jellyfish.Virtu.Services
 
             try
             {
+                DebugService.Default.WriteMessage("Saving file '{0}'", fileName);
                 using (var stream = File.Open(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     writer(stream);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.WriteLine(e.ToString());
+                DebugService.Default.WriteMessage(ex.ToString());
                 return false;
             }
 
@@ -173,14 +179,15 @@ namespace Jellyfish.Virtu.Services
 
             try
             {
+                DebugService.Default.WriteMessage("Saving file '{0}'", fileInfo.Name);
                 using (var stream = fileInfo.Open(FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     writer(stream);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.WriteLine(e.ToString());
+                DebugService.Default.WriteMessage(ex.ToString());
                 return false;
             }
 

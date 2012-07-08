@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Jellyfish.Library;
@@ -11,6 +12,12 @@ namespace Jellyfish.Virtu
         public DiskIIController(Machine machine) : 
             base(machine)
         {
+            Drive1 = new DiskIIDrive(machine);
+            Drive2 = new DiskIIDrive(machine);
+
+            Drives = new Collection<DiskIIDrive> { Drive1, Drive2 };
+
+            BootDrive = Drive1;
         }
 
         public override void Initialize()
@@ -41,7 +48,12 @@ namespace Jellyfish.Virtu
             _loadMode = reader.ReadBoolean();
             _writeMode = reader.ReadBoolean();
             _driveSpin = reader.ReadBoolean();
-            _drives.ForEach(drive => drive.LoadState(reader, version));
+            foreach (var drive in Drives)
+            {
+                DebugService.WriteMessage("Loading machine '{0}'", drive.GetType().Name);
+                drive.LoadState(reader, version);
+                //DebugService.WriteMessage("Loaded machine '{0}'", drive.GetType().Name);
+            }
         }
 
         public override void SaveState(BinaryWriter writer)
@@ -58,7 +70,12 @@ namespace Jellyfish.Virtu
             writer.Write(_loadMode);
             writer.Write(_writeMode);
             writer.Write(_driveSpin);
-            _drives.ForEach(drive => drive.SaveState(writer));
+            foreach (var drive in Drives)
+            {
+                DebugService.WriteMessage("Saving machine '{0}'", drive.GetType().Name);
+                drive.SaveState(writer);
+                //DebugService.WriteMessage("Saved machine '{0}'", drive.GetType().Name);
+            }
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
@@ -92,7 +109,7 @@ namespace Jellyfish.Virtu
                     {
                         if (!_writeMode)
                         {
-                            return _latch = _drives[_driveNumber].Read();
+                            return _latch = Drives[_driveNumber].Read();
                         }
                         else
                         {
@@ -107,7 +124,7 @@ namespace Jellyfish.Virtu
                     {
                         // write protect is forced if phase 1 is on [F9.7]
                         _latch &= 0x7F;
-                        if (_drives[_driveNumber].IsWriteProtected || 
+                        if (Drives[_driveNumber].IsWriteProtected || 
                             (_phaseStates & Phase1On) != 0)
                         {
                             _latch |= 0x80;
@@ -205,13 +222,13 @@ namespace Jellyfish.Virtu
             // write protect is forced if phase 1 is on [F9.7]
             if ((_phaseStates & Phase1On) == 0)
             {
-                _drives[_driveNumber].Write(_latch);
+                Drives[_driveNumber].Write(_latch);
             }
         }
 
         private void Flush()
         {
-            _drives[_driveNumber].FlushTrack();
+            Drives[_driveNumber].FlushTrack();
         }
 
         private void SetDriveNumber(int driveNumber)
@@ -241,19 +258,22 @@ namespace Jellyfish.Virtu
 
             if (_motorOn)
             {
-                _drives[_driveNumber].ApplyPhaseChange(_phaseStates);
+                Drives[_driveNumber].ApplyPhaseChange(_phaseStates);
             }
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public DiskIIDrive[] Drives { get { return _drives; } }
+        public DiskIIDrive Drive1 { get; private set; }
+        public DiskIIDrive Drive2 { get; private set; }
+
+        public Collection<DiskIIDrive> Drives { get; private set; }
+
+        public DiskIIDrive BootDrive { get; private set; }
 
         private const int Phase0On = 1 << 0;
         private const int Phase1On = 1 << 1;
         private const int Phase2On = 1 << 2;
         private const int Phase3On = 1 << 3;
 
-        private DiskIIDrive[] _drives = new DiskIIDrive[] { new DiskIIDrive(), new DiskIIDrive() };
         private int _latch;
         private int _phaseStates;
         private bool _motorOn;

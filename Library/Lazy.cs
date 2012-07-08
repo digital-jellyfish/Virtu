@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 
 namespace Jellyfish.Library
 {
@@ -16,13 +15,11 @@ namespace Jellyfish.Library
             {
                 if (_value == null)
                 {
-                    T value = _initializer();
-                    if (Interlocked.CompareExchange(ref _value, value, null) != null)
+                    lock (_lock)
                     {
-                        var disposable = value as IDisposable; // dispose preempted instance
-                        if (disposable != null)
+                        if (_value == null)
                         {
-                            disposable.Dispose();
+                            _value = _initializer();
                         }
                     }
                 }
@@ -32,6 +29,7 @@ namespace Jellyfish.Library
         }
 
         private Func<T> _initializer;
-        private T _value;
+        private readonly object _lock = new object();
+        private volatile T _value;
     }
 }

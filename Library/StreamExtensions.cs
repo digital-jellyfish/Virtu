@@ -6,13 +6,16 @@ namespace Jellyfish.Library
 {
     public static class StreamExtensions
     {
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
-        public static int ReadBlock(this Stream stream, byte[] buffer, int offset = 0, int minCount = int.MaxValue)
+        [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "3#")]
+        public static int ReadBlock(this Stream stream, byte[] buffer, int offset, ref int count)
         {
-            return ReadBlock(stream, buffer, offset, int.MaxValue, minCount);
+            int read = ReadBlock(stream, buffer, offset, count, count);
+            count -= read;
+            return read;
         }
 
-        public static int ReadBlock(this Stream stream, byte[] buffer, int offset, int count, int minCount)
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
+        public static int ReadBlock(this Stream stream, byte[] buffer, int offset = 0, int count = int.MaxValue, int minCount = int.MaxValue)
         {
             if (stream == null)
             {
@@ -42,6 +45,25 @@ namespace Jellyfish.Library
             return total;
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
+        public static int ReadWord(this Stream stream, bool optional = false)
+        {
+            if (stream == null)
+            {
+                throw new ArgumentNullException("stream");
+            }
+
+            int lowByte = stream.ReadByte();
+            int highByte = stream.ReadByte();
+            int word = lowByte | (highByte << 8);
+            if ((word < 0) && !optional)
+            {
+                throw new EndOfStreamException();
+            }
+
+            return word;
+        }
+
         public static void SkipBlock(this Stream stream, int count)
         {
             if (stream == null)
@@ -55,16 +77,18 @@ namespace Jellyfish.Library
             }
             else
             {
-                const int BufferSize = 1024;
-                var buffer = new byte[BufferSize];
                 int total = 0;
                 int read;
                 do
                 {
-                    total += read = stream.Read(buffer, 0, Math.Min(count - total, BufferSize));
+                    total += read = stream.Read(_skipBuffer, 0, Math.Min(count - total, SkipBufferSize));
                 }
                 while ((read > 0) && (total < count));
             }
         }
+
+        private const int SkipBufferSize = 1024;
+
+        private static byte[] _skipBuffer = new byte[SkipBufferSize];
     }
 }

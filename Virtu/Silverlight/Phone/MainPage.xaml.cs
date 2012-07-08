@@ -15,7 +15,7 @@ namespace Jellyfish.Virtu
 
             if (!DesignerProperties.IsInDesignTool)
             {
-                _debugService = new SilverlightDebugService(_machine, this);
+                _debugService = DebugService.Default;
                 _storageService = new IsolatedStorageService(_machine);
                 _keyboardService = new SilverlightKeyboardService(_machine, this);
                 _gamePortService = new GamePortService(_machine); // not connected
@@ -49,9 +49,9 @@ namespace Jellyfish.Virtu
             _videoService.Dispose();
         }
 
-        public void WriteLine(string message)
+        public void WriteMessage(string message)
         {
-            _debugText.Text += message;
+            _debugText.Text += message + Environment.NewLine;
             _debugScrollViewer.UpdateLayout();
             _debugScrollViewer.ScrollToVerticalOffset(double.MaxValue);
         }

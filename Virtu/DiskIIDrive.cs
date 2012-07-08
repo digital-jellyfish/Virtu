@@ -5,9 +5,10 @@ using Jellyfish.Virtu.Services;
 
 namespace Jellyfish.Virtu
 {
-    public sealed class DiskIIDrive
+    public sealed class DiskIIDrive : MachineComponent
     {
-        public DiskIIDrive()
+        public DiskIIDrive(Machine machine) :
+            base(machine)
         {
             DriveArmStepDelta[0] = new int[] { 0,  0,  1,  1,  0,  0,  1,  1, -1, -1,  0,  0, -1, -1,  0,  0 }; // phase 0
             DriveArmStepDelta[1] = new int[] { 0, -1,  0, -1,  1,  0,  1,  0,  0, -1,  0, -1,  1,  0,  1,  0 }; // phase 1
@@ -15,7 +16,7 @@ namespace Jellyfish.Virtu
             DriveArmStepDelta[3] = new int[] { 0,  1,  0,  1, -1,  0, -1,  0,  0,  1,  0,  1, -1,  0, -1,  0 }; // phase 3
         }
 
-        public void LoadState(BinaryReader reader, Version version)
+        public override void LoadState(BinaryReader reader, Version version)
         {
             if (reader == null)
             {
@@ -30,10 +31,18 @@ namespace Jellyfish.Virtu
             {
                 reader.Read(_trackData, 0, _trackData.Length);
             }
-            _disk = reader.ReadBoolean() ? Disk525.LoadState(reader, version) : null;
+            if (reader.ReadBoolean())
+            {
+                DebugService.WriteMessage("Loading machine '{0}'", typeof(Disk525).Name);
+                _disk = Disk525.LoadState(reader, version);
+            }
+            else
+            {
+                _disk = null;
+            }
         }
 
-        public void SaveState(BinaryWriter writer)
+        public override void SaveState(BinaryWriter writer)
         {
             if (writer == null)
             {
@@ -51,12 +60,14 @@ namespace Jellyfish.Virtu
             writer.Write(_disk != null);
             if (_disk != null)
             {
+                DebugService.WriteMessage("Saving machine '{0}'", _disk.GetType().Name);
                 _disk.SaveState(writer);
             }
         }
 
         public void InsertDisk(string name, Stream stream, bool isWriteProtected)
         {
+            DebugService.WriteMessage("Inserting disk '{0}'", name);
             FlushTrack();
             _disk = Disk525.CreateDisk(name, stream, isWriteProtected);
             _trackLoaded = false;
@@ -64,11 +75,15 @@ namespace Jellyfish.Virtu
 
         public void RemoveDisk()
         {
-            _trackLoaded = false;
-            _trackChanged = false;
-            _trackNumber = 0;
-            _trackOffset = 0;
-            _disk = null;
+            if (_disk != null)
+            {
+                DebugService.WriteMessage("Removing disk '{0}'", _disk.Name);
+                _trackLoaded = false;
+                _trackChanged = false;
+                _trackNumber = 0;
+                _trackOffset = 0;
+                _disk = null;
+            }
         }
 
         public void ApplyPhaseChange(int phaseState)

@@ -20,7 +20,7 @@ namespace Jellyfish.Virtu
             frameRateCounter.DrawOrder = 1;
             frameRateCounter.FontName = "Consolas";
 
-            _debugService = new DebugService(_machine);
+            _debugService = DebugService.Default;
 #if WINDOWS_PHONE
             _storageService = new IsolatedStorageService(_machine);
 #else

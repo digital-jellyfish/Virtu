@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -39,6 +39,8 @@ namespace Jellyfish.Virtu
             Slots = new Collection<PeripheralCard> { null, Slot1, Slot2, Slot3, Slot4, Slot5, Slot6, Slot7 };
             Components = new Collection<MachineComponent> { Cpu, Memory, Keyboard, GamePort, Cassette, Speaker, Video, NoSlotClock, Slot1, Slot2, Slot3, Slot4, Slot5, Slot6, Slot7 };
 
+            BootDiskII = Slots.OfType<DiskIIController>().Last();
+
             Thread = new Thread(Run) { Name = "Machine" };
         }
 
@@ -52,33 +54,45 @@ namespace Jellyfish.Virtu
         {
             foreach (var component in Components)
             {
-                //_debugService.WriteLine("Resetting component '{0}'", component.GetType().Name);
+                _debugService.WriteMessage("Resetting machine '{0}'", component.GetType().Name);
                 component.Reset();
-                //_debugService.WriteLine("Reset component '{0}'", component.GetType().Name);
+                //_debugService.WriteMessage("Reset machine '{0}'", component.GetType().Name);
             }
         }
 
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Jellyfish.Virtu.Services.DebugService.WriteMessage(System.String)")]
         public void Start()
         {
+            _debugService = Services.GetService<DebugService>();
+            _storageService = Services.GetService<StorageService>();
+
+            _debugService.WriteMessage("Starting machine");
             State = MachineState.Starting;
             Thread.Start();
         }
 
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Jellyfish.Virtu.Services.DebugService.WriteMessage(System.String)")]
         public void Pause()
         {
+            _debugService.WriteMessage("Pausing machine");
             State = MachineState.Pausing;
             _pauseEvent.WaitOne();
             State = MachineState.Paused;
+            _debugService.WriteMessage("Paused machine");
         }
 
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Jellyfish.Virtu.Services.DebugService.WriteMessage(System.String)")]
         public void Unpause()
         {
+            _debugService.WriteMessage("Running machine");
             State = MachineState.Running;
             _unpauseEvent.Set();
         }
 
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Jellyfish.Virtu.Services.DebugService.WriteMessage(System.String)")]
         public void Stop()
         {
+            _debugService.WriteMessage("Stopping machine");
             State = MachineState.Stopping;
             _unpauseEvent.Set();
             if (Thread.IsAlive)
@@ -86,15 +100,16 @@ namespace Jellyfish.Virtu
                 Thread.Join();
             }
             State = MachineState.Stopped;
+            _debugService.WriteMessage("Stopped machine");
         }
 
         private void Initialize()
         {
             foreach (var component in Components)
             {
-                //_debugService.WriteLine("Initializing component '{0}'", component.GetType().Name);
+                _debugService.WriteMessage("Initializing machine '{0}'", component.GetType().Name);
                 component.Initialize();
-                //_debugService.WriteLine("Initialized component '{0}'", component.GetType().Name);
+                //_debugService.WriteMessage("Initialized machine '{0}'", component.GetType().Name);
             }
         }
 
@@ -119,18 +134,22 @@ namespace Jellyfish.Virtu
                 }
                 else if (name.EndsWith(".prg", StringComparison.OrdinalIgnoreCase))
                 {
-                    loader(name, stream => Memory.LoadProgram(stream));
+                    loader(name, stream => Memory.LoadPrg(stream));
+                }
+                else if (name.EndsWith(".xex", StringComparison.OrdinalIgnoreCase))
+                {
+                    loader(name, stream => Memory.LoadXex(stream));
                 }
                 else if (Regex.IsMatch(name, @"\.(dsk|nib)$", RegexOptions.IgnoreCase))
                 {
-                    loader(name, stream => BootDiskII.Drives[0].InsertDisk(name, stream, false));
+                    loader(name, stream => BootDiskII.BootDrive.InsertDisk(name, stream, false));
                 }
             }
             else
 #endif
             if (!_storageService.Load(Machine.StateFileName, stream => LoadState(stream)))
             {
-                StorageService.LoadResource("Disks/Default.dsk", stream => BootDiskII.Drives[0].InsertDisk("Default.dsk", stream, false));
+                StorageService.LoadResource("Disks/Default.dsk", stream => BootDiskII.BootDrive.InsertDisk("Default.dsk", stream, false));
             }
         }
 
@@ -138,17 +157,17 @@ namespace Jellyfish.Virtu
         {
             using (var reader = new BinaryReader(stream))
             {
-                string stateSignature = reader.ReadString();
-                var stateVersion = new Version(reader.ReadString());
-                if ((stateSignature != StateSignature) || (stateVersion != new Version(Machine.Version))) // avoid state version mismatch (for now)
+                string signature = reader.ReadString();
+                var version = new Version(reader.ReadString());
+                if ((signature != StateSignature) || (version != new Version(Machine.Version))) // avoid state version mismatch (for now)
                 {
                     throw new InvalidOperationException();
                 }
                 foreach (var component in Components)
                 {
-                    //_debugService.WriteLine("Loading component '{0}' state", component.GetType().Name);
-                    component.LoadState(reader, stateVersion);
-                    //_debugService.WriteLine("Loaded component '{0}' state", component.GetType().Name);
+                    _debugService.WriteMessage("Loading machine '{0}'", component.GetType().Name);
+                    component.LoadState(reader, version);
+                    //_debugService.WriteMessage("Loaded machine '{0}'", component.GetType().Name);
                 }
             }
         }
@@ -166,9 +185,9 @@ namespace Jellyfish.Virtu
                 writer.Write(Machine.Version);
                 foreach (var component in Components)
                 {
-                    //_debugService.WriteLine("Saving component '{0}' state", component.GetType().Name);
+                    _debugService.WriteMessage("Saving machine '{0}'", component.GetType().Name);
                     component.SaveState(writer);
-                    //_debugService.WriteLine("Saved component '{0}' state", component.GetType().Name);
+                    //_debugService.WriteMessage("Saved machine '{0}'", component.GetType().Name);
                 }
             }
         }
@@ -177,22 +196,20 @@ namespace Jellyfish.Virtu
         {
             foreach (var component in Components)
             {
-                //_debugService.WriteLine("Uninitializing component '{0}'", component.GetType().Name);
+                _debugService.WriteMessage("Uninitializing machine '{0}'", component.GetType().Name);
                 component.Uninitialize();
-                //_debugService.WriteLine("Uninitialized component '{0}'", component.GetType().Name);
+                //_debugService.WriteMessage("Uninitialized machine '{0}'", component.GetType().Name);
             }
         }
 
+        [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Jellyfish.Virtu.Services.DebugService.WriteMessage(System.String)")]
         private void Run() // machine thread
         {
-            //_debugService = Services.GetService<DebugService>();
-            _storageService = Services.GetService<StorageService>();
-            _bootDiskII = Slots.OfType<DiskIIController>().Last();
-
             Initialize();
             Reset();
             LoadState();
 
+            _debugService.WriteMessage("Running machine");
             State = MachineState.Running;
             do
             {
@@ -237,20 +254,19 @@ namespace Jellyfish.Virtu
         public PeripheralCard Slot6 { get; private set; }
         public PeripheralCard Slot7 { get; private set; }
 
-        public DiskIIController BootDiskII { get { return _bootDiskII; } }
-
         public Collection<PeripheralCard> Slots { get; private set; }
         public Collection<MachineComponent> Components { get; private set; }
+
+        public DiskIIController BootDiskII { get; private set; }
 
         public Thread Thread { get; private set; }
 
         private const string StateFileName = "State.bin";
         private const string StateSignature = "Virtu";
 
-        //private DebugService _debugService;
+        private DebugService _debugService;
         private StorageService _storageService;
         private volatile MachineState _state;
-        private DiskIIController _bootDiskII;
 
         private AutoResetEvent _pauseEvent = new AutoResetEvent(false);
         private AutoResetEvent _unpauseEvent = new AutoResetEvent(false);
