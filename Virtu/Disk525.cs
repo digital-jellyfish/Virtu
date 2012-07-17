@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Text.RegularExpressions;
 using Jellyfish.Library;
 
 namespace Jellyfish.Virtu
@@ -20,22 +21,19 @@ namespace Jellyfish.Virtu
             {
                 throw new ArgumentNullException("name");
             }
-            if (stream == null)
-            {
-                throw new ArgumentNullException("stream");
-            }
 
-            if (name.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase))
+            if (name.EndsWith(".do", StringComparison.OrdinalIgnoreCase) ||
+                name.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase)) // assumes dos sector skew
             {
-                var data = new byte[TrackCount * SectorCount * SectorSize];
-                stream.ReadBlock(data);
-                return new DiskDsk(name, data, isWriteProtected);
+                return new DiskDsk(name, stream, isWriteProtected, SectorSkew.Dos);
             }
             else if (name.EndsWith(".nib", StringComparison.OrdinalIgnoreCase))
             {
-                var data = new byte[TrackCount * TrackSize];
-                stream.ReadBlock(data);
-                return new DiskNib(name, data, isWriteProtected);
+                return new DiskNib(name, stream, isWriteProtected);
+            }
+            else if (name.EndsWith(".po", StringComparison.OrdinalIgnoreCase))
+            {
+                return new DiskDsk(name, stream, isWriteProtected, SectorSkew.ProDos);
             }
 
             return null;
@@ -50,16 +48,21 @@ namespace Jellyfish.Virtu
             }
 
             string name = reader.ReadString();
-            bool isWriteProtected = reader.ReadBoolean();
             var data = reader.ReadBytes(reader.ReadInt32());
+            bool isWriteProtected = reader.ReadBoolean();
 
-            if (name.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase))
+            if (name.EndsWith(".do", StringComparison.OrdinalIgnoreCase) ||
+                name.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase)) // assumes dos sector skew
             {
-                return new DiskDsk(name, data, isWriteProtected);
+                return new DiskDsk(name, data, isWriteProtected, SectorSkew.Dos);
             }
             else if (name.EndsWith(".nib", StringComparison.OrdinalIgnoreCase))
             {
                 return new DiskNib(name, data, isWriteProtected);
+            }
+            else if (name.EndsWith(".po", StringComparison.OrdinalIgnoreCase))
+            {
+                return new DiskDsk(name, data, isWriteProtected, SectorSkew.ProDos);
             }
 
             return null;
@@ -73,19 +76,18 @@ namespace Jellyfish.Virtu
             }
 
             writer.Write(Name);
-            writer.Write(IsWriteProtected);
             writer.Write(Data.Length);
             writer.Write(Data);
+            writer.Write(IsWriteProtected);
         }
 
         public abstract void ReadTrack(int number, int fraction, byte[] buffer);
         public abstract void WriteTrack(int number, int fraction, byte[] buffer);
 
         public string Name { get; private set; }
-        public bool IsWriteProtected { get; private set; }
-
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        protected byte[] Data { get; private set; }
+        public byte[] Data { get; protected set; }
+        public bool IsWriteProtected { get; private set; }
 
         public const int SectorCount = 16;
         public const int SectorSize = 0x100;

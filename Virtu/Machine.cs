@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Jellyfish.Virtu.Services;
 
@@ -140,7 +139,7 @@ namespace Jellyfish.Virtu
                 {
                     loader(name, stream => Memory.LoadXex(stream));
                 }
-                else if (Regex.IsMatch(name, @"\.(dsk|nib)$", RegexOptions.IgnoreCase))
+                else
                 {
                     loader(name, stream => BootDiskII.BootDrive.InsertDisk(name, stream, false));
                 }
@@ -231,7 +230,7 @@ namespace Jellyfish.Virtu
             Uninitialize();
         }
 
-        public const string Version = "0.9.2.0";
+        public const string Version = "0.9.3.0";
 
         public MachineEvents Events { get; private set; }
         public MachineServices Services { get; private set; }

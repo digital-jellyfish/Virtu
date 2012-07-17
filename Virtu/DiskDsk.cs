@@ -1,12 +1,29 @@
 ﻿using System;
+using System.IO;
+using Jellyfish.Library;
 
 namespace Jellyfish.Virtu
 {
-    public sealed class DiskDsk : Disk525
+    public enum SectorSkew { None = 0, Dos, ProDos };
+
+    public class DiskDsk : Disk525
     {
-        public DiskDsk(string name, byte[] data, bool isWriteProtected) : 
+        public DiskDsk(string name, byte[] data, bool isWriteProtected, SectorSkew sectorSkew) :
             base(name, data, isWriteProtected)
         {
+            _sectorSkew = SectorSkewMode[(int)sectorSkew];
+        }
+
+        public DiskDsk(string name, Stream stream, bool isWriteProtected, SectorSkew sectorSkew) :
+            base(name, new byte[TrackCount * SectorCount * SectorSize], isWriteProtected)
+        {
+            if (stream == null)
+            {
+                throw new ArgumentNullException("stream");
+            }
+
+            stream.ReadBlock(Data);
+            _sectorSkew = SectorSkewMode[(int)sectorSkew];
         }
 
         public override void ReadTrack(int number, int fraction, byte[] buffer)
@@ -38,7 +55,7 @@ namespace Jellyfish.Virtu
                 WriteNibble(0xAA);
                 WriteNibble(0xAD);
 
-                WriteDataNibbles((track * SectorCount + DosOrderToLogicalSector[sector]) * SectorSize);
+                WriteDataNibbles((track * SectorCount + _sectorSkew[sector]) * SectorSize);
 
                 WriteNibble(0xDE); // data epilogue
                 WriteNibble(0xAA);
@@ -84,7 +101,7 @@ namespace Jellyfish.Virtu
                 if (!Read3Nibbles(0xD5, 0xAA, 0xAD, 0x20))
                     break; // no data prologue
 
-                if (!ReadDataNibbles((track * SectorCount + DosOrderToLogicalSector[sector]) * SectorSize))
+                if (!ReadDataNibbles((track * SectorCount + _sectorSkew[sector]) * SectorSize))
                     break; // bad data checksum
 
                 if ((ReadNibble() != 0xDE) || (ReadNibble() != 0xAA))
@@ -245,13 +262,31 @@ namespace Jellyfish.Virtu
         private byte[] _primaryBuffer = new byte[0x100];
         private const int SecondaryBufferLength = 0x56;
         private byte[] _secondaryBuffer = new byte[SecondaryBufferLength + 1];
+        private int[] _sectorSkew;
         private const int Volume = 0xFE;
 
         private static readonly byte[] SwapBits = { 0, 2, 1, 3 };
 
-        private static readonly int[] DosOrderToLogicalSector = new int[]
+        private static readonly int[] SectorSkewNone = new int[SectorCount]
+        {
+            0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF
+        };
+
+        private static readonly int[] SectorSkewDos = new int[SectorCount]
         {
             0x0, 0x7, 0xE, 0x6, 0xD, 0x5, 0xC, 0x4, 0xB, 0x3, 0xA, 0x2, 0x9, 0x1, 0x8, 0xF
+        };
+
+        private static readonly int[] SectorSkewProDos = new int[SectorCount]
+        {
+            0x0, 0x8, 0x1, 0x9, 0x2, 0xA, 0x3, 0xB, 0x4, 0xC, 0x5, 0xD, 0x6, 0xE, 0x7, 0xF
+        };
+
+        private const int SectorSkewCount = 3;
+
+        private static readonly int[][] SectorSkewMode = new int[SectorSkewCount][]
+        {
+            SectorSkewNone, SectorSkewDos, SectorSkewProDos
         };
 
         private static readonly byte[] ByteToNibble = new byte[]
