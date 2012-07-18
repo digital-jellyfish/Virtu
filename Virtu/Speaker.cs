@@ -16,11 +16,7 @@ namespace Jellyfish.Virtu
         {
             _audioService = Machine.Services.GetService<AudioService>();
 
-#if WINDOWS_PHONE
-            Volume = 0.85f;
-#else
             Volume = 0.5f;
-#endif
             Machine.Events.AddEvent(CyclesPerFlush * Machine.Cpu.Multiplier, _flushOutputEvent);
         }
 

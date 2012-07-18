@@ -68,8 +68,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyCommentAttribute.cs">
-      <Link>AssemblyCommentAttribute.cs</Link>
+    <Compile Include="..\AssemblyMetadataAttribute.cs">
+      <Link>AssemblyMetadataAttribute.cs</Link>
     </Compile>
     <Compile Include="..\DispatcherExtensions.cs">
       <Link>DispatcherExtensions.cs</Link>
@@ -89,9 +89,6 @@
     </Compile>
     <Compile Include="..\MathHelpers.cs">
       <Link>MathHelpers.cs</Link>
-    </Compile>
-    <Compile Include="..\SingletonFactory.cs">
-      <Link>SingletonFactory.cs</Link>
     </Compile>
     <Compile Include="..\StreamExtensions.cs">
       <Link>StreamExtensions.cs</Link>

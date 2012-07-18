@@ -9,11 +9,11 @@ using Jellyfish.Library;
 [assembly: AssemblyProduct("Jellyfish.Library.Wpf")]
 [assembly: AssemblyCompany("Digital Jellyfish Design Ltd")]
 [assembly: AssemblyCopyright("Copyright © 2009-2012 Digital Jellyfish Design Ltd")]
-[assembly: AssemblyComment("Developed by Sean Fausett")]
+[assembly: AssemblyMetadata("Developer", "Sean Fausett")]
 
-[assembly: AssemblyVersion("0.3.0.0")]
-[assembly: AssemblyFileVersion("0.3.0.0")]
-[assembly: AssemblyInformationalVersion("0.3.0.0")]
+[assembly: AssemblyVersion("0.4.0.0")]
+[assembly: AssemblyFileVersion("0.4.0.0")]
+[assembly: AssemblyInformationalVersion("0.4.0.0")]
 
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]

@@ -23,9 +23,7 @@ namespace Jellyfish.Virtu
             _gamePortService = Machine.Services.GetService<GamePortService>();
 
             JoystickDeadZone = 0.4f;
-#if WINDOWS_PHONE
-            UseTouch = true;
-#endif
+
             InvertPaddles = true; // Raster Blaster
             SwapPaddles = true;
             Joystick0TouchX = 0.35f;

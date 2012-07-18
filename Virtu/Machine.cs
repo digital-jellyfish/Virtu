@@ -230,7 +230,7 @@ namespace Jellyfish.Virtu
             Uninitialize();
         }
 
-        public const string Version = "0.9.3.0";
+        public const string Version = "0.9.4.0";
 
         public MachineEvents Events { get; private set; }
         public MachineServices Services { get; private set; }

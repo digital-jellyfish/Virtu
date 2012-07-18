@@ -23,9 +23,7 @@ namespace Jellyfish.Virtu.Services
             _media.SetSource(_mediaSource);
 
             page.Loaded += (sender, e) => _media.Play();
-#if !WINDOWS_PHONE
             page.Unloaded += (sender, e) => _media.Stop();
-#endif
         }
 
         public override void SetVolume(float volume)

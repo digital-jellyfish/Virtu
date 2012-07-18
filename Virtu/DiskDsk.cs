@@ -6,7 +6,7 @@ namespace Jellyfish.Virtu
 {
     public enum SectorSkew { None = 0, Dos, ProDos };
 
-    public class DiskDsk : Disk525
+    public sealed class DiskDsk : Disk525
     {
         public DiskDsk(string name, byte[] data, bool isWriteProtected, SectorSkew sectorSkew) :
             base(name, data, isWriteProtected)

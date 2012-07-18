@@ -10,7 +10,7 @@ using Jellyfish.Virtu;
 [assembly: AssemblyProduct("Jellyfish.Virtu.Silverlight")]
 [assembly: AssemblyCompany("Digital Jellyfish Design Ltd")]
 [assembly: AssemblyCopyright("Copyright © 1995-2012 Digital Jellyfish Design Ltd")]
-[assembly: AssemblyComment("Developed by Sean Fausett & Nick Westgate")]
+[assembly: AssemblyMetadata("Developers", "Sean Fausett & Nick Westgate")]
 
 [assembly: AssemblyVersion(Machine.Version)]
 [assembly: AssemblyFileVersion(Machine.Version)]

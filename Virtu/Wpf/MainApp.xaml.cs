@@ -1,11 +1,11 @@
-﻿using System.Security.Permissions;
+﻿using System.Security;
 using Jellyfish.Library;
 
 namespace Jellyfish.Virtu
 {
     public sealed partial class MainApp : ApplicationBase
     {
-        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+        [SecurityCritical]
         public MainApp() :
             base("Virtu")
         {

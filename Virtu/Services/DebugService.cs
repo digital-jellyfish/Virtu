@@ -26,7 +26,7 @@ namespace Jellyfish.Virtu.Services
 
         protected virtual void OnWriteMessage(string message)
         {
-#if SILVERLIGHT || WINDOWS_PHONE || XBOX
+#if SILVERLIGHT
             Debug.WriteLine(message);
 #else
             Trace.WriteLine(message);
@@ -45,11 +45,7 @@ namespace Jellyfish.Virtu.Services
                 }
                 catch (FormatException ex)
                 {
-#if WINDOWS_PHONE || XBOX
-                    WriteMessage("[DebugService.FormatMessage] format: {0}; exception: {1}", format, ex.Message);
-#else
                     WriteMessage("[DebugService.FormatMessage] format: {0}; args: {1}; exception: {2}", format, string.Join(", ", args), ex.Message);
-#endif
                 }
             }
             else

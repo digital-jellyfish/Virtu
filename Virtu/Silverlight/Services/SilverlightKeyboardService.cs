@@ -99,12 +99,10 @@ namespace Jellyfish.Virtu.Services
             {
                 Machine.Video.IsMonochrome ^= true;
             }
-#if !WINDOWS_PHONE
             else if (control && (e.Key == Key.Subtract))
             {
                 Machine.Video.IsFullScreen ^= true;
             }
-#endif
             Update();
         }
 
@@ -303,7 +301,7 @@ namespace Jellyfish.Virtu.Services
                         return shift ? '>' : '.';
                     }
                     break;
-#if !WINDOWS_PHONE
+
                 case PlatformID.MacOSX:
                     switch (platformKeyCode)
                     {
@@ -341,7 +339,7 @@ namespace Jellyfish.Virtu.Services
                         return shift ? '>' : '.';
                     }
                     break;
-#endif
+
                 case PlatformID.Unix:
                     switch (platformKeyCode)
                     {

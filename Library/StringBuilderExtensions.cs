@@ -49,20 +49,6 @@ namespace Jellyfish.Library
             return builder;
         }
 
-#if WINDOWS_PHONE || XBOX
-        public static StringBuilder Clear(this StringBuilder builder)
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException("builder");
-            }
-
-            builder.Length = 0;
-
-            return builder;
-        }
-#endif
-
         private static readonly char[] Digits = new char[] { '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
     }
 }
