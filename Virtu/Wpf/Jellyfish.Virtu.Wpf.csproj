@@ -57,7 +57,7 @@
     <ManifestTimestampUrl>http://timestamp.verisign.com/scripts/timestamp.dll</ManifestTimestampUrl>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>462E2816DD15CF75ED0DB781E8C7AD957C048679</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>7E57BBFFA7D9A57530AC8A09E5236FE0AAB041C2</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>..\..\..\Jellyfish\CodeSign.pfx</ManifestKeyFile>
