@@ -1,0 +1,14 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Visual Studio
+*.cs     diff=csharp
+*.sln    merge=union
+*.csproj merge=union
+
+# Virtu
+*.do binary
+*.dsk binary
+*.nib binary
+*.po binary
+*.rom binary
